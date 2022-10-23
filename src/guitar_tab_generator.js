@@ -1,7 +1,3 @@
-exports.hiyoyo = function hiyoyo(fruit) {
-    return idk(fruit);
+exports.generateTab = function generateTab(pitches, tuning, capo) {
+    return;
 };
-function idk(fruit) {
-    const test = ["Apple", "Orange", "Banana"];
-    return test.indexOf(fruit);
-}

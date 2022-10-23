@@ -1,2 +1,3 @@
-let generator_here = require("./guitar_tab_generator");
-console.log(generator_here.hiyoyo("Apple"));
+const GuitarModule = require("../src/guitar_object.js");
+const guitar = new GuitarModule.Guitar("Standard", 3);
+console.log(guitar.strings);
