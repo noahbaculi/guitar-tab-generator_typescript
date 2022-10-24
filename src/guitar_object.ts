@@ -46,10 +46,24 @@ const tunings: {
 	standard: Tuning;
 	openg: Tuning;
 	opend: Tuning;
+	c6: Tuning;
+	dsus4: Tuning;
+	dropd: Tuning;
+	dropc: Tuning;
+	openc: Tuning;
+	dropb: Tuning;
+	opene: Tuning;
 } = {
 	standard: createTuning(0, 0, 0, 0, 0, 0),
 	openg: createTuning(-2, -2, 0, 0, 0, -2),
 	opend: createTuning(-2, -2, -1, 0, 0, -2),
+	c6: createTuning(0, 1, 0, -2, 0, -4),
+	dsus4: createTuning(-2, -2, 0, 0, 0, -2),
+	dropd: createTuning(0, 0, 0, 0, 0, -2),
+	dropc: createTuning(-2, -2, -2, -2, -2, -4),
+	openc: createTuning(0, 1, 0, -2, -2, -4),
+	dropb: createTuning(-3, -3, -3, -3, -3, -5),
+	opene: createTuning(0, 0, -2, -2, -2, 0),
 };
 
 /**
@@ -57,6 +71,9 @@ const tunings: {
  */
 exports.Guitar = class Guitar {
 	guitarRange = [
+		"A1",
+		"A#1",
+		"B1",
 		"C2",
 		"C#2",
 		"D2",
@@ -301,14 +318,6 @@ exports.Guitar = class Guitar {
 
 		// Process tuning and capo to string changes
 		const tuning: Tuning = tunings[this.tuning_name];
-		if (
-			JSON.stringify(Object.keys(tuning)) !==
-			JSON.stringify(Object.keys(this.strings))
-		) {
-			throw new Error(
-				"The `tuning` and `strings` objects do not have matching keys."
-			);
-		}
 		for (const string in this.strings) {
 			const tuningAdj: number = tuning[string];
 
