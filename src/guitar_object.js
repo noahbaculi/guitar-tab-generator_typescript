@@ -1,4 +1,14 @@
 /**
+ * Fingering interface with integer fret positions
+ */
+class Fingering {
+    constructor(stringNamesFrets) {
+        for (const [stringName, fret] of Object.entries(stringNamesFrets)) {
+            this[stringName] = fret;
+        }
+    }
+}
+/**
  * Create the tuning adjustment from Standard in the order of
  * [E, A, D, G, B, e]
  * @param E low E string tuning adjustment
@@ -20,26 +30,11 @@ function createTuning(e, B, G, D, A, E) {
     };
 }
 /**
- * Tunings reference with tuning adjustments from Standard
- */
-const tunings = {
-    standard: createTuning(0, 0, 0, 0, 0, 0),
-    openg: createTuning(-2, -2, 0, 0, 0, -2),
-    opend: createTuning(-2, -2, -1, 0, 0, -2),
-    c6: createTuning(0, 1, 0, -2, 0, -4),
-    dsus4: createTuning(-2, -2, 0, 0, 0, -2),
-    dropd: createTuning(0, 0, 0, 0, 0, -2),
-    dropc: createTuning(-2, -2, -2, -2, -2, -4),
-    openc: createTuning(0, 1, 0, -2, -2, -4),
-    dropb: createTuning(-3, -3, -3, -3, -3, -5),
-    opene: createTuning(0, 0, -2, -2, -2, 0),
-};
-/**
  * Guitar object
  */
 exports.Guitar = class Guitar {
-    constructor(tuning_str, capo) {
-        this.guitarRange = [
+    constructor(tuningName, capo) {
+        this.guitarRangeTotal = [
             "A1",
             "A#1",
             "B1",
@@ -265,14 +260,29 @@ exports.Guitar = class Guitar {
                 "E4",
             ],
         };
-        this.tuning_name = "standard";
+        this.tuningName = "standard";
         this.capo = 0;
         this.numFrets = 18;
+        /**
+         * Tunings reference with tuning adjustments from Standard
+         */
+        const tunings = {
+            standard: createTuning(0, 0, 0, 0, 0, 0),
+            openg: createTuning(-2, -2, 0, 0, 0, -2),
+            opend: createTuning(-2, -2, -1, 0, 0, -2),
+            c6: createTuning(0, 1, 0, -2, 0, -4),
+            dsus4: createTuning(-2, -2, 0, 0, 0, -2),
+            dropd: createTuning(0, 0, 0, 0, 0, -2),
+            dropc: createTuning(-2, -2, -2, -2, -2, -4),
+            openc: createTuning(0, 1, 0, -2, -2, -4),
+            dropb: createTuning(-3, -3, -3, -3, -3, -5),
+            opene: createTuning(0, 0, -2, -2, -2, 0),
+        };
         // Parse tuning input
-        if (tuning_str !== undefined) {
-            tuning_str = tuning_str.replace(/\s/g, "").toLowerCase();
-            if (tuning_str in tunings) {
-                this.tuning_name = tuning_str;
+        if (tuningName !== undefined) {
+            tuningName = tuningName.replace(/\s/g, "").toLowerCase();
+            if (tuningName in tunings) {
+                this.tuningName = tuningName;
             }
         }
         // Parse capo input
@@ -280,31 +290,115 @@ exports.Guitar = class Guitar {
             this.capo = capo;
         }
         // Process tuning and capo to string changes
-        const tuning = tunings[this.tuning_name];
-        for (const string in this.strings) {
-            const tuningAdj = tuning[string];
+        const tuning = tunings[this.tuningName];
+        for (const stringName in this.strings) {
+            const tuningAdj = tuning[stringName];
             // Tune down
             if (tuningAdj < 0) {
-                const lowNotePos = this.guitarRange.indexOf(this.strings[string].at(0));
-                const newNotes = this.guitarRange.slice(lowNotePos + tuningAdj, lowNotePos);
+                const lowNotePos = this.guitarRangeTotal.indexOf(this.strings[stringName].at(0));
+                const newNotes = this.guitarRangeTotal.slice(lowNotePos + tuningAdj, lowNotePos);
                 // Insert new notes
-                this.strings[string] = newNotes.concat(this.strings[string]);
+                this.strings[stringName] = newNotes.concat(this.strings[stringName]);
                 // Remove old notes
-                this.strings[string] = this.strings[string].slice(0, tuningAdj);
+                this.strings[stringName] = this.strings[stringName].slice(0, tuningAdj);
             }
             // Tune up
             else if (tuningAdj > 0) {
-                const highNotePos = this.guitarRange.indexOf(this.strings[string].at(-1));
-                const newNotes = this.guitarRange.slice(highNotePos + 1, highNotePos + tuningAdj + 1);
+                const highNotePos = this.guitarRangeTotal.indexOf(this.strings[stringName].at(-1));
+                const newNotes = this.guitarRangeTotal.slice(highNotePos + 1, highNotePos + tuningAdj + 1);
                 // Insert new notes
-                this.strings[string] = this.strings[string].concat(newNotes);
+                this.strings[stringName] = this.strings[stringName].concat(newNotes);
                 // Remove old notes
-                this.strings[string] = this.strings[string].slice(tuningAdj);
+                this.strings[stringName] = this.strings[stringName].slice(tuningAdj);
             }
             // Limit strings to number of frets available
-            this.strings[string] = this.strings[string].slice(0, this.numFrets);
+            this.strings[stringName] = this.strings[stringName].slice(0, this.numFrets);
             // Limit strings to frets available with capo
-            this.strings[string] = this.strings[string].slice(this.capo);
+            this.strings[stringName] = this.strings[stringName].slice(this.capo);
         }
+        this.pitchRange = new Set(Object.values(this.strings).flat());
+    }
+    /**
+     * Function to get combinations of substring from string
+     * @param inputString
+     * @returns Empty List
+     */
+    getStringCombinations(inputString) {
+        let list_of_strings = new Array();
+        for (let i = 0; i < inputString.length; i++) {
+            for (let j = i + 1; j < inputString.length + 1; j++) {
+                list_of_strings.push(inputString.slice(i, j));
+            }
+        }
+        return list_of_strings;
+    }
+    calcFingerings(pitchName) {
+        let fingerings = [];
+        for (const [stringName, stringVals] of Object.entries(this.strings)) {
+            const pitchFret = stringVals.indexOf(pitchName);
+            if (pitchFret === -1) {
+                continue;
+            }
+            console.log(`${stringName} | ${pitchName} | ${pitchFret}`);
+            fingerings.push({ name: stringName, fret: pitchFret });
+        }
+        if (fingerings.length == 0) {
+            throw new Error(`Out of range or invalid pitch '${pitchName}'`);
+        }
+        return fingerings;
+    }
+    /**
+     * Function to generate a set of TAB fingerings for a guitar object
+     * @param inputPitchString
+     * @returns Empty List
+     */
+    generateTab(inputPitchString) {
+        this.validateInput(inputPitchString);
+        return [];
+    }
+    validateInput(inputPitchString) {
+        // Format and convert input to sharps
+        inputPitchString = inputPitchString.toUpperCase();
+        const flatsToSharps = {
+            DB: "C#",
+            EB: "D#",
+            GB: "F#",
+            AB: "G#",
+            BB: "A#",
+        };
+        for (const flatString in flatsToSharps) {
+            const replace = new RegExp(`${flatString}`, "g");
+            inputPitchString = inputPitchString.replace(replace, flatsToSharps[flatString]);
+        }
+        const inputPitchLines = inputPitchString.split("\n");
+        console.log(inputPitchLines);
+        for (let inputPitchLine of inputPitchLines) {
+            inputPitchLine = inputPitchLine.replace(/\s/g, "");
+            if (inputPitchLine === "") {
+                console.log("----");
+                continue;
+            }
+            console.log();
+            let linePitches = [];
+            while (inputPitchLine !== "") {
+                const pitchCombos = this.getStringCombinations(inputPitchLine);
+                for (const [i, linePitchCombo] of pitchCombos.entries()) {
+                    if (this.pitchRange.has(linePitchCombo)) {
+                        console.log(`${inputPitchLine} -> ${linePitchCombo}`);
+                        inputPitchLine = inputPitchLine.replace(linePitchCombo, "");
+                        linePitches.push(linePitchCombo);
+                        break;
+                    }
+                    if (i === pitchCombos.length - 1) {
+                        throw new Error(`Out of range or invalid pitch '${inputPitchLine}'`);
+                    }
+                }
+            }
+            console.log("linePitches", linePitches);
+            for (const pitchName of linePitches) {
+                console.log(this.calcFingerings(pitchName));
+            }
+        }
+        return [""];
     }
 };

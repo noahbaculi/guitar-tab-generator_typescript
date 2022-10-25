@@ -1,12 +1,10 @@
-// import { yoyo } from "../src/guitar_tab_generator";
-// const TabModule = require("../src/guitar_tab_generator.ts");
 const GuitarModule = require("../src/guitar_object.ts");
 
-describe("Guitar Object", () => {
+describe("Guitar Object Config", () => {
 	it("has default properties", function () {
 		const guitar = new GuitarModule.Guitar();
 
-		expect(guitar.tuning_name).toEqual("standard");
+		expect(guitar.tuningName).toEqual("standard");
 		expect(guitar.capo).toEqual(0);
 		expect(guitar.strings.e).toEqual([
 			"E4",
@@ -132,17 +130,17 @@ describe("Guitar Object", () => {
 
 	it("handles improper input", function () {
 		let guitar = new GuitarModule.Guitar("random 373 string", -2);
-		expect(guitar.tuning_name).toEqual("standard");
+		expect(guitar.tuningName).toEqual("standard");
 		expect(guitar.capo).toEqual(0);
 
 		guitar = new GuitarModule.Guitar("lorem ipsum", 15);
-		expect(guitar.tuning_name).toEqual("standard");
+		expect(guitar.tuningName).toEqual("standard");
 		expect(guitar.capo).toEqual(0);
 	});
 
 	it("handles capo input", function () {
 		const guitar = new GuitarModule.Guitar("Standard", 3);
-		expect(guitar.tuning_name).toEqual("standard");
+		expect(guitar.tuningName).toEqual("standard");
 		expect(guitar.capo).toEqual(3);
 
 		expect(guitar.strings.e).toEqual([
@@ -252,7 +250,7 @@ describe("Guitar Object", () => {
 	it("handles Open G tuning", function () {
 		const guitar = new GuitarModule.Guitar("Open G");
 
-		expect(guitar.tuning_name).toEqual("openg");
+		expect(guitar.tuningName).toEqual("openg");
 		expect(guitar.strings.e).toEqual([
 			"D4",
 			"D#4",
@@ -377,7 +375,7 @@ describe("Guitar Object", () => {
 
 	it("handles Open D tuning", function () {
 		const guitar = new GuitarModule.Guitar("Open D");
-		expect(guitar.tuning_name).toEqual("opend");
+		expect(guitar.tuningName).toEqual("opend");
 
 		expect(guitar.strings.e[0]).toEqual("D4");
 		expect(guitar.strings.B[0]).toEqual("A3");
@@ -389,7 +387,7 @@ describe("Guitar Object", () => {
 
 	it("handles C6 tuning", function () {
 		const guitar = new GuitarModule.Guitar("C6");
-		expect(guitar.tuning_name).toEqual("c6");
+		expect(guitar.tuningName).toEqual("c6");
 
 		expect(guitar.strings.e[0]).toEqual("E4");
 		expect(guitar.strings.B[0]).toEqual("C4");
@@ -401,7 +399,7 @@ describe("Guitar Object", () => {
 
 	it("handles Dsus4 tuning", function () {
 		const guitar = new GuitarModule.Guitar("Dsus4");
-		expect(guitar.tuning_name).toEqual("dsus4");
+		expect(guitar.tuningName).toEqual("dsus4");
 
 		expect(guitar.strings.e[0]).toEqual("D4");
 		expect(guitar.strings.B[0]).toEqual("A3");
@@ -413,7 +411,7 @@ describe("Guitar Object", () => {
 
 	it("handles Drop D tuning", function () {
 		const guitar = new GuitarModule.Guitar("Drop D");
-		expect(guitar.tuning_name).toEqual("dropd");
+		expect(guitar.tuningName).toEqual("dropd");
 
 		expect(guitar.strings.e[0]).toEqual("E4");
 		expect(guitar.strings.B[0]).toEqual("B3");
@@ -425,7 +423,7 @@ describe("Guitar Object", () => {
 
 	it("handles Drop C tuning", function () {
 		const guitar = new GuitarModule.Guitar("Drop C");
-		expect(guitar.tuning_name).toEqual("dropc");
+		expect(guitar.tuningName).toEqual("dropc");
 
 		expect(guitar.strings.e[0]).toEqual("D4");
 		expect(guitar.strings.B[0]).toEqual("A3");
@@ -437,7 +435,7 @@ describe("Guitar Object", () => {
 
 	it("handles Open C tuning", function () {
 		const guitar = new GuitarModule.Guitar("Open C");
-		expect(guitar.tuning_name).toEqual("openc");
+		expect(guitar.tuningName).toEqual("openc");
 
 		expect(guitar.strings.e[0]).toEqual("E4");
 		expect(guitar.strings.B[0]).toEqual("C4");
@@ -449,7 +447,7 @@ describe("Guitar Object", () => {
 
 	it("handles Drop B tuning", function () {
 		const guitar = new GuitarModule.Guitar("Drop B");
-		expect(guitar.tuning_name).toEqual("dropb");
+		expect(guitar.tuningName).toEqual("dropb");
 
 		expect(guitar.strings.e[0]).toEqual("C#4");
 		expect(guitar.strings.B[0]).toEqual("G#3");
@@ -461,7 +459,7 @@ describe("Guitar Object", () => {
 
 	it("handles Open E tuning", function () {
 		const guitar = new GuitarModule.Guitar("Open E");
-		expect(guitar.tuning_name).toEqual("opene");
+		expect(guitar.tuningName).toEqual("opene");
 
 		expect(guitar.strings.e[0]).toEqual("E4");
 		expect(guitar.strings.B[0]).toEqual("B3");
@@ -469,5 +467,61 @@ describe("Guitar Object", () => {
 		expect(guitar.strings.D[0]).toEqual("C3");
 		expect(guitar.strings.A[0]).toEqual("G2");
 		expect(guitar.strings.E[0]).toEqual("E2");
+	});
+});
+
+describe("Guitar Fingering Calculations", () => {
+	it("calculates fingerings correctly with standard tuning, no capo", function () {
+		const guitar = new GuitarModule.Guitar();
+
+		expect(guitar.calcFingerings("E2")).toEqual([{ name: "E", fret: 0 }]);
+		expect(guitar.calcFingerings("G5")).toEqual([{ name: "e", fret: 15 }]);
+		expect(guitar.calcFingerings("A3")).toEqual([
+			{ name: "G", fret: 2 },
+			{ name: "D", fret: 7 },
+			{ name: "A", fret: 12 },
+			{ name: "E", fret: 17 },
+		]);
+		expect(guitar.calcFingerings("A#4")).toEqual([
+			{ name: "e", fret: 6 },
+			{ name: "B", fret: 11 },
+			{ name: "G", fret: 15 },
+		]);
+	});
+
+	it("calculates fingerings correctly with non standard tuning, no capo", function () {
+		const guitar = new GuitarModule.Guitar("Drop B");
+
+		expect(guitar.tuningName).toEqual("dropb");
+		expect(guitar.calcFingerings("E2")).toEqual([{ name: "E", fret: 5 }]);
+		expect(guitar.calcFingerings("A3")).toEqual([
+			{ name: "B", fret: 1 },
+			{ name: "G", fret: 5 },
+			{ name: "D", fret: 10 },
+			{ name: "A", fret: 15 },
+		]);
+		expect(guitar.calcFingerings("A#4")).toEqual([
+			{ name: "e", fret: 9 },
+			{ name: "B", fret: 14 },
+		]);
+		expect(() => {
+			guitar.calcFingerings("G5");
+		}).toThrow("Out of range or invalid pitch");
+	});
+
+	it("calculates fingerings correctly with standard tuning, with capo", function () {
+		const guitar = new GuitarModule.Guitar("Standard", 4);
+
+		expect(guitar.calcFingerings("A3")).toEqual([
+			{ name: "D", fret: 3 },
+			{ name: "A", fret: 8 },
+			{ name: "E", fret: 13 },
+		]);
+		expect(() => {
+			guitar.calcFingerings("E2");
+		}).toThrow("Out of range or invalid pitch");
+		expect(() => {
+			guitar.calcFingerings("G2");
+		}).toThrow("Out of range or invalid pitch");
 	});
 });
