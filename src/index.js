@@ -9,6 +9,8 @@ A2A3E4
 A2
 A3
 E4
+
+A2A3
 `;
 // console.log(guitar.calcFingerings("G5"));
 guitar.generateTab(testNotesString);

@@ -326,7 +326,7 @@ exports.Guitar = class Guitar {
         }
         return list_of_strings;
     }
-    // TODO cache these values for efficiency improvements
+    // TODO cache values for efficiency improvements
     /**
      * Create fingerings for a given pitch
      * @param pitch Validated pitch name
@@ -356,11 +356,14 @@ exports.Guitar = class Guitar {
      */
     generateTab(inputPitchString) {
         const pitchLines = this.validateInput(inputPitchString);
+        const fingeringLines = this.generateLineFingerings(pitchLines);
         print(pitchLines);
+        print(fingeringLines);
         // TODO implement multi pitch combiner and optimizer
         return [];
     }
     validateInput(inputPitchString) {
+        let pitchLines = [];
         // Format and convert input to sharps
         inputPitchString = inputPitchString.toUpperCase();
         const flatsToSharps = {
@@ -374,12 +377,14 @@ exports.Guitar = class Guitar {
             const replace = new RegExp(`${flatString}`, "g");
             inputPitchString = inputPitchString.replace(replace, flatsToSharps[flatString]);
         }
-        let pitchLines = [];
+        // Validate lines of pitches against of Guitar's pitchRange
+        let errorStrings = [];
         const inputPitchLines = inputPitchString.split("\n");
-        for (let inputPitchLine of inputPitchLines) {
+        for (const [lineNum, inputPitchLineOrig] of inputPitchLines.entries()) {
+            let inputPitchLine = inputPitchLineOrig;
             inputPitchLine = inputPitchLine.replace(/\s/g, "");
             if (inputPitchLine === "") {
-                pitchLines.push("break");
+                pitchLines.push("");
                 continue;
             }
             let linePitches = [];
@@ -392,19 +397,33 @@ exports.Guitar = class Guitar {
                         break;
                     }
                     if (i === pitchCombos.length - 1) {
-                        // TODO add error aggregation to return all parse errors
-                        // at once
-                        throw new Error(`Out of range or invalid pitch '${inputPitchLine}'`);
+                        errorStrings.push(`Line ${lineNum} - '${inputPitchLine}' in '${inputPitchLineOrig}'`);
+                        inputPitchLine = "";
                     }
                 }
+            }
+            pitchLines.push(linePitches);
+        }
+        // Throw aggregated invalid pitch error
+        if (errorStrings.length > 0) {
+            throw new Error(`Out of range or invalid pitches:\n${errorStrings.join("\n")}`);
+        }
+        return pitchLines;
+    }
+    generateLineFingerings(pitchLines) {
+        let pitchLineFingerings = [];
+        for (const linePitches of pitchLines) {
+            if (linePitches === "") {
+                pitchLineFingerings.push("break");
+                continue;
             }
             let linePitchIndivFingerings = [];
             for (const pitchName of linePitches) {
                 const pitchFingerings = this.calcPitchFingerings(pitchName);
                 linePitchIndivFingerings.push(pitchFingerings);
             }
-            pitchLines.push(linePitchIndivFingerings);
+            pitchLineFingerings.push(linePitchIndivFingerings);
         }
-        return pitchLines;
+        return pitchLineFingerings;
     }
 };
