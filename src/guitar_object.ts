@@ -73,6 +73,8 @@ type PitchName =
 	| "G6"
 	| "G#6";
 
+type MeasureBreak = "break";
+
 const util = require("util");
 function print(obj: any): void {
 	console.log(
@@ -517,7 +519,9 @@ exports.Guitar = class Guitar {
 		return [];
 	}
 
-	validateInput(inputPitchString: string): PitchFingerings[][] {
+	validateInput(
+		inputPitchString: string
+	): (PitchFingerings[] | MeasureBreak)[] {
 		// Format and convert input to sharps
 		inputPitchString = inputPitchString.toUpperCase();
 		const flatsToSharps = {
@@ -535,15 +539,14 @@ exports.Guitar = class Guitar {
 			);
 		}
 
-		let pitchLines: PitchFingerings[][] = [];
+		let pitchLines: (PitchFingerings[] | MeasureBreak)[] = [];
 		const inputPitchLines = inputPitchString.split("\n");
 		for (let inputPitchLine of inputPitchLines) {
 			inputPitchLine = inputPitchLine.replace(/\s/g, "");
 			if (inputPitchLine === "") {
-				console.log("----");
+				pitchLines.push("break");
 				continue;
 			}
-			console.log();
 
 			let linePitches: PitchName[] = [];
 			while (inputPitchLine !== "") {
@@ -555,6 +558,8 @@ exports.Guitar = class Guitar {
 						break;
 					}
 					if (i === pitchCombos.length - 1) {
+						// TODO add error aggregation to return all parse errors
+						// at once
 						throw new Error(
 							`Out of range or invalid pitch '${inputPitchLine}'`
 						);

@@ -379,10 +379,9 @@ exports.Guitar = class Guitar {
         for (let inputPitchLine of inputPitchLines) {
             inputPitchLine = inputPitchLine.replace(/\s/g, "");
             if (inputPitchLine === "") {
-                console.log("----");
+                pitchLines.push("break");
                 continue;
             }
-            console.log();
             let linePitches = [];
             while (inputPitchLine !== "") {
                 const pitchCombos = this.getStringCombinations(inputPitchLine);
@@ -393,6 +392,8 @@ exports.Guitar = class Guitar {
                         break;
                     }
                     if (i === pitchCombos.length - 1) {
+                        // TODO add error aggregation to return all parse errors
+                        // at once
                         throw new Error(`Out of range or invalid pitch '${inputPitchLine}'`);
                     }
                 }
