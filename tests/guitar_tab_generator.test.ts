@@ -474,54 +474,78 @@ describe("Guitar Fingering Calculations", () => {
 	it("calculates fingerings correctly with standard tuning, no capo", function () {
 		const guitar = new GuitarModule.Guitar();
 
-		expect(guitar.calcFingerings("E2")).toEqual([{ name: "E", fret: 0 }]);
-		expect(guitar.calcFingerings("G5")).toEqual([{ name: "e", fret: 15 }]);
-		expect(guitar.calcFingerings("A3")).toEqual([
-			{ name: "G", fret: 2 },
-			{ name: "D", fret: 7 },
-			{ name: "A", fret: 12 },
-			{ name: "E", fret: 17 },
-		]);
-		expect(guitar.calcFingerings("A#4")).toEqual([
-			{ name: "e", fret: 6 },
-			{ name: "B", fret: 11 },
-			{ name: "G", fret: 15 },
-		]);
+		expect(guitar.calcPitchFingerings("E2")).toEqual({
+			pitch: "E2",
+			fingerings: [{ stringName: "E", fret: 0 }],
+		});
+		expect(guitar.calcPitchFingerings("G5")).toEqual({
+			pitch: "G5",
+			fingerings: [{ stringName: "e", fret: 15 }],
+		});
+		expect(guitar.calcPitchFingerings("A3")).toEqual({
+			pitch: "A3",
+			fingerings: [
+				{ stringName: "G", fret: 2 },
+				{ stringName: "D", fret: 7 },
+				{ stringName: "A", fret: 12 },
+				{ stringName: "E", fret: 17 },
+			],
+		});
+		expect(guitar.calcPitchFingerings("A#4")).toEqual({
+			pitch: "A#4",
+			fingerings: [
+				{ stringName: "e", fret: 6 },
+				{ stringName: "B", fret: 11 },
+				{ stringName: "G", fret: 15 },
+			],
+		});
 	});
 
 	it("calculates fingerings correctly with non standard tuning, no capo", function () {
 		const guitar = new GuitarModule.Guitar("Drop B");
 
 		expect(guitar.tuningName).toEqual("dropb");
-		expect(guitar.calcFingerings("E2")).toEqual([{ name: "E", fret: 5 }]);
-		expect(guitar.calcFingerings("A3")).toEqual([
-			{ name: "B", fret: 1 },
-			{ name: "G", fret: 5 },
-			{ name: "D", fret: 10 },
-			{ name: "A", fret: 15 },
-		]);
-		expect(guitar.calcFingerings("A#4")).toEqual([
-			{ name: "e", fret: 9 },
-			{ name: "B", fret: 14 },
-		]);
+		expect(guitar.calcPitchFingerings("E2")).toEqual({
+			pitch: "E2",
+			fingerings: [{ stringName: "E", fret: 5 }],
+		});
+		expect(guitar.calcPitchFingerings("A3")).toEqual({
+			pitch: "A3",
+			fingerings: [
+				{ stringName: "B", fret: 1 },
+				{ stringName: "G", fret: 5 },
+				{ stringName: "D", fret: 10 },
+				{ stringName: "A", fret: 15 },
+			],
+		});
+		expect(guitar.calcPitchFingerings("A#4")).toEqual({
+			pitch: "A#4",
+			fingerings: [
+				{ stringName: "e", fret: 9 },
+				{ stringName: "B", fret: 14 },
+			],
+		});
 		expect(() => {
-			guitar.calcFingerings("G5");
+			guitar.calcPitchFingerings("G5");
 		}).toThrow("Out of range or invalid pitch");
 	});
 
 	it("calculates fingerings correctly with standard tuning, with capo", function () {
 		const guitar = new GuitarModule.Guitar("Standard", 4);
 
-		expect(guitar.calcFingerings("A3")).toEqual([
-			{ name: "D", fret: 3 },
-			{ name: "A", fret: 8 },
-			{ name: "E", fret: 13 },
-		]);
+		expect(guitar.calcPitchFingerings("A3")).toEqual({
+			pitch: "A3",
+			fingerings: [
+				{ stringName: "D", fret: 3 },
+				{ stringName: "A", fret: 8 },
+				{ stringName: "E", fret: 13 },
+			],
+		});
 		expect(() => {
-			guitar.calcFingerings("E2");
+			guitar.calcPitchFingerings("E2");
 		}).toThrow("Out of range or invalid pitch");
 		expect(() => {
-			guitar.calcFingerings("G2");
+			guitar.calcPitchFingerings("G2");
 		}).toThrow("Out of range or invalid pitch");
 	});
 });
