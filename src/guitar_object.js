@@ -1,12 +1,6 @@
-/**
- * Fingering interface with integer fret positions
- */
-class Fingering {
-    constructor(stringNamesFrets) {
-        for (const [stringName, fret] of Object.entries(stringNamesFrets)) {
-            this[stringName] = fret;
-        }
-    }
+const util = require("util");
+function print(obj) {
+    console.log(util.inspect(obj, { showHidden: false, depth: null, colors: true }));
 }
 /**
  * Create the tuning adjustment from Standard in the order of
@@ -324,7 +318,7 @@ exports.Guitar = class Guitar {
      * @returns Empty List
      */
     getStringCombinations(inputString) {
-        let list_of_strings = new Array();
+        let list_of_strings = [];
         for (let i = 0; i < inputString.length; i++) {
             for (let j = i + 1; j < inputString.length + 1; j++) {
                 list_of_strings.push(inputString.slice(i, j));
@@ -332,20 +326,28 @@ exports.Guitar = class Guitar {
         }
         return list_of_strings;
     }
-    calcFingerings(pitchName) {
+    // TODO cache these values for efficiency improvements
+    /**
+     * Create fingerings for a given pitch
+     * @param pitch Validated pitch name
+     * @returns
+     */
+    calcPitchFingerings(pitch) {
         let fingerings = [];
         for (const [stringName, stringVals] of Object.entries(this.strings)) {
-            const pitchFret = stringVals.indexOf(pitchName);
+            const pitchFret = stringVals.indexOf(pitch);
             if (pitchFret === -1) {
                 continue;
             }
-            console.log(`${stringName} | ${pitchName} | ${pitchFret}`);
-            fingerings.push({ name: stringName, fret: pitchFret });
+            fingerings.push({ stringName: stringName, fret: pitchFret });
         }
         if (fingerings.length == 0) {
-            throw new Error(`Out of range or invalid pitch '${pitchName}'`);
+            throw new Error(`Out of range or invalid pitch '${pitch}'`);
         }
-        return fingerings;
+        return {
+            pitch: pitch,
+            fingerings: fingerings,
+        };
     }
     /**
      * Function to generate a set of TAB fingerings for a guitar object
@@ -353,7 +355,9 @@ exports.Guitar = class Guitar {
      * @returns Empty List
      */
     generateTab(inputPitchString) {
-        this.validateInput(inputPitchString);
+        const pitchLines = this.validateInput(inputPitchString);
+        print(pitchLines);
+        // TODO implement multi pitch combiner and optimizer
         return [];
     }
     validateInput(inputPitchString) {
@@ -370,8 +374,8 @@ exports.Guitar = class Guitar {
             const replace = new RegExp(`${flatString}`, "g");
             inputPitchString = inputPitchString.replace(replace, flatsToSharps[flatString]);
         }
+        let pitchLines = [];
         const inputPitchLines = inputPitchString.split("\n");
-        console.log(inputPitchLines);
         for (let inputPitchLine of inputPitchLines) {
             inputPitchLine = inputPitchLine.replace(/\s/g, "");
             if (inputPitchLine === "") {
@@ -384,7 +388,6 @@ exports.Guitar = class Guitar {
                 const pitchCombos = this.getStringCombinations(inputPitchLine);
                 for (const [i, linePitchCombo] of pitchCombos.entries()) {
                     if (this.pitchRange.has(linePitchCombo)) {
-                        console.log(`${inputPitchLine} -> ${linePitchCombo}`);
                         inputPitchLine = inputPitchLine.replace(linePitchCombo, "");
                         linePitches.push(linePitchCombo);
                         break;
@@ -394,11 +397,13 @@ exports.Guitar = class Guitar {
                     }
                 }
             }
-            console.log("linePitches", linePitches);
+            let linePitchIndivFingerings = [];
             for (const pitchName of linePitches) {
-                console.log(this.calcFingerings(pitchName));
+                const pitchFingerings = this.calcPitchFingerings(pitchName);
+                linePitchIndivFingerings.push(pitchFingerings);
             }
+            pitchLines.push(linePitchIndivFingerings);
         }
-        return [""];
+        return pitchLines;
     }
 };

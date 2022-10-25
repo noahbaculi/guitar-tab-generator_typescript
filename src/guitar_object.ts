@@ -11,27 +11,73 @@ type TuningName =
 	| "dropb"
 	| "opene";
 
-/**
- * Fingering interface with integer fret positions
- */
-class Fingering {
-	guitarString: {
-		name: GuitarStringName;
-		fret: number;
-	};
+type PitchName =
+	| "A1"
+	| "A#1"
+	| "B1"
+	| "C2"
+	| "C#2"
+	| "D2"
+	| "D#2"
+	| "E2"
+	| "F2"
+	| "F#2"
+	| "G2"
+	| "G#2"
+	| "A2"
+	| "A#2"
+	| "B2"
+	| "C3"
+	| "C#3"
+	| "D3"
+	| "D#3"
+	| "E3"
+	| "F3"
+	| "F#3"
+	| "G3"
+	| "G#3"
+	| "A3"
+	| "A#3"
+	| "B3"
+	| "C4"
+	| "C#4"
+	| "D4"
+	| "D#4"
+	| "E4"
+	| "F4"
+	| "F#4"
+	| "G4"
+	| "G#4"
+	| "A4"
+	| "A#4"
+	| "B4"
+	| "C5"
+	| "C#5"
+	| "D5"
+	| "D#5"
+	| "E5"
+	| "F5"
+	| "F#5"
+	| "G5"
+	| "G#5"
+	| "A5"
+	| "A#5"
+	| "B5"
+	| "C6"
+	| "C#6"
+	| "D6"
+	| "D#6"
+	| "E6"
+	| "F6"
+	| "F#6"
+	| "G6"
+	| "G#6";
 
-	constructor(stringNamesFrets: {
-		e?: number;
-		B?: number;
-		G?: number;
-		D?: number;
-		A?: number;
-		E?: number;
-	}) {
-		for (const [stringName, fret] of Object.entries(stringNamesFrets)) {
-			this[stringName] = fret;
-		}
-	}
+const util = require("util");
+function print(obj: any): void {
+	console.log(
+		util.inspect(obj, { showHidden: false, depth: null, colors: true })
+	);
 }
 
 /**
@@ -49,7 +95,7 @@ interface Tuning {
 /**
  * String interface with pitch range list
  */
-interface GuitarString {
+interface GuitarStrings {
 	e: string[];
 	B: string[];
 	G: string[];
@@ -85,6 +131,11 @@ function createTuning(
 		A: A,
 		E: E,
 	};
+}
+
+interface PitchFingerings {
+	pitch: PitchName;
+	fingerings: { stringName: GuitarStringName; fret: number }[];
 }
 
 /**
@@ -154,14 +205,7 @@ exports.Guitar = class Guitar {
 		"G#6",
 	];
 
-	strings: {
-		e: string[];
-		B: string[];
-		G: string[];
-		D: string[];
-		A: string[];
-		E: string[];
-	} = {
+	strings: GuitarStrings = {
 		e: [
 			"E4",
 			"F4",
@@ -426,7 +470,7 @@ exports.Guitar = class Guitar {
 	 * @returns Empty List
 	 */
 	getStringCombinations(inputString: string): string[] {
-		let list_of_strings = new Array();
+		let list_of_strings: string[] = [];
 		for (let i = 0; i < inputString.length; i++) {
 			for (let j = i + 1; j < inputString.length + 1; j++) {
 				list_of_strings.push(inputString.slice(i, j));
@@ -435,20 +479,28 @@ exports.Guitar = class Guitar {
 		return list_of_strings;
 	}
 
-	calcFingerings(pitchName: string): { name: string; fret: number }[] {
+	// TODO cache these values for efficiency improvements
+	/**
+	 * Create fingerings for a given pitch
+	 * @param pitch Validated pitch name
+	 * @returns
+	 */
+	calcPitchFingerings(pitch: PitchName): PitchFingerings {
 		let fingerings = [];
 		for (const [stringName, stringVals] of Object.entries(this.strings)) {
-			const pitchFret = stringVals.indexOf(pitchName);
+			const pitchFret = stringVals.indexOf(pitch);
 			if (pitchFret === -1) {
 				continue;
 			}
-			console.log(`${stringName} | ${pitchName} | ${pitchFret}`);
-			fingerings.push({ name: stringName, fret: pitchFret });
+			fingerings.push({ stringName: stringName, fret: pitchFret });
 		}
 		if (fingerings.length == 0) {
-			throw new Error(`Out of range or invalid pitch '${pitchName}'`);
+			throw new Error(`Out of range or invalid pitch '${pitch}'`);
 		}
-		return fingerings;
+		return {
+			pitch: pitch,
+			fingerings: fingerings,
+		};
 	}
 
 	/**
@@ -457,11 +509,15 @@ exports.Guitar = class Guitar {
 	 * @returns Empty List
 	 */
 	generateTab(inputPitchString: string): [] {
-		this.validateInput(inputPitchString);
+		const pitchLines = this.validateInput(inputPitchString);
+
+		print(pitchLines);
+
+		// TODO implement multi pitch combiner and optimizer
 		return [];
 	}
 
-	validateInput(inputPitchString: string): string[] {
+	validateInput(inputPitchString: string): PitchFingerings[][] {
 		// Format and convert input to sharps
 		inputPitchString = inputPitchString.toUpperCase();
 		const flatsToSharps = {
@@ -479,26 +535,23 @@ exports.Guitar = class Guitar {
 			);
 		}
 
+		let pitchLines: PitchFingerings[][] = [];
 		const inputPitchLines = inputPitchString.split("\n");
-		console.log(inputPitchLines);
 		for (let inputPitchLine of inputPitchLines) {
 			inputPitchLine = inputPitchLine.replace(/\s/g, "");
 			if (inputPitchLine === "") {
 				console.log("----");
 				continue;
 			}
-
 			console.log();
 
-			let linePitches = [];
-
+			let linePitches: PitchName[] = [];
 			while (inputPitchLine !== "") {
 				const pitchCombos = this.getStringCombinations(inputPitchLine);
 				for (const [i, linePitchCombo] of pitchCombos.entries()) {
 					if (this.pitchRange.has(linePitchCombo)) {
-						console.log(`${inputPitchLine} -> ${linePitchCombo}`);
 						inputPitchLine = inputPitchLine.replace(linePitchCombo, "");
-						linePitches.push(linePitchCombo);
+						linePitches.push(<PitchName>linePitchCombo);
 						break;
 					}
 					if (i === pitchCombos.length - 1) {
@@ -508,12 +561,14 @@ exports.Guitar = class Guitar {
 					}
 				}
 			}
-			console.log("linePitches", linePitches);
 
+			let linePitchIndivFingerings: PitchFingerings[] = [];
 			for (const pitchName of linePitches) {
-				console.log(this.calcFingerings(pitchName));
+				const pitchFingerings = this.calcPitchFingerings(pitchName);
+				linePitchIndivFingerings.push(pitchFingerings);
 			}
+			pitchLines.push(linePitchIndivFingerings);
 		}
-		return [""];
+		return pitchLines;
 	}
 };
