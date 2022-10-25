@@ -263,6 +263,7 @@ exports.Guitar = class Guitar {
         this.tuningName = "standard";
         this.capo = 0;
         this.numFrets = 18;
+        this.chordPitchesMap = this.generateChordPitches();
         /**
          * Tunings reference with tuning adjustments from Standard
          */
@@ -278,18 +279,6 @@ exports.Guitar = class Guitar {
             dropb: createTuning(-5, -3, -3, -3, -3, -3),
             opene: createTuning(0, -2, -2, -2, 0, 0),
         };
-        // const reversedTunings = {
-        // 	standard: createTuning(0, 0, 0, 0, 0, 0),
-        // 	openg: createTuning(-2, -2, 0, 0, 0, -2),
-        // 	opend: createTuning(-2, -2, -1, 0, 0, -2),
-        // 	c6: createTuning(0, 1, 0, -2, 0, -4),
-        // 	dsus4: createTuning(-2, -2, 0, 0, 0, -2),
-        // 	dropd: createTuning(0, 0, 0, 0, 0, -2),
-        // 	dropc: createTuning(-2, -2, -2, -2, -2, -4),
-        // 	openc: createTuning(0, 1, 0, -2, -2, -4),
-        // 	dropb: createTuning(-3, -3, -3, -3, -3, -5),
-        // 	opene: createTuning(0, 0, -2, -2, -2, 0),
-        // };
         // Parse tuning input
         if (tuningName !== undefined) {
             tuningName = tuningName.replace(/\s/g, "").toLowerCase();
@@ -297,7 +286,6 @@ exports.Guitar = class Guitar {
                 this.tuningName = tuningName;
             }
         }
-        print("hi", "there");
         // Parse capo input
         if (capo !== undefined && Number.isInteger(capo) && 0 < capo && capo < 13) {
             this.capo = capo;
@@ -330,65 +318,67 @@ exports.Guitar = class Guitar {
             this.strings[stringNum] = this.strings[stringNum].slice(this.capo);
         }
         this.pitchRange = new Set(Object.values(this.strings).flat());
-        // this.chordFingeringMap = this.generateChordFingerings();
     }
-    generateChordFingerings() {
+    generateChordPitches() {
+        if (this.tuningName !== "standard") {
+            throw new Error(`Cannot generate chord fingerings with non-standard tuning: '${this.tuningName}'`);
+        }
         // Chord tabs in string order from 6 to 1 (EADGBe)
         const chordTabStringNums = [..."654321"];
-        const chordStandardTabMap = {
-            achord: "-02220",
-            amaj7chord: "-02120",
-            a7chord: "-02020",
-            amchord: "-02210",
-            am7chord: "-02010",
-            bchord: "--4442",
-            bmaj7chord: "22130-",
-            b7chord: "-21202",
-            bmchord: "--4432",
-            bm7chord: "-20202",
-            cchord: "-32010",
-            cmaj7chord: "-32000",
-            c7chord: "-32310",
-            cmchord: "-310--",
-            cm7chord: "-313--",
-            dchord: "--0232",
-            dmaj7chord: "--0222",
-            d7chord: "--0212",
-            dmchord: "--0231",
-            dm7chord: "--0211",
-            echord: "022100",
-            emaj7chord: "021100",
-            e7chord: "020100",
-            emchord: "022000",
-            em7chord: "022030",
-            fchord: "--3211",
-            fmaj7chord: "--3210",
-            f7chord: "131211",
-            fmchord: "--3111",
-            fm7chord: "131111",
-            gchord: "320003",
-            gmaj7chord: "3-0002",
-            g7chord: "320001",
-            gmchord: "--0333",
-            gm7chord: "-13030",
+        const chordStandardTuningTabMap = {
+            ACHORD: "-02220",
+            AMAJ7CHORD: "-02120",
+            A7CHORD: "-02020",
+            AMCHORD: "-02210",
+            AM7CHORD: "-02010",
+            BCHORD: "--4442",
+            BMAJ7CHORD: "22130-",
+            B7CHORD: "-21202",
+            BMCHORD: "--4432",
+            BM7CHORD: "-20202",
+            CCHORD: "-32010",
+            CMAJ7CHORD: "-32000",
+            C7CHORD: "-32310",
+            CMCHORD: "-310--",
+            CM7CHORD: "-313--",
+            DCHORD: "--0232",
+            DMAJ7CHORD: "--0222",
+            D7CHORD: "--0212",
+            DMCHORD: "--0231",
+            DM7CHORD: "--0211",
+            ECHORD: "022100",
+            EMAJ7CHORD: "021100",
+            E7CHORD: "020100",
+            EMCHORD: "022000",
+            EM7CHORD: "022030",
+            FCHORD: "--3211",
+            FMAJ7CHORD: "--3210",
+            F7CHORD: "131211",
+            FMCHORD: "--3111",
+            FM7CHORD: "131111",
+            GCHORD: "320003",
+            GMAJ7CHORD: "3-0002",
+            G7CHORD: "320001",
+            GMCHORD: "--0333",
+            GM7CHORD: "-13030",
         };
-        this.calcChordPitches("-02220", chordTabStringNums);
+        let chordPitchesMap = {};
+        for (const [chordName, chordTab] of Object.entries(chordStandardTuningTabMap)) {
+            chordPitchesMap[chordName] = this.calcChordPitches([...chordTab], chordTabStringNums);
+        }
+        return chordPitchesMap;
     }
-    calcChordPitches(inputTab, chordTabStringNums) {
-        const tabFingeringList = [...inputTab];
+    calcChordPitches(tabFingeringList, chordTabStringNums) {
         const zip = (a, b) => Array.from(Array(Math.max(b.length, a.length)), (_, i) => [a[i], b[i]]);
-        // print(chordTabStringNums);
-        // print(tabFingeringList);
         const zippedFingering = zip(chordTabStringNums, tabFingeringList);
         const fingering = Object.fromEntries(zippedFingering);
-        console.log(fingering);
         let pitches = [];
         for (const [stringNum, fretVal] of Object.entries(fingering)) {
             const fretNum = parseInt(fretVal);
             if (isNaN(fretNum)) {
                 continue;
             }
-            const pitch = this.strings[stringNum][fretNum];
+            const pitch = this.strings[stringNum].at(fretNum);
             pitches.push(pitch);
         }
         return pitches;
@@ -434,6 +424,11 @@ exports.Guitar = class Guitar {
             let linePitches = [];
             while (inputPitchLine !== "") {
                 const pitchCombos = this.getStringCombinations(inputPitchLine);
+                const matchingChords = Object.keys(this.chordPitchesMap).filter((value) => pitchCombos.includes(value));
+                if (matchingChords && matchingChords.length) {
+                    linePitches = this.chordPitchesMap[matchingChords.at(0)];
+                    break;
+                }
                 for (const [i, linePitchCombo] of pitchCombos.entries()) {
                     if (this.pitchRange.has(linePitchCombo)) {
                         inputPitchLine = inputPitchLine.replace(linePitchCombo, "");
