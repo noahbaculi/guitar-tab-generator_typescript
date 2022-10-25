@@ -1,7 +1,12 @@
 const util = require("util");
-// TODO create docstring and add multiple obj support
-function print(obj) {
-    console.log(util.inspect(obj, { showHidden: false, depth: null, colors: true }));
+/**
+ * Console Log objects to full depth
+ * @param objs Objects to print
+ */
+function print(...objs) {
+    for (const obj of objs) {
+        console.log(util.inspect(obj, { showHidden: false, depth: null, colors: true }));
+    }
 }
 /**
  * Create the tuning adjustment from Standard in string order from 6 to 1 (EADGBe)
@@ -292,6 +297,7 @@ exports.Guitar = class Guitar {
                 this.tuningName = tuningName;
             }
         }
+        print("hi", "there");
         // Parse capo input
         if (capo !== undefined && Number.isInteger(capo) && 0 < capo && capo < 13) {
             this.capo = capo;

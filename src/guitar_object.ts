@@ -77,11 +77,16 @@ type ValidatedPitchInput = PitchName[] | "";
 type LineFingering = PitchFingerings[] | MeasureBreak;
 
 const util = require("util");
-// TODO create docstring and add multiple obj support
-function print(obj: any): void {
-	console.log(
-		util.inspect(obj, { showHidden: false, depth: null, colors: true })
-	);
+/**
+ * Console Log objects to full depth
+ * @param objs Objects to print
+ */
+function print(...objs: any[]): void {
+	for (const obj of objs) {
+		console.log(
+			util.inspect(obj, { showHidden: false, depth: null, colors: true })
+		);
+	}
 }
 
 /**
@@ -431,6 +436,7 @@ exports.Guitar = class Guitar {
 				this.tuningName = tuningName;
 			}
 		}
+		print("hi", "there");
 
 		// Parse capo input
 		if (capo !== undefined && Number.isInteger(capo) && 0 < capo && capo < 13) {
