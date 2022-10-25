@@ -3,24 +3,23 @@ function print(obj) {
     console.log(util.inspect(obj, { showHidden: false, depth: null, colors: true }));
 }
 /**
- * Create the tuning adjustment from Standard in the order of
- * [E, A, D, G, B, e]
- * @param E low E string tuning adjustment
- * @param A A string tuning adjustment
- * @param D D string tuning adjustment
- * @param G G string tuning adjustment
- * @param B B string tuning adjustment
- * @param e high E string tuning adjustment
+ * Create the tuning adjustment from Standard in string order from 6 to 1 (EADGBe)
+ * @param string1TuningAdj
+ * @param string2TuningAdj
+ * @param string3TuningAdj
+ * @param string4TuningAdj
+ * @param string5TuningAdj
+ * @param string6TuningAdj
  * @returns
  */
-function createTuning(e, B, G, D, A, E) {
+function createTuning(string1TuningAdj, string2TuningAdj, string3TuningAdj, string4TuningAdj, string5TuningAdj, string6TuningAdj) {
     return {
-        e: e,
-        B: B,
-        G: G,
-        D: D,
-        A: A,
-        E: E,
+        1: string1TuningAdj,
+        2: string2TuningAdj,
+        3: string3TuningAdj,
+        4: string4TuningAdj,
+        5: string5TuningAdj,
+        6: string6TuningAdj,
     };
 }
 /**
@@ -91,7 +90,7 @@ exports.Guitar = class Guitar {
             "G#6",
         ];
         this.strings = {
-            e: [
+            1: [
                 "E4",
                 "F4",
                 "F#4",
@@ -118,7 +117,7 @@ exports.Guitar = class Guitar {
                 "D#6",
                 "E6",
             ],
-            B: [
+            2: [
                 "B3",
                 "C4",
                 "C#4",
@@ -145,7 +144,7 @@ exports.Guitar = class Guitar {
                 "A#5",
                 "B5",
             ],
-            G: [
+            3: [
                 "G3",
                 "G#3",
                 "A3",
@@ -172,7 +171,7 @@ exports.Guitar = class Guitar {
                 "F#5",
                 "G5",
             ],
-            D: [
+            4: [
                 "D3",
                 "D#3",
                 "E3",
@@ -199,7 +198,7 @@ exports.Guitar = class Guitar {
                 "C#5",
                 "D5",
             ],
-            A: [
+            5: [
                 "A2",
                 "A#2",
                 "B2",
@@ -226,7 +225,7 @@ exports.Guitar = class Guitar {
                 "G#4",
                 "A4",
             ],
-            E: [
+            6: [
                 "E2",
                 "F2",
                 "F#2",
@@ -263,16 +262,28 @@ exports.Guitar = class Guitar {
          */
         const tunings = {
             standard: createTuning(0, 0, 0, 0, 0, 0),
-            openg: createTuning(-2, -2, 0, 0, 0, -2),
-            opend: createTuning(-2, -2, -1, 0, 0, -2),
+            openg: createTuning(-2, 0, 0, 0, -2, -2),
+            opend: createTuning(-2, 0, 0, -1, -2, -2),
             c6: createTuning(0, 1, 0, -2, 0, -4),
-            dsus4: createTuning(-2, -2, 0, 0, 0, -2),
-            dropd: createTuning(0, 0, 0, 0, 0, -2),
-            dropc: createTuning(-2, -2, -2, -2, -2, -4),
-            openc: createTuning(0, 1, 0, -2, -2, -4),
-            dropb: createTuning(-3, -3, -3, -3, -3, -5),
-            opene: createTuning(0, 0, -2, -2, -2, 0),
+            dsus4: createTuning(-2, 0, 0, 0, -2, -2),
+            dropd: createTuning(-2, 0, 0, 0, 0, 0),
+            dropc: createTuning(-4, -2, -2, -2, -2, -2),
+            openc: createTuning(-4, -2, -2, 0, 1, 0),
+            dropb: createTuning(-5, -3, -3, -3, -3, -3),
+            opene: createTuning(0, -2, -2, -2, 0, 0),
         };
+        // const reversedTunings = {
+        // 	standard: createTuning(0, 0, 0, 0, 0, 0),
+        // 	openg: createTuning(-2, -2, 0, 0, 0, -2),
+        // 	opend: createTuning(-2, -2, -1, 0, 0, -2),
+        // 	c6: createTuning(0, 1, 0, -2, 0, -4),
+        // 	dsus4: createTuning(-2, -2, 0, 0, 0, -2),
+        // 	dropd: createTuning(0, 0, 0, 0, 0, -2),
+        // 	dropc: createTuning(-2, -2, -2, -2, -2, -4),
+        // 	openc: createTuning(0, 1, 0, -2, -2, -4),
+        // 	dropb: createTuning(-3, -3, -3, -3, -3, -5),
+        // 	opene: createTuning(0, 0, -2, -2, -2, 0),
+        // };
         // Parse tuning input
         if (tuningName !== undefined) {
             tuningName = tuningName.replace(/\s/g, "").toLowerCase();
@@ -286,86 +297,93 @@ exports.Guitar = class Guitar {
         }
         // Process tuning and capo to string changes
         const tuning = tunings[this.tuningName];
-        for (const stringName in this.strings) {
-            const tuningAdj = tuning[stringName];
+        for (const stringNum in this.strings) {
+            const tuningAdj = tuning[stringNum];
             // Tune down
             if (tuningAdj < 0) {
-                const lowNotePos = this.guitarRangeTotal.indexOf(this.strings[stringName].at(0));
+                const lowNotePos = this.guitarRangeTotal.indexOf(this.strings[stringNum].at(0));
                 const newNotes = this.guitarRangeTotal.slice(lowNotePos + tuningAdj, lowNotePos);
                 // Insert new notes
-                this.strings[stringName] = newNotes.concat(this.strings[stringName]);
+                this.strings[stringNum] = newNotes.concat(this.strings[stringNum]);
                 // Remove old notes
-                this.strings[stringName] = this.strings[stringName].slice(0, tuningAdj);
+                this.strings[stringNum] = this.strings[stringNum].slice(0, tuningAdj);
             }
             // Tune up
             else if (tuningAdj > 0) {
-                const highNotePos = this.guitarRangeTotal.indexOf(this.strings[stringName].at(-1));
+                const highNotePos = this.guitarRangeTotal.indexOf(this.strings[stringNum].at(-1));
                 const newNotes = this.guitarRangeTotal.slice(highNotePos + 1, highNotePos + tuningAdj + 1);
                 // Insert new notes
-                this.strings[stringName] = this.strings[stringName].concat(newNotes);
+                this.strings[stringNum] = this.strings[stringNum].concat(newNotes);
                 // Remove old notes
-                this.strings[stringName] = this.strings[stringName].slice(tuningAdj);
+                this.strings[stringNum] = this.strings[stringNum].slice(tuningAdj);
             }
             // Limit strings to number of frets available
-            this.strings[stringName] = this.strings[stringName].slice(0, this.numFrets);
+            this.strings[stringNum] = this.strings[stringNum].slice(0, this.numFrets);
             // Limit strings to frets available with capo
-            this.strings[stringName] = this.strings[stringName].slice(this.capo);
+            this.strings[stringNum] = this.strings[stringNum].slice(this.capo);
         }
         this.pitchRange = new Set(Object.values(this.strings).flat());
-        this.chordFingeringMap = this.generateChordFingerings();
+        // this.chordFingeringMap = this.generateChordFingerings();
     }
     generateChordFingerings() {
-        const chordStandardTabMap = new Map([
-            ["achord", "-02220"],
-            ["amaj7chord", "-02120"],
-            ["a7chord", "-02020"],
-            ["amchord", "-02210"],
-            ["am7chord", "-02010"],
-            ["bchord", "--4442"],
-            ["bmaj7chord", "22130-"],
-            ["b7chord", "-21202"],
-            ["bmchord", "--4432"],
-            ["bm7chord", "-20202"],
-            ["cchord", "-32010"],
-            ["cmaj7chord", "-32000"],
-            ["c7chord", "-32310"],
-            ["cmchord", "-310--"],
-            ["cm7chord", "-313--"],
-            ["dchord", "--0232"],
-            ["dmaj7chord", "--0222"],
-            ["d7chord", "--0212"],
-            ["dmchord", "--0231"],
-            ["dm7chord", "--0211"],
-            ["echord", "022100"],
-            ["emaj7chord", "021100"],
-            ["e7chord", "020100"],
-            ["emchord", "022000"],
-            ["em7chord", "022030"],
-            ["fchord", "--3211"],
-            ["fmaj7chord", "--3210"],
-            ["f7chord", "131211"],
-            ["fmchord", "--3111"],
-            ["fm7chord", "131111"],
-            ["gchord", "320003"],
-            ["gmaj7chord", "3-0002"],
-            ["g7chord", "320001"],
-            ["gmchord", "--0333"],
-            ["gm7chord", "-13030"],
-        ]);
+        // Chord tabs in string order from 6 to 1 (EADGBe)
+        const chordTabStringNums = [..."654321"];
+        const chordStandardTabMap = {
+            achord: "-02220",
+            amaj7chord: "-02120",
+            a7chord: "-02020",
+            amchord: "-02210",
+            am7chord: "-02010",
+            bchord: "--4442",
+            bmaj7chord: "22130-",
+            b7chord: "-21202",
+            bmchord: "--4432",
+            bm7chord: "-20202",
+            cchord: "-32010",
+            cmaj7chord: "-32000",
+            c7chord: "-32310",
+            cmchord: "-310--",
+            cm7chord: "-313--",
+            dchord: "--0232",
+            dmaj7chord: "--0222",
+            d7chord: "--0212",
+            dmchord: "--0231",
+            dm7chord: "--0211",
+            echord: "022100",
+            emaj7chord: "021100",
+            e7chord: "020100",
+            emchord: "022000",
+            em7chord: "022030",
+            fchord: "--3211",
+            fmaj7chord: "--3210",
+            f7chord: "131211",
+            fmchord: "--3111",
+            fm7chord: "131111",
+            gchord: "320003",
+            gmaj7chord: "3-0002",
+            g7chord: "320001",
+            gmchord: "--0333",
+            gm7chord: "-13030",
+        };
+        this.calcChordPitches("-02220", chordTabStringNums);
     }
-    calcChordPitches(inputTab) {
+    calcChordPitches(inputTab, chordTabStringNums) {
+        const tabFingeringList = [...inputTab];
         const zip = (a, b) => Array.from(Array(Math.max(b.length, a.length)), (_, i) => [a[i], b[i]]);
-        const stringNames = "EADGBe";
-        const zippedFingering = zip(stringNames, inputTab);
+        // print(chordTabStringNums);
+        // print(tabFingeringList);
+        const zippedFingering = zip(chordTabStringNums, tabFingeringList);
+        print(zippedFingering);
+        print(Object.keys(this.strings));
         const fingering = Object.fromEntries(zippedFingering);
         console.log(fingering);
         let pitches = [];
-        for (const [stringName, fretVal] of Object.entries(fingering)) {
+        for (const [stringNum, fretVal] of Object.entries(fingering)) {
             const fretNum = parseInt(fretVal);
-            if (isNaN(fretVal)) {
+            if (isNaN(fretNum)) {
                 continue;
             }
-            const pitch = this.strings[stringName][fretNum];
+            const pitch = this.strings[stringNum][fretNum];
             pitches.push(pitch);
         }
         return pitches;
@@ -455,12 +473,12 @@ exports.Guitar = class Guitar {
      */
     calcPitchFingerings(pitch) {
         let fingerings = [];
-        for (const [stringName, stringVals] of Object.entries(this.strings)) {
+        for (const [stringNum, stringVals] of Object.entries(this.strings)) {
             const pitchFret = stringVals.indexOf(pitch);
             if (pitchFret === -1) {
                 continue;
             }
-            fingerings.push({ stringName: stringName, fret: pitchFret });
+            fingerings.push({ stringNum: stringNum, fret: pitchFret });
         }
         if (fingerings.length == 0) {
             throw new Error(`Out of range or invalid pitch '${pitch}'`);
