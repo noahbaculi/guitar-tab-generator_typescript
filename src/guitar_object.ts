@@ -376,6 +376,8 @@ exports.Guitar = class Guitar {
 		],
 	};
 
+	chordFingeringMap: Map<string, any>;
+
 	// chords
 
 	tuningName = "standard";
@@ -470,9 +472,72 @@ exports.Guitar = class Guitar {
 			this.strings[stringName] = this.strings[stringName].slice(this.capo);
 		}
 		this.pitchRange = new Set(Object.values(this.strings).flat());
+
+		this.chordFingeringMap = this.generateChordFingerings();
 	}
 
-	testGetChordPitches(fingering: Fingering) {}
+	generateChordFingerings() {
+		const chordStandardTabMap = new Map([
+			["achord", "-02220"],
+			["amaj7chord", "-02120"],
+			["a7chord", "-02020"],
+			["amchord", "-02210"],
+			["am7chord", "-02010"],
+			["bchord", "--4442"],
+			["bmaj7chord", "22130-"],
+			["b7chord", "-21202"],
+			["bmchord", "--4432"],
+			["bm7chord", "-20202"],
+			["cchord", "-32010"],
+			["cmaj7chord", "-32000"],
+			["c7chord", "-32310"],
+			["cmchord", "-310--"],
+			["cm7chord", "-313--"],
+			["dchord", "--0232"],
+			["dmaj7chord", "--0222"],
+			["d7chord", "--0212"],
+			["dmchord", "--0231"],
+			["dm7chord", "--0211"],
+			["echord", "022100"],
+			["emaj7chord", "021100"],
+			["e7chord", "020100"],
+			["emchord", "022000"],
+			["em7chord", "022030"],
+			["fchord", "--3211"],
+			["fmaj7chord", "--3210"],
+			["f7chord", "131211"],
+			["fmchord", "--3111"],
+			["fm7chord", "131111"],
+			["gchord", "320003"],
+			["gmaj7chord", "3-0002"],
+			["g7chord", "320001"],
+			["gmchord", "--0333"],
+			["gm7chord", "-13030"],
+		]);
+	}
+
+	calcChordPitches(inputTab: string) {
+		const zip = (a, b): string[][] =>
+			Array.from(Array(Math.max(b.length, a.length)), (_, i) => [a[i], b[i]]);
+
+		const stringNames = "EADGBe";
+		const zippedFingering = zip(stringNames, inputTab);
+		const fingering = Object.fromEntries(zippedFingering);
+		console.log(fingering);
+
+		let pitches = [];
+
+		for (const [stringName, fretVal] of Object.entries(fingering)) {
+			const fretNum = parseInt(fretVal);
+			if (isNaN(fretVal)) {
+				continue;
+			}
+
+			const pitch = this.strings[stringName][fretNum];
+			pitches.push(pitch);
+		}
+		return pitches;
+	}
 
 	/**
 	 * Function to generate a set of TAB fingerings for a guitar object
