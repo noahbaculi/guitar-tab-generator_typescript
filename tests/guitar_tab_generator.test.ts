@@ -470,12 +470,15 @@ describe("Guitar Object Config", () => {
 	});
 });
 
-describe("Guitar Input Validation", () => {
-	it("validates normal input", function () {
-		const guitar = new GuitarModule.Guitar();
+describe("Guitar Pitch Input Validation", () => {
+	let normalGuitar;
+	beforeEach(() => {
+		normalGuitar = new GuitarModule.Guitar();
+	});
 
-		const inputString = `A2A3E4\nA7 chord\nA2\nA3\nE4\n\nA2A3`;
-		expect(guitar.validateInput(inputString)).toEqual([
+	it("validates normal input", function () {
+		const inputString = "A2A3E4\nA7 chord\nA2\nA3\nE4\n\nA2A3";
+		expect(normalGuitar.validateInput(inputString)).toEqual([
 			["A2", "A3", "E4"],
 			["E4", "C#4", "G3", "E3", "A2"],
 			["A2"],
@@ -484,6 +487,27 @@ describe("Guitar Input Validation", () => {
 			"",
 			["A2", "A3"],
 		]);
+	});
+
+	it("handles repeated pitch input", function () {
+		expect(normalGuitar.validateInput("A2A3A2E4E4")).toEqual([
+			["A2", "A3", "E4"],
+		]);
+	});
+
+	it("handles flat pitches input", function () {
+		expect(normalGuitar.validateInput("C4Ab2F3")).toEqual([
+			["C4", "G#2", "F3"],
+		]);
+	});
+
+	it("handles improper input", function () {
+		expect(() => {
+			normalGuitar.validateInput("A2Q");
+		}).toThrow("Out of range or invalid pitch");
+		expect(() => {
+			normalGuitar.validateInput("Z87Chord");
+		}).toThrow("Out of range or invalid pitch");
 	});
 });
 

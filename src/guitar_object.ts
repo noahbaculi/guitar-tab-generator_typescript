@@ -390,7 +390,7 @@ exports.Guitar = class Guitar {
 	pitchRange: Set<string>;
 
 	constructor(tuningName?: string, capo?: number) {
-		this.chordPitchesMap = this.generateChordPitches();
+		this.chordPitchesMap = this.#generateChordPitches();
 
 		/**
 		 * Tunings reference with tuning adjustments from Standard
@@ -478,15 +478,10 @@ exports.Guitar = class Guitar {
 		this.pitchRange = new Set(Object.values(this.strings).flat());
 	}
 
-	generateChordPitches(): {} {
-		if (this.tuningName !== "standard") {
-			throw new Error(
-				`Cannot generate chord fingerings with non-standard tuning: '${this.tuningName}'`
-			);
-		}
-
+	#generateChordPitches(): {} {
 		// Chord tabs in string order from 6 to 1 (EADGBe)
 		const chordTabStringNums = [..."654321"];
+		// TODO add more chords like sharp chords
 		const chordStandardTuningTabMap = {
 			ACHORD: "-02220",
 			AMAJ7CHORD: "-02120",
@@ -564,10 +559,10 @@ exports.Guitar = class Guitar {
 	 */
 	generateTab(inputPitchString: string): [] {
 		const pitchLines = this.validateInput(inputPitchString);
+		print(pitchLines);
 		const fingeringLines = this.generateLineFingerings(pitchLines);
 
-		print(pitchLines);
-		print(fingeringLines);
+		this.createFingeringOptions(fingeringLines);
 
 		// TODO implement multi pitch combiner and optimizer
 		return [];
@@ -619,7 +614,11 @@ exports.Guitar = class Guitar {
 				for (const [i, linePitchCombo] of pitchCombos.entries()) {
 					if (this.pitchRange.has(linePitchCombo)) {
 						inputPitchLine = inputPitchLine.replace(linePitchCombo, "");
-						linePitches.push(<PitchName>linePitchCombo);
+
+						// Add to the pitches in the line if not already present
+						if (!linePitches.includes(<PitchName>linePitchCombo)) {
+							linePitches.push(<PitchName>linePitchCombo);
+						}
 						break;
 					}
 					if (i === pitchCombos.length - 1) {
@@ -702,5 +701,12 @@ exports.Guitar = class Guitar {
 			}
 		}
 		return list_of_strings;
+	}
+
+	createFingeringOptions(fingeringLines) {
+		fingeringLines = fingeringLines.filter(
+			(v, i, a) => a.findIndex((v2) => v2.pitch === v.pitch) === i
+		);
+		print(fingeringLines);
 	}
 };
