@@ -85,28 +85,28 @@ function print(obj: any): void {
 }
 
 /**
- * Tuning adjustment interface with integer differences from Standard tuning
+ * Tuning adjustment type with integer differences from Standard tuning
  */
-interface Tuning {
+type Tuning = {
 	e: number;
 	B: number;
 	G: number;
 	D: number;
 	A: number;
 	E: number;
-}
+};
 
 /**
- * String interface with pitch range list
+ * Type with pitch range list
  */
-interface GuitarStrings {
+type GuitarStrings = {
 	e: string[];
 	B: string[];
 	G: string[];
 	D: string[];
 	A: string[];
 	E: string[];
-}
+};
 
 /**
  * Create the tuning adjustment from Standard in the order of
@@ -137,10 +137,12 @@ function createTuning(
 	};
 }
 
-interface PitchFingerings {
+type Fingering = { stringName: GuitarStringName; fret: number };
+
+type PitchFingerings = {
 	pitch: PitchName;
-	fingerings: { stringName: GuitarStringName; fret: number }[];
-}
+	fingerings: Fingering[];
+};
 
 /**
  * Guitar object
@@ -374,6 +376,8 @@ exports.Guitar = class Guitar {
 		],
 	};
 
+	// chords
+
 	tuningName = "standard";
 	capo = 0;
 	numFrets = 18;
@@ -468,44 +472,7 @@ exports.Guitar = class Guitar {
 		this.pitchRange = new Set(Object.values(this.strings).flat());
 	}
 
-	/**
-	 * Function to get combinations of substring from string
-	 * @param inputString
-	 * @returns Empty List
-	 */
-	getStringCombinations(inputString: string): string[] {
-		let list_of_strings: string[] = [];
-		for (let i = 0; i < inputString.length; i++) {
-			for (let j = i + 1; j < inputString.length + 1; j++) {
-				list_of_strings.push(inputString.slice(i, j));
-			}
-		}
-		return list_of_strings;
-	}
-
-	// TODO cache values for efficiency improvements
-	/**
-	 * Create fingerings for a given pitch
-	 * @param pitch Validated pitch name
-	 * @returns
-	 */
-	calcPitchFingerings(pitch: PitchName): PitchFingerings {
-		let fingerings = [];
-		for (const [stringName, stringVals] of Object.entries(this.strings)) {
-			const pitchFret = stringVals.indexOf(pitch);
-			if (pitchFret === -1) {
-				continue;
-			}
-			fingerings.push({ stringName: stringName, fret: pitchFret });
-		}
-		if (fingerings.length == 0) {
-			throw new Error(`Out of range or invalid pitch '${pitch}'`);
-		}
-		return {
-			pitch: pitch,
-			fingerings: fingerings,
-		};
-	}
+	testGetChordPitches(fingering: Fingering) {}
 
 	/**
 	 * Function to generate a set of TAB fingerings for a guitar object
@@ -599,5 +566,44 @@ exports.Guitar = class Guitar {
 			pitchLineFingerings.push(linePitchIndivFingerings);
 		}
 		return pitchLineFingerings;
+	}
+
+	// TODO cache values for efficiency improvements
+	/**
+	 * Create fingerings for a given pitch
+	 * @param pitch Validated pitch name
+	 * @returns
+	 */
+	calcPitchFingerings(pitch: PitchName): PitchFingerings {
+		let fingerings = [];
+		for (const [stringName, stringVals] of Object.entries(this.strings)) {
+			const pitchFret = stringVals.indexOf(pitch);
+			if (pitchFret === -1) {
+				continue;
+			}
+			fingerings.push({ stringName: stringName, fret: pitchFret });
+		}
+		if (fingerings.length == 0) {
+			throw new Error(`Out of range or invalid pitch '${pitch}'`);
+		}
+		return {
+			pitch: pitch,
+			fingerings: fingerings,
+		};
+	}
+
+	/**
+	 * Function to get combinations of substring from string
+	 * @param inputString
+	 * @returns Empty List
+	 */
+	getStringCombinations(inputString: string): string[] {
+		let list_of_strings: string[] = [];
+		for (let i = 0; i < inputString.length; i++) {
+			for (let j = i + 1; j < inputString.length + 1; j++) {
+				list_of_strings.push(inputString.slice(i, j));
+			}
+		}
+		return list_of_strings;
 	}
 };

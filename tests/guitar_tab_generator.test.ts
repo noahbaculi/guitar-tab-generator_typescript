@@ -470,6 +470,22 @@ describe("Guitar Object Config", () => {
 	});
 });
 
+describe("Guitar Input Validation", () => {
+	it("validates normal input", function () {
+		const guitar = new GuitarModule.Guitar();
+
+		const inputString = `A2A3E4\nA2\nA3\nE4\n\nA2A3`;
+		expect(guitar.validateInput(inputString)).toEqual([
+			["A2", "A3", "E4"],
+			["A2"],
+			["A3"],
+			["E4"],
+			"",
+			["A2", "A3"],
+		]);
+	});
+});
+
 describe("Guitar Fingering Calculations", () => {
 	it("calculates fingerings correctly with standard tuning, no capo", function () {
 		const guitar = new GuitarModule.Guitar();

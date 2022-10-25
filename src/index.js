@@ -6,6 +6,7 @@ const guitar = new GuitarModule2.Guitar("Standard", 4);
 // }
 const testNotesString = `
 A2A3E4
+A7 chord
 A2
 A3
 E4
