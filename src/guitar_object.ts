@@ -77,6 +77,7 @@ type ValidatedPitchInput = PitchName[] | "";
 type LineFingering = PitchFingerings[] | MeasureBreak;
 
 const util = require("util");
+// TODO create docstring and add multiple obj support
 function print(obj: any): void {
 	console.log(
 		util.inspect(obj, { showHidden: false, depth: null, colors: true })
@@ -109,21 +110,21 @@ type GuitarStrings = {
 
 /**
  * Create the tuning adjustment from Standard in string order from 6 to 1 (EADGBe)
- * @param string1TuningAdj
- * @param string2TuningAdj
- * @param string3TuningAdj
- * @param string4TuningAdj
- * @param string5TuningAdj
  * @param string6TuningAdj
+ * @param string5TuningAdj
+ * @param string4TuningAdj
+ * @param string3TuningAdj
+ * @param string2TuningAdj
+ * @param string1TuningAdj
  * @returns
  */
 function createTuning(
-	string1TuningAdj: number,
-	string2TuningAdj: number,
-	string3TuningAdj: number,
-	string4TuningAdj: number,
+	string6TuningAdj: number,
 	string5TuningAdj: number,
-	string6TuningAdj: number
+	string4TuningAdj: number,
+	string3TuningAdj: number,
+	string2TuningAdj: number,
+	string1TuningAdj: number
 ): Tuning {
 	return {
 		1: string1TuningAdj,
@@ -402,7 +403,7 @@ exports.Guitar = class Guitar {
 			standard: createTuning(0, 0, 0, 0, 0, 0),
 			openg: createTuning(-2, 0, 0, 0, -2, -2),
 			opend: createTuning(-2, 0, 0, -1, -2, -2),
-			c6: createTuning(0, 1, 0, -2, 0, -4),
+			c6: createTuning(-4, 0, -2, 0, 1, 0),
 			dsus4: createTuning(-2, 0, 0, 0, -2, -2),
 			dropd: createTuning(-2, 0, 0, 0, 0, 0),
 			dropc: createTuning(-4, -2, -2, -2, -2, -2),
@@ -438,6 +439,7 @@ exports.Guitar = class Guitar {
 
 		// Process tuning and capo to string changes
 		const tuning: Tuning = tunings[this.tuningName];
+
 		for (const stringNum in this.strings) {
 			const tuningAdj: number = tuning[stringNum];
 
@@ -536,8 +538,6 @@ exports.Guitar = class Guitar {
 		// print(chordTabStringNums);
 		// print(tabFingeringList);
 		const zippedFingering = zip(chordTabStringNums, tabFingeringList);
-		print(zippedFingering);
-		print(Object.keys(this.strings));
 
 		const fingering = Object.fromEntries(zippedFingering);
 		console.log(fingering);
@@ -657,10 +657,15 @@ exports.Guitar = class Guitar {
 	 */
 	calcPitchFingerings(pitch: PitchName): PitchFingerings {
 		let fingerings = [];
-		for (const [stringNum, stringVals] of Object.entries(this.strings)) {
+		for (const [stringNumKey, stringVals] of Object.entries(this.strings)) {
 			const pitchFret = stringVals.indexOf(pitch);
 			if (pitchFret === -1) {
 				continue;
+			}
+
+			const stringNum = parseInt(stringNumKey);
+			if (isNaN(stringNum)) {
+				throw new Error(`String number key is not a number '${stringNumKey}'`);
 			}
 			fingerings.push({ stringNum: stringNum, fret: pitchFret });
 		}

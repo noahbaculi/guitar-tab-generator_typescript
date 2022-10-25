@@ -6,7 +6,7 @@ describe("Guitar Object Config", () => {
 
 		expect(guitar.tuningName).toEqual("standard");
 		expect(guitar.capo).toEqual(0);
-		expect(guitar.strings.e).toEqual([
+		expect(guitar.strings["1"]).toEqual([
 			"E4",
 			"F4",
 			"F#4",
@@ -26,7 +26,7 @@ describe("Guitar Object Config", () => {
 			"G#5",
 			"A5",
 		]);
-		expect(guitar.strings.B).toEqual([
+		expect(guitar.strings["2"]).toEqual([
 			"B3",
 			"C4",
 			"C#4",
@@ -46,7 +46,7 @@ describe("Guitar Object Config", () => {
 			"D#5",
 			"E5",
 		]);
-		expect(guitar.strings.G).toEqual([
+		expect(guitar.strings["3"]).toEqual([
 			"G3",
 			"G#3",
 			"A3",
@@ -66,7 +66,7 @@ describe("Guitar Object Config", () => {
 			"B4",
 			"C5",
 		]);
-		expect(guitar.strings.D).toEqual([
+		expect(guitar.strings["4"]).toEqual([
 			"D3",
 			"D#3",
 			"E3",
@@ -86,7 +86,7 @@ describe("Guitar Object Config", () => {
 			"F#4",
 			"G4",
 		]);
-		expect(guitar.strings.A).toEqual([
+		expect(guitar.strings["5"]).toEqual([
 			"A2",
 			"A#2",
 			"B2",
@@ -106,7 +106,7 @@ describe("Guitar Object Config", () => {
 			"C#4",
 			"D4",
 		]);
-		expect(guitar.strings.E).toEqual([
+		expect(guitar.strings["6"]).toEqual([
 			"E2",
 			"F2",
 			"F#2",
@@ -143,7 +143,7 @@ describe("Guitar Object Config", () => {
 		expect(guitar.tuningName).toEqual("standard");
 		expect(guitar.capo).toEqual(3);
 
-		expect(guitar.strings.e).toEqual([
+		expect(guitar.strings["1"]).toEqual([
 			"G4",
 			"G#4",
 			"A4",
@@ -160,7 +160,7 @@ describe("Guitar Object Config", () => {
 			"G#5",
 			"A5",
 		]);
-		expect(guitar.strings.B).toEqual([
+		expect(guitar.strings["2"]).toEqual([
 			"D4",
 			"D#4",
 			"E4",
@@ -177,7 +177,7 @@ describe("Guitar Object Config", () => {
 			"D#5",
 			"E5",
 		]);
-		expect(guitar.strings.G).toEqual([
+		expect(guitar.strings["3"]).toEqual([
 			"A#3",
 			"B3",
 			"C4",
@@ -194,7 +194,7 @@ describe("Guitar Object Config", () => {
 			"B4",
 			"C5",
 		]);
-		expect(guitar.strings.D).toEqual([
+		expect(guitar.strings["4"]).toEqual([
 			"F3",
 			"F#3",
 			"G3",
@@ -211,7 +211,7 @@ describe("Guitar Object Config", () => {
 			"F#4",
 			"G4",
 		]);
-		expect(guitar.strings.A).toEqual([
+		expect(guitar.strings["5"]).toEqual([
 			"C3",
 			"C#3",
 			"D3",
@@ -228,7 +228,7 @@ describe("Guitar Object Config", () => {
 			"C#4",
 			"D4",
 		]);
-		expect(guitar.strings.E).toEqual([
+		expect(guitar.strings["6"]).toEqual([
 			"G2",
 			"G#2",
 			"A2",
@@ -251,7 +251,7 @@ describe("Guitar Object Config", () => {
 		const guitar = new GuitarModule.Guitar("Open G");
 
 		expect(guitar.tuningName).toEqual("openg");
-		expect(guitar.strings.e).toEqual([
+		expect(guitar.strings["1"]).toEqual([
 			"D4",
 			"D#4",
 			"E4",
@@ -271,7 +271,7 @@ describe("Guitar Object Config", () => {
 			"F#5",
 			"G5",
 		]);
-		expect(guitar.strings.B).toEqual([
+		expect(guitar.strings["2"]).toEqual([
 			"A3",
 			"A#3",
 			"B3",
@@ -291,7 +291,7 @@ describe("Guitar Object Config", () => {
 			"C#5",
 			"D5",
 		]);
-		expect(guitar.strings.G).toEqual([
+		expect(guitar.strings["3"]).toEqual([
 			"G3",
 			"G#3",
 			"A3",
@@ -311,7 +311,7 @@ describe("Guitar Object Config", () => {
 			"B4",
 			"C5",
 		]);
-		expect(guitar.strings.D).toEqual([
+		expect(guitar.strings["4"]).toEqual([
 			"D3",
 			"D#3",
 			"E3",
@@ -331,7 +331,7 @@ describe("Guitar Object Config", () => {
 			"F#4",
 			"G4",
 		]);
-		expect(guitar.strings.A).toEqual([
+		expect(guitar.strings["5"]).toEqual([
 			"A2",
 			"A#2",
 			"B2",
@@ -351,7 +351,7 @@ describe("Guitar Object Config", () => {
 			"C#4",
 			"D4",
 		]);
-		expect(guitar.strings.E).toEqual([
+		expect(guitar.strings["6"]).toEqual([
 			"D2",
 			"D#2",
 			"E2",
@@ -377,96 +377,96 @@ describe("Guitar Object Config", () => {
 		const guitar = new GuitarModule.Guitar("Open D");
 		expect(guitar.tuningName).toEqual("opend");
 
-		expect(guitar.strings.e[0]).toEqual("D4");
-		expect(guitar.strings.B[0]).toEqual("A3");
-		expect(guitar.strings.G[0]).toEqual("F#3");
-		expect(guitar.strings.D[0]).toEqual("D3");
-		expect(guitar.strings.A[0]).toEqual("A2");
-		expect(guitar.strings.E[0]).toEqual("D2");
+		expect(guitar.strings["1"][0]).toEqual("D4");
+		expect(guitar.strings["2"][0]).toEqual("A3");
+		expect(guitar.strings["3"][0]).toEqual("F#3");
+		expect(guitar.strings["4"][0]).toEqual("D3");
+		expect(guitar.strings["5"][0]).toEqual("A2");
+		expect(guitar.strings["6"][0]).toEqual("D2");
 	});
 
 	it("handles C6 tuning", function () {
 		const guitar = new GuitarModule.Guitar("C6");
 		expect(guitar.tuningName).toEqual("c6");
 
-		expect(guitar.strings.e[0]).toEqual("E4");
-		expect(guitar.strings.B[0]).toEqual("C4");
-		expect(guitar.strings.G[0]).toEqual("G3");
-		expect(guitar.strings.D[0]).toEqual("C3");
-		expect(guitar.strings.A[0]).toEqual("A2");
-		expect(guitar.strings.E[0]).toEqual("C2");
+		expect(guitar.strings["1"][0]).toEqual("E4");
+		expect(guitar.strings["2"][0]).toEqual("C4");
+		expect(guitar.strings["3"][0]).toEqual("G3");
+		expect(guitar.strings["4"][0]).toEqual("C3");
+		expect(guitar.strings["5"][0]).toEqual("A2");
+		expect(guitar.strings["6"][0]).toEqual("C2");
 	});
 
 	it("handles Dsus4 tuning", function () {
 		const guitar = new GuitarModule.Guitar("Dsus4");
 		expect(guitar.tuningName).toEqual("dsus4");
 
-		expect(guitar.strings.e[0]).toEqual("D4");
-		expect(guitar.strings.B[0]).toEqual("A3");
-		expect(guitar.strings.G[0]).toEqual("G3");
-		expect(guitar.strings.D[0]).toEqual("D3");
-		expect(guitar.strings.A[0]).toEqual("A2");
-		expect(guitar.strings.E[0]).toEqual("D2");
+		expect(guitar.strings["1"][0]).toEqual("D4");
+		expect(guitar.strings["2"][0]).toEqual("A3");
+		expect(guitar.strings["3"][0]).toEqual("G3");
+		expect(guitar.strings["4"][0]).toEqual("D3");
+		expect(guitar.strings["5"][0]).toEqual("A2");
+		expect(guitar.strings["6"][0]).toEqual("D2");
 	});
 
 	it("handles Drop D tuning", function () {
 		const guitar = new GuitarModule.Guitar("Drop D");
 		expect(guitar.tuningName).toEqual("dropd");
 
-		expect(guitar.strings.e[0]).toEqual("E4");
-		expect(guitar.strings.B[0]).toEqual("B3");
-		expect(guitar.strings.G[0]).toEqual("G3");
-		expect(guitar.strings.D[0]).toEqual("D3");
-		expect(guitar.strings.A[0]).toEqual("A2");
-		expect(guitar.strings.E[0]).toEqual("D2");
+		expect(guitar.strings["1"][0]).toEqual("E4");
+		expect(guitar.strings["2"][0]).toEqual("B3");
+		expect(guitar.strings["3"][0]).toEqual("G3");
+		expect(guitar.strings["4"][0]).toEqual("D3");
+		expect(guitar.strings["5"][0]).toEqual("A2");
+		expect(guitar.strings["6"][0]).toEqual("D2");
 	});
 
 	it("handles Drop C tuning", function () {
 		const guitar = new GuitarModule.Guitar("Drop C");
 		expect(guitar.tuningName).toEqual("dropc");
 
-		expect(guitar.strings.e[0]).toEqual("D4");
-		expect(guitar.strings.B[0]).toEqual("A3");
-		expect(guitar.strings.G[0]).toEqual("F3");
-		expect(guitar.strings.D[0]).toEqual("C3");
-		expect(guitar.strings.A[0]).toEqual("G2");
-		expect(guitar.strings.E[0]).toEqual("C2");
+		expect(guitar.strings["1"][0]).toEqual("D4");
+		expect(guitar.strings["2"][0]).toEqual("A3");
+		expect(guitar.strings["3"][0]).toEqual("F3");
+		expect(guitar.strings["4"][0]).toEqual("C3");
+		expect(guitar.strings["5"][0]).toEqual("G2");
+		expect(guitar.strings["6"][0]).toEqual("C2");
 	});
 
 	it("handles Open C tuning", function () {
 		const guitar = new GuitarModule.Guitar("Open C");
 		expect(guitar.tuningName).toEqual("openc");
 
-		expect(guitar.strings.e[0]).toEqual("E4");
-		expect(guitar.strings.B[0]).toEqual("C4");
-		expect(guitar.strings.G[0]).toEqual("G3");
-		expect(guitar.strings.D[0]).toEqual("C3");
-		expect(guitar.strings.A[0]).toEqual("G2");
-		expect(guitar.strings.E[0]).toEqual("C2");
+		expect(guitar.strings["1"][0]).toEqual("E4");
+		expect(guitar.strings["2"][0]).toEqual("C4");
+		expect(guitar.strings["3"][0]).toEqual("G3");
+		expect(guitar.strings["4"][0]).toEqual("C3");
+		expect(guitar.strings["5"][0]).toEqual("G2");
+		expect(guitar.strings["6"][0]).toEqual("C2");
 	});
 
 	it("handles Drop B tuning", function () {
 		const guitar = new GuitarModule.Guitar("Drop B");
 		expect(guitar.tuningName).toEqual("dropb");
 
-		expect(guitar.strings.e[0]).toEqual("C#4");
-		expect(guitar.strings.B[0]).toEqual("G#3");
-		expect(guitar.strings.G[0]).toEqual("E3");
-		expect(guitar.strings.D[0]).toEqual("B2");
-		expect(guitar.strings.A[0]).toEqual("F#2");
-		expect(guitar.strings.E[0]).toEqual("B1");
+		expect(guitar.strings["1"][0]).toEqual("C#4");
+		expect(guitar.strings["2"][0]).toEqual("G#3");
+		expect(guitar.strings["3"][0]).toEqual("E3");
+		expect(guitar.strings["4"][0]).toEqual("B2");
+		expect(guitar.strings["5"][0]).toEqual("F#2");
+		expect(guitar.strings["6"][0]).toEqual("B1");
 	});
 
 	it("handles Open E tuning", function () {
 		const guitar = new GuitarModule.Guitar("Open E");
 		expect(guitar.tuningName).toEqual("opene");
 
-		expect(guitar.strings.e[0]).toEqual("E4");
-		expect(guitar.strings.B[0]).toEqual("B3");
-		expect(guitar.strings.G[0]).toEqual("F3");
-		expect(guitar.strings.D[0]).toEqual("C3");
-		expect(guitar.strings.A[0]).toEqual("G2");
-		expect(guitar.strings.E[0]).toEqual("E2");
+		expect(guitar.strings["1"][0]).toEqual("E4");
+		expect(guitar.strings["2"][0]).toEqual("B3");
+		expect(guitar.strings["3"][0]).toEqual("F3");
+		expect(guitar.strings["4"][0]).toEqual("C3");
+		expect(guitar.strings["5"][0]).toEqual("G2");
+		expect(guitar.strings["6"][0]).toEqual("E2");
 	});
 });
 
@@ -492,27 +492,27 @@ describe("Guitar Fingering Calculations", () => {
 
 		expect(guitar.calcPitchFingerings("E2")).toEqual({
 			pitch: "E2",
-			fingerings: [{ stringName: "E", fret: 0 }],
+			fingerings: [{ stringNum: 6, fret: 0 }],
 		});
 		expect(guitar.calcPitchFingerings("G5")).toEqual({
 			pitch: "G5",
-			fingerings: [{ stringName: "e", fret: 15 }],
+			fingerings: [{ stringNum: 1, fret: 15 }],
 		});
 		expect(guitar.calcPitchFingerings("A3")).toEqual({
 			pitch: "A3",
 			fingerings: [
-				{ stringName: "G", fret: 2 },
-				{ stringName: "D", fret: 7 },
-				{ stringName: "A", fret: 12 },
-				{ stringName: "E", fret: 17 },
+				{ stringNum: 3, fret: 2 },
+				{ stringNum: 4, fret: 7 },
+				{ stringNum: 5, fret: 12 },
+				{ stringNum: 6, fret: 17 },
 			],
 		});
 		expect(guitar.calcPitchFingerings("A#4")).toEqual({
 			pitch: "A#4",
 			fingerings: [
-				{ stringName: "e", fret: 6 },
-				{ stringName: "B", fret: 11 },
-				{ stringName: "G", fret: 15 },
+				{ stringNum: 1, fret: 6 },
+				{ stringNum: 2, fret: 11 },
+				{ stringNum: 3, fret: 15 },
 			],
 		});
 	});
@@ -523,22 +523,22 @@ describe("Guitar Fingering Calculations", () => {
 		expect(guitar.tuningName).toEqual("dropb");
 		expect(guitar.calcPitchFingerings("E2")).toEqual({
 			pitch: "E2",
-			fingerings: [{ stringName: "E", fret: 5 }],
+			fingerings: [{ stringNum: 6, fret: 5 }],
 		});
 		expect(guitar.calcPitchFingerings("A3")).toEqual({
 			pitch: "A3",
 			fingerings: [
-				{ stringName: "B", fret: 1 },
-				{ stringName: "G", fret: 5 },
-				{ stringName: "D", fret: 10 },
-				{ stringName: "A", fret: 15 },
+				{ stringNum: 2, fret: 1 },
+				{ stringNum: 3, fret: 5 },
+				{ stringNum: 4, fret: 10 },
+				{ stringNum: 5, fret: 15 },
 			],
 		});
 		expect(guitar.calcPitchFingerings("A#4")).toEqual({
 			pitch: "A#4",
 			fingerings: [
-				{ stringName: "e", fret: 9 },
-				{ stringName: "B", fret: 14 },
+				{ stringNum: 1, fret: 9 },
+				{ stringNum: 2, fret: 14 },
 			],
 		});
 		expect(() => {
@@ -552,9 +552,9 @@ describe("Guitar Fingering Calculations", () => {
 		expect(guitar.calcPitchFingerings("A3")).toEqual({
 			pitch: "A3",
 			fingerings: [
-				{ stringName: "D", fret: 3 },
-				{ stringName: "A", fret: 8 },
-				{ stringName: "E", fret: 13 },
+				{ stringNum: 4, fret: 3 },
+				{ stringNum: 5, fret: 8 },
+				{ stringNum: 6, fret: 13 },
 			],
 		});
 		expect(() => {
