@@ -708,23 +708,105 @@ exports.Guitar = class Guitar {
 		return list_of_strings;
 	}
 
-	createFingeringOptions(fingeringLines) {
+	createFingeringOptions(fingeringLines: LineFingering[]) {
 		// let fingeringOptions: {
 		// 	pitches: PitchName[];
 		// 	fingerings: [];
 		// };
+
 		for (const fingeringLine of fingeringLines) {
-			print(fingeringLine);
+			if (fingeringLine === "break") {
+				continue;
+			}
+			// let linePitchFingerings = [];
+
+			// const linePitchFingerings = fingeringLine.map(
+			// 	({ fingerings }): Fingering => fingerings
+			// );
+			const linePitchFingerings = fingeringLine.map((a) => a.fingerings);
+			console.log("linePitchFingerings : ", linePitchFingerings);
+
+			// for (const linePitchFingering of linePitchFingerings) {
+			// 	console.log("linePitchFingering : ", linePitchFingering);
+			// }
+
+			// * Working!!!
+			// const f = (a, b) =>
+			// 	[].concat(...a.map((d) => b.map((e) => [].concat(d, e))));
+			// const cartesian = (a: any[], b: any[], ...c: any[]) =>
+			// 	b ? cartesian(f(a, b), ...c) : a;
+
+			// // console.log(cartesian([1, 2], [10, 20], [100, 200, 300], [1000]));
+			// console.log(cartesian(...linePitchFingerings));
+			// const expectedOut = [
+			// 	[
+			// 		{ stringNum: 5, fret: 0 },
+			// 		{ stringNum: 3, fret: 2 },
+			// 	],
+			// 	[
+			// 		{ stringNum: 5, fret: 0 },
+			// 		{ stringNum: 4, fret: 7 },
+			// 	],
+			// 	[
+			// 		{ stringNum: 5, fret: 0 },
+			// 		{ stringNum: 5, fret: 12 },
+			// 	],
+			// 	[
+			// 		{ stringNum: 5, fret: 0 },
+			// 		{ stringNum: 6, fret: 17 },
+			// 	],
+			// 	[
+			// 		{ stringNum: 6, fret: 5 },
+			// 		{ stringNum: 3, fret: 2 },
+			// 	],
+			// 	[
+			// 		{ stringNum: 6, fret: 5 },
+			// 		{ stringNum: 4, fret: 7 },
+			// 	],
+			// 	[
+			// 		{ stringNum: 6, fret: 5 },
+			// 		{ stringNum: 5, fret: 12 },
+			// 	],
+			// 	[
+			// 		{ stringNum: 6, fret: 5 },
+			// 		{ stringNum: 6, fret: 17 },
+			// 	],
+			// ];
+
+			const cartesian = (...a) =>
+				a.reduce((a, b) => a.flatMap((d) => b.map((e) => [d, e].flat())));
+
+			// console.log(cartesian([1, 2], [10, 20], [100, 200, 300], [1000]));
+			console.log(cartesian(...linePitchFingerings));
+
+			// for (const linePitch of fingeringLine) {
+			// 	console.log("linePitch : ", linePitch);
+			// 	const linePitchFingering = linePitch.fingerings;
+			// 	console.log("linePitchFingering : ", linePitchFingering);
+
+			// 	// linePitch.map(({ email }) => email);
+			// 	linePitchFingerings.push(linePitchFingering);
+			// 	console.log("---");
+			// }
+
+			// for (const [stringNum, fretNum] of linePitchFingerings) {
+			// 	console.log(stringNum, fretNum);
+			// }
 			break;
 		}
 
-		const test: Map<StringNumber, number> = new Map([
-			[3, 2],
-			[4, 7],
-			[5, 12],
-			[6, 17],
-		]);
-
-		print(test);
+		// TODO wtf is going on here??
+		function getStringCombinations(inputString: string): string[] {
+			let list_of_strings: string[] = [];
+			// * loop through first set of guitar pitches
+			for (let i = 0; i < inputString.length; i++) {
+				for (let j = i + 1; j < inputString.length + 1; j++) {
+					// ! something isn't working here
+					list_of_strings.push(inputString.slice(i, j));
+					// ? try parallelization
+				}
+			}
+			return list_of_strings;
+		}
 	}
 };
