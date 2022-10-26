@@ -11,18 +11,6 @@ function print(...objs: any[]): void {
 	}
 }
 
-type TuningName =
-	| "standard"
-	| "openg"
-	| "opend"
-	| "c6"
-	| "dsus4"
-	| "dropd"
-	| "dropc"
-	| "openc"
-	| "dropb"
-	| "opene";
-
 type PitchName =
 	| "A1"
 	| "A#1"
@@ -85,29 +73,52 @@ type PitchName =
 	| "G6"
 	| "G#6";
 
+type FretNumber =
+	| 0
+	| 1
+	| 2
+	| 3
+	| 4
+	| 5
+	| 6
+	| 7
+	| 8
+	| 9
+	| 10
+	| 11
+	| 12
+	| 13
+	| 14
+	| 15
+	| 16
+	| 17
+	| 18;
+
+type TuningName =
+	| "standard"
+	| "openg"
+	| "opend"
+	| "c6"
+	| "dsus4"
+	| "dropd"
+	| "dropc"
+	| "openc"
+	| "dropb"
+	| "opene";
+
+type StringNumber = 1 | 2 | 3 | 4 | 5 | 6;
+
+type TunningAdjustment = -5 | -4 | -3 | -2 | -1 | 0 | 1 | 2 | 3 | 4 | 5;
+
 /**
- * Tuning adjustment type with integer differences from Standard tuning
+ * Tuning type with tuning adjustments from Standard tuning
  */
-type Tuning = {
-	1: number;
-	2: number;
-	3: number;
-	4: number;
-	5: number;
-	6: number;
-};
+type Tuning = Record<StringNumber, TunningAdjustment>;
 
 /**
  * Type with pitch range list
  */
-type GuitarStrings = {
-	1: string[];
-	2: string[];
-	3: string[];
-	4: string[];
-	5: string[];
-	6: string[];
-};
+type GuitarStrings = Record<StringNumber, string[]>;
 
 /**
  * Create the tuning adjustment from Standard in string order from 6 to 1 (EADGBe)
@@ -120,12 +131,12 @@ type GuitarStrings = {
  * @returns
  */
 function createTuning(
-	string6TuningAdj: number,
-	string5TuningAdj: number,
-	string4TuningAdj: number,
-	string3TuningAdj: number,
-	string2TuningAdj: number,
-	string1TuningAdj: number
+	string6TuningAdj: TunningAdjustment,
+	string5TuningAdj: TunningAdjustment,
+	string4TuningAdj: TunningAdjustment,
+	string3TuningAdj: TunningAdjustment,
+	string2TuningAdj: TunningAdjustment,
+	string1TuningAdj: TunningAdjustment
 ): Tuning {
 	return {
 		1: string1TuningAdj,
@@ -447,7 +458,6 @@ exports.Guitar = class Guitar {
 					lowNotePos + tuningAdj,
 					lowNotePos
 				);
-
 				// Insert new notes
 				this.strings[stringNum] = newNotes.concat(this.strings[stringNum]);
 				// Remove old notes
@@ -462,16 +472,13 @@ exports.Guitar = class Guitar {
 					highNotePos + 1,
 					highNotePos + tuningAdj + 1
 				);
-
 				// Insert new notes
 				this.strings[stringNum] = this.strings[stringNum].concat(newNotes);
 				// Remove old notes
 				this.strings[stringNum] = this.strings[stringNum].slice(tuningAdj);
 			}
-
 			// Limit strings to number of frets available
 			this.strings[stringNum] = this.strings[stringNum].slice(0, this.numFrets);
-
 			// Limit strings to frets available with capo
 			this.strings[stringNum] = this.strings[stringNum].slice(this.capo);
 		}
@@ -559,12 +566,10 @@ exports.Guitar = class Guitar {
 	 */
 	generateTab(inputPitchString: string): [] {
 		const pitchLines = this.validateInput(inputPitchString);
-		print(pitchLines);
 		const fingeringLines = this.generateLineFingerings(pitchLines);
-
+		// TODO implement multi pitch combiner and optimizer
 		this.createFingeringOptions(fingeringLines);
 
-		// TODO implement multi pitch combiner and optimizer
 		return [];
 	}
 
@@ -704,9 +709,22 @@ exports.Guitar = class Guitar {
 	}
 
 	createFingeringOptions(fingeringLines) {
-		fingeringLines = fingeringLines.filter(
-			(v, i, a) => a.findIndex((v2) => v2.pitch === v.pitch) === i
-		);
-		print(fingeringLines);
+		// let fingeringOptions: {
+		// 	pitches: PitchName[];
+		// 	fingerings: [];
+		// };
+		for (const fingeringLine of fingeringLines) {
+			print(fingeringLine);
+			break;
+		}
+
+		const test: Map<StringNumber, number> = new Map([
+			[3, 2],
+			[4, 7],
+			[5, 12],
+			[6, 17],
+		]);
+
+		print(test);
 	}
 };

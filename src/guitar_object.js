@@ -348,10 +348,9 @@ exports.Guitar = (_a = class Guitar {
          */
         generateTab(inputPitchString) {
             const pitchLines = this.validateInput(inputPitchString);
-            print(pitchLines);
             const fingeringLines = this.generateLineFingerings(pitchLines);
-            this.createFingeringOptions(fingeringLines);
             // TODO implement multi pitch combiner and optimizer
+            this.createFingeringOptions(fingeringLines);
             return [];
         }
         validateInput(inputPitchString) {
@@ -468,8 +467,21 @@ exports.Guitar = (_a = class Guitar {
             return list_of_strings;
         }
         createFingeringOptions(fingeringLines) {
-            fingeringLines = fingeringLines.filter((v, i, a) => a.findIndex((v2) => v2.pitch === v.pitch) === i);
-            print(fingeringLines);
+            // let fingeringOptions: {
+            // 	pitches: PitchName[];
+            // 	fingerings: [];
+            // };
+            for (const fingeringLine of fingeringLines) {
+                print(fingeringLine);
+                break;
+            }
+            const test = new Map([
+                [3, 2],
+                [4, 7],
+                [5, 12],
+                [6, 17],
+            ]);
+            print(test);
         }
     },
     _Guitar_instances = new WeakSet(),

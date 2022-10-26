@@ -7,8 +7,7 @@ const guitar = new GuitarModule2.Guitar("");
 // 	console.log(`${string} | ${guitar.strings[string][0]}`);
 // }
 
-const testNotesString = `
-A2A3
+const testNotesString = `A2A3
 A7 chord
 A2
 A3
