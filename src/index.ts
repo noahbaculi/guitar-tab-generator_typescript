@@ -10,5 +10,10 @@ const guitar = new GuitarModule2.Guitar("");
 const testNotesString = `A2A3
 A7chord
 A2`;
-// console.log(guitar.calcFingerings("G5"));
-guitar.generateTab(testNotesString);
+guitar.generateLineFingerings([
+	["E2"],
+	["A2", "A3"],
+	"",
+	["E4", "C#4", "G3", "E3", "A2"],
+]);
+// guitar.generateTab(testNotesString);

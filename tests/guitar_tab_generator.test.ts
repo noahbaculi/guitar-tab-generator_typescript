@@ -590,3 +590,79 @@ describe("Guitar Fingering Calculations", () => {
 		}).toThrow("Out of range or invalid pitch");
 	});
 });
+
+describe("Guitar Fingering Lines Calculations", () => {
+	it("calculates fingerings lines in correct format", function () {
+		const guitar = new GuitarModule.Guitar();
+
+		const input = [["E2"], ["A2", "A3"], "", ["E4", "C#4", "G3", "E3", "A2"]];
+		const output = [
+			[{ pitch: "E2", fingerings: [{ stringNum: 6, fret: 0 }] }],
+			[
+				{
+					pitch: "A2",
+					fingerings: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 6, fret: 5 },
+					],
+				},
+				{
+					pitch: "A3",
+					fingerings: [
+						{ stringNum: 3, fret: 2 },
+						{ stringNum: 4, fret: 7 },
+						{ stringNum: 5, fret: 12 },
+						{ stringNum: 6, fret: 17 },
+					],
+				},
+			],
+			"break",
+			[
+				{
+					pitch: "E4",
+					fingerings: [
+						{ stringNum: 1, fret: 0 },
+						{ stringNum: 2, fret: 5 },
+						{ stringNum: 3, fret: 9 },
+						{ stringNum: 4, fret: 14 },
+					],
+				},
+				{
+					pitch: "C#4",
+					fingerings: [
+						{ stringNum: 2, fret: 2 },
+						{ stringNum: 3, fret: 6 },
+						{ stringNum: 4, fret: 11 },
+						{ stringNum: 5, fret: 16 },
+					],
+				},
+				{
+					pitch: "G3",
+					fingerings: [
+						{ stringNum: 3, fret: 0 },
+						{ stringNum: 4, fret: 5 },
+						{ stringNum: 5, fret: 10 },
+						{ stringNum: 6, fret: 15 },
+					],
+				},
+				{
+					pitch: "E3",
+					fingerings: [
+						{ stringNum: 4, fret: 2 },
+						{ stringNum: 5, fret: 7 },
+						{ stringNum: 6, fret: 12 },
+					],
+				},
+				{
+					pitch: "A2",
+					fingerings: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 6, fret: 5 },
+					],
+				},
+			],
+		];
+
+		expect(guitar.generateLineFingerings(input)).toEqual(output);
+	});
+});
