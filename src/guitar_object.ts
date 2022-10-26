@@ -152,7 +152,7 @@ type MeasureBreak = "break";
 type ValidatedPitchInput = PitchName[] | "";
 type LineFingering = PitchFingerings[] | MeasureBreak;
 
-type Fingering = { stringNumber: number; fret: number };
+type Fingering = { stringNum: number; fret: number };
 
 type PitchFingerings = {
 	pitch: PitchName;
@@ -567,6 +567,7 @@ exports.Guitar = class Guitar {
 	generateTab(inputPitchString: string): [] {
 		const pitchLines = this.validateInput(inputPitchString);
 		const fingeringLines = this.generateLineFingerings(pitchLines);
+		// print(fingeringLines);
 		// TODO implement multi pitch combiner and optimizer
 		this.createFingeringOptions(fingeringLines);
 
@@ -709,104 +710,51 @@ exports.Guitar = class Guitar {
 	}
 
 	createFingeringOptions(fingeringLines: LineFingering[]) {
-		// let fingeringOptions: {
-		// 	pitches: PitchName[];
-		// 	fingerings: [];
-		// };
+		/**
+		 * Combinate product of N number of lists
+		 * @param listOfListsToCombinate
+		 * @returns
+		 */
+		// const cartesian = (...listOfListsToCombinate) =>
+		// 	listOfListsToCombinate.reduce((a, b) =>
+		// 		a.flatMap((d) => b.map((e) => [d, e].flat()))
+		// 	);
+
+		const cartesian = (...listOfListsToCombinate) =>
+			listOfListsToCombinate.reduce((a, b) =>
+				a.flatMap((d) => b.map((e) => [d, e].flat()))
+			);
 
 		for (const fingeringLine of fingeringLines) {
 			if (fingeringLine === "break") {
 				continue;
 			}
-			// let linePitchFingerings = [];
-
-			// const linePitchFingerings = fingeringLine.map(
-			// 	({ fingerings }): Fingering => fingerings
-			// );
+			const linePitches = fingeringLine.map((a) => a.pitch);
 			const linePitchFingerings = fingeringLine.map((a) => a.fingerings);
-			console.log("linePitchFingerings : ", linePitchFingerings);
+			let lineFingeringCombos = cartesian(...linePitchFingerings);
 
-			// for (const linePitchFingering of linePitchFingerings) {
-			// 	console.log("linePitchFingering : ", linePitchFingering);
-			// }
+			// Only one combination so wrap in enclosing array for processing
+			if (!Array.isArray(lineFingeringCombos.at(0))) {
+				lineFingeringCombos = [lineFingeringCombos];
+			}
 
-			// * Working!!!
-			// const f = (a, b) =>
-			// 	[].concat(...a.map((d) => b.map((e) => [].concat(d, e))));
-			// const cartesian = (a: any[], b: any[], ...c: any[]) =>
-			// 	b ? cartesian(f(a, b), ...c) : a;
+			lineFingeringCombos = <Set<Fingering[]>>new Set(lineFingeringCombos);
 
-			// // console.log(cartesian([1, 2], [10, 20], [100, 200, 300], [1000]));
-			// console.log(cartesian(...linePitchFingerings));
-			// const expectedOut = [
-			// 	[
-			// 		{ stringNum: 5, fret: 0 },
-			// 		{ stringNum: 3, fret: 2 },
-			// 	],
-			// 	[
-			// 		{ stringNum: 5, fret: 0 },
-			// 		{ stringNum: 4, fret: 7 },
-			// 	],
-			// 	[
-			// 		{ stringNum: 5, fret: 0 },
-			// 		{ stringNum: 5, fret: 12 },
-			// 	],
-			// 	[
-			// 		{ stringNum: 5, fret: 0 },
-			// 		{ stringNum: 6, fret: 17 },
-			// 	],
-			// 	[
-			// 		{ stringNum: 6, fret: 5 },
-			// 		{ stringNum: 3, fret: 2 },
-			// 	],
-			// 	[
-			// 		{ stringNum: 6, fret: 5 },
-			// 		{ stringNum: 4, fret: 7 },
-			// 	],
-			// 	[
-			// 		{ stringNum: 6, fret: 5 },
-			// 		{ stringNum: 5, fret: 12 },
-			// 	],
-			// 	[
-			// 		{ stringNum: 6, fret: 5 },
-			// 		{ stringNum: 6, fret: 17 },
-			// 	],
-			// ];
-
-			const cartesian = (...a) =>
-				a.reduce((a, b) => a.flatMap((d) => b.map((e) => [d, e].flat())));
-
-			// console.log(cartesian([1, 2], [10, 20], [100, 200, 300], [1000]));
-			console.log(cartesian(...linePitchFingerings));
-
-			// for (const linePitch of fingeringLine) {
-			// 	console.log("linePitch : ", linePitch);
-			// 	const linePitchFingering = linePitch.fingerings;
-			// 	console.log("linePitchFingering : ", linePitchFingering);
-
-			// 	// linePitch.map(({ email }) => email);
-			// 	linePitchFingerings.push(linePitchFingering);
-			// 	console.log("---");
-			// }
-
-			// for (const [stringNum, fretNum] of linePitchFingerings) {
-			// 	console.log(stringNum, fretNum);
-			// }
-			break;
-		}
-
-		// TODO wtf is going on here??
-		function getStringCombinations(inputString: string): string[] {
-			let list_of_strings: string[] = [];
-			// * loop through first set of guitar pitches
-			for (let i = 0; i < inputString.length; i++) {
-				for (let j = i + 1; j < inputString.length + 1; j++) {
-					// ! something isn't working here
-					list_of_strings.push(inputString.slice(i, j));
-					// ? try parallelization
+			// Check for fingering combos with overlapping strings
+			for (const lineFingeringCombo of lineFingeringCombos) {
+				const numPitches = lineFingeringCombo.length;
+				const uniqueStringNums = new Set(
+					lineFingeringCombo.map((a) => a.stringNum)
+				);
+				if (uniqueStringNums.size !== numPitches) {
+					lineFingeringCombos.delete(lineFingeringCombo);
 				}
 			}
-			return list_of_strings;
+
+			console.log("linePitches", linePitches);
+			console.log("lineFingeringCombos", lineFingeringCombos);
+			console.log("\n---\n");
+			// break;
 		}
 	}
 };
