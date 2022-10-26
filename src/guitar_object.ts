@@ -715,12 +715,7 @@ exports.Guitar = class Guitar {
 		 * @param listOfListsToCombinate
 		 * @returns
 		 */
-		// const cartesian = (...listOfListsToCombinate) =>
-		// 	listOfListsToCombinate.reduce((a, b) =>
-		// 		a.flatMap((d) => b.map((e) => [d, e].flat()))
-		// 	);
-
-		const cartesian = (...listOfListsToCombinate) =>
+		const cartesian = (...listOfListsToCombinate: any[][]) =>
 			listOfListsToCombinate.reduce((a, b) =>
 				a.flatMap((d) => b.map((e) => [d, e].flat()))
 			);
@@ -731,16 +726,20 @@ exports.Guitar = class Guitar {
 			}
 			const linePitches = fingeringLine.map((a) => a.pitch);
 			const linePitchFingerings = fingeringLine.map((a) => a.fingerings);
-			let lineFingeringCombos = cartesian(...linePitchFingerings);
+
+			// Calculate list of combinations
+			let lineFingeringCombosList = cartesian(...linePitchFingerings);
 
 			// Only one combination so wrap in enclosing array for processing
-			if (!Array.isArray(lineFingeringCombos.at(0))) {
-				lineFingeringCombos = [lineFingeringCombos];
+			if (!Array.isArray(lineFingeringCombosList.at(0))) {
+				lineFingeringCombosList = [lineFingeringCombosList];
 			}
 
-			lineFingeringCombos = <Set<Fingering[]>>new Set(lineFingeringCombos);
+			const lineFingeringCombos = <Set<Fingering[]>>(
+				new Set(lineFingeringCombosList)
+			);
 
-			// Check for fingering combos with overlapping strings
+			// Check for fingering combos with overlapping strings numbers
 			for (const lineFingeringCombo of lineFingeringCombos) {
 				const numPitches = lineFingeringCombo.length;
 				const uniqueStringNums = new Set(
@@ -754,7 +753,6 @@ exports.Guitar = class Guitar {
 			console.log("linePitches", linePitches);
 			console.log("lineFingeringCombos", lineFingeringCombos);
 			console.log("\n---\n");
-			// break;
 		}
 	}
 };

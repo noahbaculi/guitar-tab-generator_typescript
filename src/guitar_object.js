@@ -473,10 +473,6 @@ exports.Guitar = (_a = class Guitar {
              * @param listOfListsToCombinate
              * @returns
              */
-            // const cartesian = (...listOfListsToCombinate) =>
-            // 	listOfListsToCombinate.reduce((a, b) =>
-            // 		a.flatMap((d) => b.map((e) => [d, e].flat()))
-            // 	);
             const cartesian = (...listOfListsToCombinate) => listOfListsToCombinate.reduce((a, b) => a.flatMap((d) => b.map((e) => [d, e].flat())));
             for (const fingeringLine of fingeringLines) {
                 if (fingeringLine === "break") {
@@ -484,13 +480,14 @@ exports.Guitar = (_a = class Guitar {
                 }
                 const linePitches = fingeringLine.map((a) => a.pitch);
                 const linePitchFingerings = fingeringLine.map((a) => a.fingerings);
-                let lineFingeringCombos = cartesian(...linePitchFingerings);
+                // Calculate list of combinations
+                let lineFingeringCombosList = cartesian(...linePitchFingerings);
                 // Only one combination so wrap in enclosing array for processing
-                if (!Array.isArray(lineFingeringCombos.at(0))) {
-                    lineFingeringCombos = [lineFingeringCombos];
+                if (!Array.isArray(lineFingeringCombosList.at(0))) {
+                    lineFingeringCombosList = [lineFingeringCombosList];
                 }
-                lineFingeringCombos = new Set(lineFingeringCombos);
-                // Check for fingering combos with overlapping strings
+                const lineFingeringCombos = (new Set(lineFingeringCombosList));
+                // Check for fingering combos with overlapping strings numbers
                 for (const lineFingeringCombo of lineFingeringCombos) {
                     const numPitches = lineFingeringCombo.length;
                     const uniqueStringNums = new Set(lineFingeringCombo.map((a) => a.stringNum));
@@ -501,7 +498,6 @@ exports.Guitar = (_a = class Guitar {
                 console.log("linePitches", linePitches);
                 console.log("lineFingeringCombos", lineFingeringCombos);
                 console.log("\n---\n");
-                // break;
             }
         }
     },
