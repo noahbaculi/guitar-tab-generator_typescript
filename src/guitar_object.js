@@ -270,6 +270,12 @@ exports.Guitar = (_a = class Guitar {
             this.tuningName = "standard";
             this.capo = 0;
             this.numFrets = 18;
+            /**
+             * Combinate product of N number of lists
+             * @param listOfListsToCombinate
+             * @returns
+             */
+            this.cartesian = (...listOfListsToCombinate) => listOfListsToCombinate.reduce((a, b) => a.flatMap((d) => b.map((e) => [d, e].flat())));
             this.chordPitchesMap = __classPrivateFieldGet(this, _Guitar_instances, "m", _Guitar_generateChordPitches).call(this);
             /**
              * Tunings reference with tuning adjustments from Standard
@@ -410,6 +416,12 @@ exports.Guitar = (_a = class Guitar {
             }
             return pitchLines;
         }
+        // TODO convert to mapped function to apply to the pitchLines array directly
+        /**
+         * Generate the pitch fingerings for multiple lines
+         * @param pitchLines
+         * @returns
+         */
         generateLineFingerings(pitchLines) {
             let pitchLineFingerings = [];
             for (const linePitches of pitchLines) {
@@ -424,6 +436,7 @@ exports.Guitar = (_a = class Guitar {
                 }
                 pitchLineFingerings.push(linePitchIndivFingerings);
             }
+            print(pitchLineFingerings);
             return pitchLineFingerings;
         }
         // TODO cache values for efficiency improvements
@@ -467,13 +480,13 @@ exports.Guitar = (_a = class Guitar {
             }
             return list_of_strings;
         }
+        // TODO convert to mapped function to apply to the fingeringLines array
+        // directly
+        /**
+         * Generate fingering options from each line fingerings
+         * @param fingeringLines
+         */
         createFingeringOptions(fingeringLines) {
-            /**
-             * Combinate product of N number of lists
-             * @param listOfListsToCombinate
-             * @returns
-             */
-            const cartesian = (...listOfListsToCombinate) => listOfListsToCombinate.reduce((a, b) => a.flatMap((d) => b.map((e) => [d, e].flat())));
             for (const fingeringLine of fingeringLines) {
                 if (fingeringLine === "break") {
                     continue;
@@ -481,7 +494,7 @@ exports.Guitar = (_a = class Guitar {
                 const linePitches = fingeringLine.map((a) => a.pitch);
                 const linePitchFingerings = fingeringLine.map((a) => a.fingerings);
                 // Calculate list of combinations
-                let lineFingeringCombosList = cartesian(...linePitchFingerings);
+                let lineFingeringCombosList = this.cartesian(...linePitchFingerings);
                 // Only one combination so wrap in enclosing array for processing
                 if (!Array.isArray(lineFingeringCombosList.at(0))) {
                     lineFingeringCombosList = [lineFingeringCombosList];

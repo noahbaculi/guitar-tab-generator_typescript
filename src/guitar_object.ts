@@ -647,6 +647,12 @@ exports.Guitar = class Guitar {
 		return pitchLines;
 	}
 
+	// TODO convert to mapped function to apply to the pitchLines array directly
+	/**
+	 * Generate the pitch fingerings for multiple lines
+	 * @param pitchLines
+	 * @returns
+	 */
 	generateLineFingerings(pitchLines: ValidatedPitchInput[]): LineFingering[] {
 		let pitchLineFingerings: LineFingering[] = [];
 		for (const linePitches of pitchLines) {
@@ -662,6 +668,7 @@ exports.Guitar = class Guitar {
 			}
 			pitchLineFingerings.push(linePitchIndivFingerings);
 		}
+		print(pitchLineFingerings);
 		return pitchLineFingerings;
 	}
 
@@ -709,17 +716,13 @@ exports.Guitar = class Guitar {
 		return list_of_strings;
 	}
 
+	// TODO convert to mapped function to apply to the fingeringLines array
+	// directly
+	/**
+	 * Generate fingering options from each line fingerings
+	 * @param fingeringLines
+	 */
 	createFingeringOptions(fingeringLines: LineFingering[]) {
-		/**
-		 * Combinate product of N number of lists
-		 * @param listOfListsToCombinate
-		 * @returns
-		 */
-		const cartesian = (...listOfListsToCombinate: any[][]) =>
-			listOfListsToCombinate.reduce((a, b) =>
-				a.flatMap((d) => b.map((e) => [d, e].flat()))
-			);
-
 		for (const fingeringLine of fingeringLines) {
 			if (fingeringLine === "break") {
 				continue;
@@ -728,7 +731,7 @@ exports.Guitar = class Guitar {
 			const linePitchFingerings = fingeringLine.map((a) => a.fingerings);
 
 			// Calculate list of combinations
-			let lineFingeringCombosList = cartesian(...linePitchFingerings);
+			let lineFingeringCombosList = this.cartesian(...linePitchFingerings);
 
 			// Only one combination so wrap in enclosing array for processing
 			if (!Array.isArray(lineFingeringCombosList.at(0))) {
@@ -755,4 +758,14 @@ exports.Guitar = class Guitar {
 			console.log("\n---\n");
 		}
 	}
+
+	/**
+	 * Combinate product of N number of lists
+	 * @param listOfListsToCombinate
+	 * @returns
+	 */
+	cartesian = (...listOfListsToCombinate: any[][]) =>
+		listOfListsToCombinate.reduce((a, b) =>
+			a.flatMap((d) => b.map((e) => [d, e].flat()))
+		);
 };
