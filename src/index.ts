@@ -7,13 +7,12 @@ const guitar = new GuitarModule2.Guitar("");
 // 	console.log(`${string} | ${guitar.strings[string][0]}`);
 // }
 
-const testNotesString = `A2A3
-A7chord
-A2`;
-guitar.generateLineFingerings([
-	["E2"],
-	["A2", "A3"],
-	"",
-	["E4", "C#4", "G3", "E3", "A2"],
-]);
-// guitar.generateTab(testNotesString);
+const testNotesString = `
+Cm chord
+`;
+// guitar.generateLineFingerings([
+// 	["E2"],
+// 	["A2", "A3"],
+// 	["E4", "C#4", "G3", "E3", "A2"],
+// ]);
+guitar.generateTab(testNotesString);

@@ -439,7 +439,7 @@ exports.Guitar = (_a = class Guitar {
             print(pitchLineFingerings);
             return pitchLineFingerings;
         }
-        // TODO cache values for efficiency improvements
+        // TODO cache values with memoization for efficiency improvements
         /**
          * Create fingerings for a given pitch
          * @param pitch Validated pitch name
@@ -525,15 +525,15 @@ exports.Guitar = (_a = class Guitar {
             A7CHORD: "-02020",
             AMCHORD: "-02210",
             AM7CHORD: "-02010",
-            BCHORD: "--4442",
+            BCHORD: "-24442",
             BMAJ7CHORD: "22130-",
             B7CHORD: "-21202",
-            BMCHORD: "--4432",
+            BMCHORD: "-24432",
             BM7CHORD: "-20202",
             CCHORD: "-32010",
             CMAJ7CHORD: "-32000",
             C7CHORD: "-32310",
-            CMCHORD: "-310--",
+            CMCHORD: "-35543",
             CM7CHORD: "-313--",
             DCHORD: "--0232",
             DMAJ7CHORD: "--0222",
@@ -548,10 +548,10 @@ exports.Guitar = (_a = class Guitar {
             FCHORD: "--3211",
             FMAJ7CHORD: "--3210",
             F7CHORD: "131211",
-            FMCHORD: "--3111",
+            FMCHORD: "133111",
             FM7CHORD: "131111",
             GCHORD: "320003",
-            GMAJ7CHORD: "3-0002",
+            GMAJ7CHORD: "--5432",
             G7CHORD: "320001",
             GMCHORD: "--0333",
             GM7CHORD: "-13030",

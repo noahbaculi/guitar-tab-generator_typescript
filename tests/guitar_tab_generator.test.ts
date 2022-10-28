@@ -542,7 +542,7 @@ describe("Guitar Fingering Calculations", () => {
 		});
 	});
 
-	it("calculates fingerings correctly with non standard tuning, no capo", function () {
+	it("calculates fingerings correctly with non-standard tuning, no capo", function () {
 		const guitar = new GuitarModule.Guitar("Drop B");
 
 		expect(guitar.tuningName).toEqual("dropb");
