@@ -566,9 +566,9 @@ exports.Guitar = class Guitar {
 	 */
 	generateTab(inputPitchString: string): [] {
 		const pitchLines = this.validateInput(inputPitchString);
-		const fingeringLines = this.generateLineFingerings(pitchLines);
+		const fingeringLines = pitchLines.map(this.generateLineFingering, this);
 		// TODO implement multi pitch combiner and optimizer
-		this.createFingeringOptions(fingeringLines);
+		// this.createFingeringOptions(fingeringLines);
 
 		return [];
 	}
@@ -646,29 +646,24 @@ exports.Guitar = class Guitar {
 		return pitchLines;
 	}
 
-	// TODO convert to mapped function to apply to the pitchLines array directly
 	/**
-	 * Generate the pitch fingerings for multiple lines
-	 * @param pitchLines
+	 * Generate the fingerings for the pitches on the same line/beat
+	 * @param linePitches
 	 * @returns
 	 */
-	generateLineFingerings(pitchLines: ValidatedPitchInput[]): LineFingering[] {
-		let pitchLineFingerings: LineFingering[] = [];
-		for (const linePitches of pitchLines) {
-			if (linePitches === "") {
-				pitchLineFingerings.push("break");
-				continue;
-			}
-
-			let linePitchIndivFingerings: PitchFingerings[] = [];
-			for (const pitchName of linePitches) {
-				const pitchFingerings = this.calcPitchFingerings(pitchName);
-				linePitchIndivFingerings.push(pitchFingerings);
-			}
-			pitchLineFingerings.push(linePitchIndivFingerings);
+	generateLineFingering(linePitches: ValidatedPitchInput): LineFingering {
+		print(this);
+		if (linePitches === "") {
+			return "break";
 		}
-		print(pitchLineFingerings);
-		return pitchLineFingerings;
+
+		let linePitchIndivFingerings: PitchFingerings[] = [];
+		for (const pitchName of linePitches) {
+			const pitchFingerings = this.calcPitchFingerings(pitchName);
+			linePitchIndivFingerings.push(pitchFingerings);
+		}
+
+		return linePitchIndivFingerings;
 	}
 
 	// TODO cache values with memoization for efficiency improvements
