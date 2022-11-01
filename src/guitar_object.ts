@@ -567,7 +567,6 @@ exports.Guitar = class Guitar {
 	generateTab(inputPitchString: string): [] {
 		const pitchLines = this.validateInput(inputPitchString);
 		const fingeringLines = this.generateLineFingerings(pitchLines);
-		// print(fingeringLines);
 		// TODO implement multi pitch combiner and optimizer
 		this.createFingeringOptions(fingeringLines);
 

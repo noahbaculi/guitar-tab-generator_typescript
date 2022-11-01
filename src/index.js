@@ -5,7 +5,10 @@ const guitar = new GuitarModule2.Guitar("");
 // 	console.log(`${string} | ${guitar.strings[string][0]}`);
 // }
 const testNotesString = `
-Cm chord
+Eb4
+A2A3
+
+Em chord
 `;
 // guitar.generateLineFingerings([
 // 	["E2"],

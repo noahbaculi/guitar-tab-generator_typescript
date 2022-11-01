@@ -8,7 +8,10 @@ const guitar = new GuitarModule2.Guitar("");
 // }
 
 const testNotesString = `
-Cm chord
+Eb4
+A2A3
+
+Em chord
 `;
 // guitar.generateLineFingerings([
 // 	["E2"],
