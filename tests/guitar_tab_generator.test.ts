@@ -666,3 +666,153 @@ describe("Guitar Fingering Lines Calculations", () => {
 		expect(input.map(guitar.generateLineFingering, guitar)).toEqual(output);
 	});
 });
+
+describe("Guitar Fingering Line Options Calculations", () => {
+	it("calculates fingerings line options in correct format", function () {
+		const guitar = new GuitarModule.Guitar();
+
+		const input = [
+			[
+				{
+					pitch: "D#4",
+					fingerings: [
+						{ stringNum: 2, fret: 4 },
+						{ stringNum: 3, fret: 8 },
+						{ stringNum: 4, fret: 13 },
+					],
+				},
+			],
+			[
+				{
+					pitch: "B4",
+					fingerings: [
+						{ stringNum: 1, fret: 7 },
+						{ stringNum: 2, fret: 12 },
+						{ stringNum: 3, fret: 16 },
+					],
+				},
+			],
+			[
+				{
+					pitch: "A2",
+					fingerings: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 6, fret: 5 },
+					],
+				},
+				{
+					pitch: "A3",
+					fingerings: [
+						{ stringNum: 3, fret: 2 },
+						{ stringNum: 4, fret: 7 },
+						{ stringNum: 5, fret: 12 },
+						{ stringNum: 6, fret: 17 },
+					],
+				},
+			],
+			"break",
+			[
+				{
+					pitch: "E4",
+					fingerings: [
+						{ stringNum: 1, fret: 0 },
+						{ stringNum: 2, fret: 5 },
+						{ stringNum: 3, fret: 9 },
+						{ stringNum: 4, fret: 14 },
+					],
+				},
+				{
+					pitch: "B3",
+					fingerings: [
+						{ stringNum: 2, fret: 0 },
+						{ stringNum: 3, fret: 4 },
+						{ stringNum: 4, fret: 9 },
+						{ stringNum: 5, fret: 14 },
+					],
+				},
+				{
+					pitch: "G3",
+					fingerings: [
+						{ stringNum: 3, fret: 0 },
+						{ stringNum: 4, fret: 5 },
+						{ stringNum: 5, fret: 10 },
+						{ stringNum: 6, fret: 15 },
+					],
+				},
+				{
+					pitch: "E3",
+					fingerings: [
+						{ stringNum: 4, fret: 2 },
+						{ stringNum: 5, fret: 7 },
+						{ stringNum: 6, fret: 12 },
+					],
+				},
+				{
+					pitch: "B2",
+					fingerings: [
+						{ stringNum: 5, fret: 2 },
+						{ stringNum: 6, fret: 7 },
+					],
+				},
+				{ pitch: "E2", fingerings: [{ stringNum: 6, fret: 0 }] },
+			],
+		];
+		const output = [
+			[
+				[
+					{ stringNum: 2, fret: 4 },
+					{ stringNum: 3, fret: 8 },
+					{ stringNum: 4, fret: 13 },
+				],
+			],
+			[
+				[
+					{ stringNum: 1, fret: 7 },
+					{ stringNum: 2, fret: 12 },
+					{ stringNum: 3, fret: 16 },
+				],
+			],
+			[
+				[
+					{ stringNum: 5, fret: 0 },
+					{ stringNum: 3, fret: 2 },
+				],
+				[
+					{ stringNum: 5, fret: 0 },
+					{ stringNum: 4, fret: 7 },
+				],
+				[
+					{ stringNum: 5, fret: 0 },
+					{ stringNum: 6, fret: 17 },
+				],
+				[
+					{ stringNum: 6, fret: 5 },
+					{ stringNum: 3, fret: 2 },
+				],
+				[
+					{ stringNum: 6, fret: 5 },
+					{ stringNum: 4, fret: 7 },
+				],
+				[
+					{ stringNum: 6, fret: 5 },
+					{ stringNum: 5, fret: 12 },
+				],
+			],
+			"break",
+			[
+				[
+					{ stringNum: 1, fret: 0 },
+					{ stringNum: 2, fret: 0 },
+					{ stringNum: 3, fret: 0 },
+					{ stringNum: 4, fret: 2 },
+					{ stringNum: 5, fret: 2 },
+					{ stringNum: 6, fret: 0 },
+				],
+			],
+		];
+
+		expect(input.map(guitar.generateLineFingeringOptions, guitar)).toEqual(
+			output
+		);
+	});
+});

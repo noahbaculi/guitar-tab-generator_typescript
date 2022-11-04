@@ -18,7 +18,7 @@ Em chord
 
 </details>
 
-### `validateInput()`
+### `pitchLines <- validateInput()`
 
 Perform the following standardizations to the input string:
 
@@ -42,7 +42,7 @@ Perform the following standardizations to the input string:
 
 </details>
 
-### `generateLineFingerings()`
+### `fingeringLines <- generateLineFingering()`
 
 Generate the fingerings for the individual pitches for each line/beat.
 
@@ -63,11 +63,18 @@ Generate the fingerings for the individual pitches for each line/beat.
   ],
   [
     {
-      pitch: 'A2',
+      pitch: 'B4',
       fingerings: [
-        { stringNum: 5, fret: 0 },
-        { stringNum: 6, fret: 5 }
+        { stringNum: 1, fret: 7 },
+        { stringNum: 2, fret: 12 },
+        { stringNum: 3, fret: 16 }
       ]
+    }
+  ],
+  [
+    {
+      pitch: 'A2',
+      fingerings: [ { stringNum: 5, fret: 0 }, { stringNum: 6, fret: 5 } ]
     },
     {
       pitch: 'A3',
@@ -118,22 +125,16 @@ Generate the fingerings for the individual pitches for each line/beat.
     },
     {
       pitch: 'B2',
-      fingerings: [
-        { stringNum: 5, fret: 2 },
-        { stringNum: 6, fret: 7 }
-      ]
+      fingerings: [ { stringNum: 5, fret: 2 }, { stringNum: 6, fret: 7 } ]
     },
-    { pitch: 'E2', fingerings: [
-        { stringNum: 6, fret: 0 }
-      ]
-    }
+    { pitch: 'E2', fingerings: [ { stringNum: 6, fret: 0 } ] }   
   ]
 ]
 ```
 
 </details>
 
-### `createFingeringOptions()`
+### `fingeringLineOptions <- generateLineFingeringOptions()`
 
 Generate compatible fingering combinations for each set of pitches for later comparison.
 
@@ -141,7 +142,41 @@ Generate compatible fingering combinations for each set of pitches for later com
 <summary>Example</summary>
 
 ```typescript
-
+[
+  [
+    [
+      { stringNum: 2, fret: 4 },
+      { stringNum: 3, fret: 8 },
+      { stringNum: 4, fret: 13 }
+    ]
+  ],
+  [
+    [
+      { stringNum: 1, fret: 7 },
+      { stringNum: 2, fret: 12 },
+      { stringNum: 3, fret: 16 }
+    ]
+  ],
+  [
+    [ { stringNum: 5, fret: 0 }, { stringNum: 3, fret: 2 } ],    
+    [ { stringNum: 5, fret: 0 }, { stringNum: 4, fret: 7 } ],    
+    [ { stringNum: 5, fret: 0 }, { stringNum: 6, fret: 17 } ],   
+    [ { stringNum: 6, fret: 5 }, { stringNum: 3, fret: 2 } ],    
+    [ { stringNum: 6, fret: 5 }, { stringNum: 4, fret: 7 } ],    
+    [ { stringNum: 6, fret: 5 }, { stringNum: 5, fret: 12 } ]    
+  ],
+  'break',
+  [
+    [
+      { stringNum: 1, fret: 0 },
+      { stringNum: 2, fret: 0 },
+      { stringNum: 3, fret: 0 },
+      { stringNum: 4, fret: 2 },
+      { stringNum: 5, fret: 2 },
+      { stringNum: 6, fret: 0 }
+    ]
+  ]
+]
 ```
 
 </details>

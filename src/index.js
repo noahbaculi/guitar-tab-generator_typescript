@@ -4,12 +4,11 @@ const guitar = new GuitarModule2.Guitar("");
 // for (const string in guitar.strings) {
 // 	console.log(`${string} | ${guitar.strings[string][0]}`);
 // }
-const testNotesString = `
-Eb4
+const testNotesString = `Eb4
+B4
 A2A3
 
-Em chord
-`;
+Em chord`;
 // guitar.generateLineFingerings([
 // 	["E2"],
 // 	["A2", "A3"],

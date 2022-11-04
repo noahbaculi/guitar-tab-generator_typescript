@@ -355,8 +355,11 @@ exports.Guitar = (_a = class Guitar {
         generateTab(inputPitchString) {
             const pitchLines = this.validateInput(inputPitchString);
             const fingeringLines = pitchLines.map(this.generateLineFingering, this);
-            // TODO implement multi pitch combiner and optimizer
-            // this.createFingeringOptions(fingeringLines);
+            const fingeringLineOptions = fingeringLines.map(this.generateLineFingeringOptions, this);
+            print(fingeringLines);
+            // print(fingeringLineOptions);
+            // TODO implement fingering optimizer
+            // this.createMultiBeatFingerings(fingeringOptions);
             return [];
         }
         validateInput(inputPitchString) {
@@ -416,12 +419,25 @@ exports.Guitar = (_a = class Guitar {
             return pitchLines;
         }
         /**
+         * Function to get combinations of substring from string
+         * @param inputString
+         * @returns Empty List
+         */
+        getStringCombinations(inputString) {
+            let list_of_strings = [];
+            for (let i = 0; i < inputString.length; i++) {
+                for (let j = i + 1; j < inputString.length + 1; j++) {
+                    list_of_strings.push(inputString.slice(i, j));
+                }
+            }
+            return list_of_strings;
+        }
+        /**
          * Generate the fingerings for the pitches on the same line/beat
          * @param linePitches
          * @returns
          */
         generateLineFingering(linePitches) {
-            print(this);
             if (linePitches === "") {
                 return "break";
             }
@@ -459,53 +475,36 @@ exports.Guitar = (_a = class Guitar {
                 fingerings: fingerings,
             };
         }
-        /**
-         * Function to get combinations of substring from string
-         * @param inputString
-         * @returns Empty List
-         */
-        getStringCombinations(inputString) {
-            let list_of_strings = [];
-            for (let i = 0; i < inputString.length; i++) {
-                for (let j = i + 1; j < inputString.length + 1; j++) {
-                    list_of_strings.push(inputString.slice(i, j));
-                }
-            }
-            return list_of_strings;
-        }
         // TODO convert to mapped function to apply to the fingeringLines array
         // directly
         /**
          * Generate fingering options from each line fingerings
-         * @param fingeringLines
+         * @param fingeringLine
          */
-        createFingeringOptions(fingeringLines) {
-            for (const fingeringLine of fingeringLines) {
-                if (fingeringLine === "break") {
-                    continue;
-                }
-                const linePitches = fingeringLine.map((a) => a.pitch);
-                const linePitchFingerings = fingeringLine.map((a) => a.fingerings);
-                // Calculate list of combinations
-                let lineFingeringCombosList = this.cartesian(...linePitchFingerings);
-                // Only one combination so wrap in enclosing array for processing
-                if (!Array.isArray(lineFingeringCombosList.at(0))) {
-                    lineFingeringCombosList = [lineFingeringCombosList];
-                }
-                const lineFingeringCombos = (new Set(lineFingeringCombosList));
-                // Check for fingering combos with overlapping strings numbers
-                for (const lineFingeringCombo of lineFingeringCombos) {
-                    const numPitches = lineFingeringCombo.length;
-                    const uniqueStringNums = new Set(lineFingeringCombo.map((a) => a.stringNum));
-                    if (uniqueStringNums.size !== numPitches) {
-                        lineFingeringCombos.delete(lineFingeringCombo);
-                    }
-                }
-                console.log("linePitches", linePitches);
-                console.log("lineFingeringCombos", lineFingeringCombos);
-                console.log("\n---\n");
+        generateLineFingeringOptions(fingeringLine) {
+            if (fingeringLine === "break") {
+                return "break";
             }
+            const linePitches = fingeringLine.map((a) => a.pitch);
+            const linePitchFingerings = fingeringLine.map((a) => a.fingerings);
+            // Calculate list of combinations
+            let lineFingeringCombosList = this.cartesian(...linePitchFingerings);
+            // Only one combination so wrap in enclosing array for processing
+            if (!Array.isArray(lineFingeringCombosList.at(0))) {
+                lineFingeringCombosList = [lineFingeringCombosList];
+            }
+            const lineFingeringCombos = (new Set(lineFingeringCombosList));
+            // Check for fingering combos with overlapping strings numbers
+            for (const lineFingeringCombo of lineFingeringCombos) {
+                const numPitches = lineFingeringCombo.length;
+                const uniqueStringNums = new Set(lineFingeringCombo.map((a) => a.stringNum));
+                if (uniqueStringNums.size !== numPitches) {
+                    lineFingeringCombos.delete(lineFingeringCombo);
+                }
+            }
+            return Array.from(lineFingeringCombos);
         }
+        createMultiBeatFingerings() { }
     },
     _Guitar_instances = new WeakSet(),
     _Guitar_generateChordPitches = function _Guitar_generateChordPitches() {
