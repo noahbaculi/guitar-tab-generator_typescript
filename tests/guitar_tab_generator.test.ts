@@ -663,6 +663,6 @@ describe("Guitar Fingering Lines Calculations", () => {
 			],
 		];
 
-		expect(guitar.generateLineFingerings(input)).toEqual(output);
+		expect(input.map(guitar.generateLineFingering, guitar)).toEqual(output);
 	});
 });
