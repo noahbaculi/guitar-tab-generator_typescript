@@ -354,10 +354,12 @@ exports.Guitar = (_a = class Guitar {
             const pitchLines = this.validateInput(inputPitchString);
             const linePitchFingerings = pitchLines.map(this.genPitchFingering, this);
             const lineFingeringOptions = linePitchFingerings.map(this.genLineFingeringOptions, this);
-            print(lineFingeringOptions);
+            const optimizedFingerings = this.optimizeFingerings(lineFingeringOptions);
+            // print(lineFingeringOptions);
             // TODO implement fingering optimizer
             return [];
         }
+        // TODO consolidate single-use functions
         validateInput(inputPitchString) {
             let pitchLines = [];
             // Format and convert input to sharps
@@ -415,21 +417,19 @@ exports.Guitar = (_a = class Guitar {
             return pitchLines;
         }
         /**
-         * Function to get combinations of substring from string
-         * @param inputString
+         * Function to get combinations of substrings from string
          */
         getStringCombinations(inputString) {
-            let list_of_strings = [];
+            let list_of_substrings = [];
             for (let i = 0; i < inputString.length; i++) {
                 for (let j = i + 1; j < inputString.length + 1; j++) {
-                    list_of_strings.push(inputString.slice(i, j));
+                    list_of_substrings.push(inputString.slice(i, j));
                 }
             }
-            return list_of_strings;
+            return list_of_substrings;
         }
         /**
          * Generate the fingerings for the pitches on the same line/beat
-         * @param linePitches
          */
         genPitchFingering(linePitches) {
             if (linePitches === "") {
@@ -445,7 +445,6 @@ exports.Guitar = (_a = class Guitar {
         // TODO cache values with memoization for efficiency improvements
         /**
          * Create fingerings for a given pitch
-         * @param pitch Validated pitch name
          */
         calcPitchFingerings(pitch) {
             let fingerings = [];
@@ -523,7 +522,31 @@ exports.Guitar = (_a = class Guitar {
             }
             return lineFingeringOptions;
         }
-        createMultiBeatFingerings() { }
+        optimizeFingerings(lineFingeringOptions) {
+            const splitArrayOn = (inputList, delimiter, limit = 100) => {
+                let sublists = [];
+                let count = 0;
+                while (inputList.includes(delimiter)) {
+                    if (count > limit) {
+                        throw new Error(`Array split delimiter limit reached.`);
+                    }
+                    count++;
+                    const breakIndex = inputList.indexOf(delimiter);
+                    sublists.push(inputList.slice(0, breakIndex));
+                    inputList.splice(0, breakIndex + 1);
+                }
+                sublists.push(inputList);
+                return sublists;
+            };
+            // Split list of options into sublists separated by measure breaks
+            const lineFingeringOptionsBlocks = splitArrayOn(lineFingeringOptions, "break");
+            for (const lineFingeringOptionsBlock of lineFingeringOptionsBlocks) {
+                print(lineFingeringOptionsBlock);
+                print("--");
+            }
+            // print(lineFingeringOptions);
+            return lineFingeringOptions;
+        }
     },
     _Guitar_instances = new WeakSet(),
     _Guitar_generateChordPitches = function _Guitar_generateChordPitches() {

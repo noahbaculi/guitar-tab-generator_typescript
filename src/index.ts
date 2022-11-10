@@ -9,8 +9,9 @@ const guitar = new GuitarModule2.Guitar("");
 
 const testNotesString = `Eb4
 B4
-F2B4
 A2A3
+
+F2B4
 
 Em chord`;
 guitar.generateTab(testNotesString);

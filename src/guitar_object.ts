@@ -73,27 +73,6 @@ type PitchName =
 	| "G6"
 	| "G#6";
 
-type FretNumber =
-	| 0
-	| 1
-	| 2
-	| 3
-	| 4
-	| 5
-	| 6
-	| 7
-	| 8
-	| 9
-	| 10
-	| 11
-	| 12
-	| 13
-	| 14
-	| 15
-	| 16
-	| 17
-	| 18;
-
 type TuningName =
 	| "standard"
 	| "openg"
@@ -148,9 +127,7 @@ function createTuning(
 	};
 }
 
-type MeasureBreak = "break";
-type ValidatedPitchInput = PitchName[] | "";
-type LineFingering = PitchFingerings[] | MeasureBreak;
+type ValidatedLinePitchInput = PitchName[] | "";
 
 type Fingering = { stringNum: number; fret: number };
 
@@ -413,18 +390,7 @@ exports.Guitar = class Guitar {
 		/**
 		 * Tunings reference with tuning adjustments from Standard
 		 */
-		const tunings: {
-			standard: Tuning;
-			openg: Tuning;
-			opend: Tuning;
-			c6: Tuning;
-			dsus4: Tuning;
-			dropd: Tuning;
-			dropc: Tuning;
-			openc: Tuning;
-			dropb: Tuning;
-			opene: Tuning;
-		} = {
+		const tunings = {
 			standard: createTuning(0, 0, 0, 0, 0, 0),
 			openg: createTuning(-2, 0, 0, 0, -2, -2),
 			opend: createTuning(-2, 0, 0, -1, -2, -2),
@@ -577,13 +543,15 @@ exports.Guitar = class Guitar {
 			this.genLineFingeringOptions,
 			this
 		);
+		const optimizedFingerings = this.optimizeFingerings(lineFingeringOptions);
 		// print(lineFingeringOptions);
 		// TODO implement fingering optimizer
 		return [];
 	}
 
-	validateInput(inputPitchString: string): ValidatedPitchInput[] {
-		let pitchLines: ValidatedPitchInput[] = [];
+	// TODO consolidate single-use functions
+	validateInput(inputPitchString: string): ValidatedLinePitchInput[] {
+		let pitchLines: ValidatedLinePitchInput[] = [];
 
 		// Format and convert input to sharps
 		inputPitchString = inputPitchString.toUpperCase();
@@ -656,24 +624,24 @@ exports.Guitar = class Guitar {
 	}
 
 	/**
-	 * Function to get combinations of substring from string
-	 * @param inputString
+	 * Function to get combinations of substrings from string
 	 */
 	getStringCombinations(inputString: string): string[] {
-		let list_of_strings: string[] = [];
+		let list_of_substrings: string[] = [];
 		for (let i = 0; i < inputString.length; i++) {
 			for (let j = i + 1; j < inputString.length + 1; j++) {
-				list_of_strings.push(inputString.slice(i, j));
+				list_of_substrings.push(inputString.slice(i, j));
 			}
 		}
-		return list_of_strings;
+		return list_of_substrings;
 	}
 
 	/**
 	 * Generate the fingerings for the pitches on the same line/beat
-	 * @param linePitches
 	 */
-	genPitchFingering(linePitches: ValidatedPitchInput): LineFingering {
+	genPitchFingering(
+		linePitches: ValidatedLinePitchInput
+	): PitchFingerings[] | "break" {
 		if (linePitches === "") {
 			return "break";
 		}
@@ -690,7 +658,6 @@ exports.Guitar = class Guitar {
 	// TODO cache values with memoization for efficiency improvements
 	/**
 	 * Create fingerings for a given pitch
-	 * @param pitch Validated pitch name
 	 */
 	calcPitchFingerings(pitch: PitchName): PitchFingerings {
 		let fingerings = [];
@@ -719,8 +686,8 @@ exports.Guitar = class Guitar {
 	 * Generate fingering options from each line fingerings
 	 */
 	genLineFingeringOptions(
-		fingeringLine: LineFingering
-	): FingeringOption[] | MeasureBreak {
+		fingeringLine: PitchFingerings[] | "break"
+	): FingeringOption[] | "break" {
 		if (fingeringLine === "break") {
 			return "break";
 		}
@@ -799,7 +766,37 @@ exports.Guitar = class Guitar {
 		return lineFingeringOptions;
 	}
 
-	createMultiBeatFingerings() {}
+	optimizeFingerings(lineFingeringOptions: ("break" | FingeringOption[])[]) {
+		const splitArrayOn = (inputList: any[], delimiter: any, limit = 100) => {
+			let sublists = [];
+			let count = 0;
+			while (inputList.includes(delimiter)) {
+				if (count > limit) {
+					throw new Error(`Array split delimiter limit reached.`);
+				}
+				count++;
+				const breakIndex = inputList.indexOf(delimiter);
+				sublists.push(inputList.slice(0, breakIndex));
+				inputList.splice(0, breakIndex + 1);
+			}
+			sublists.push(inputList);
+			return sublists;
+		};
+
+		// Split list of options into sublists separated by measure breaks
+		const lineFingeringOptionsBlocks = splitArrayOn(
+			lineFingeringOptions,
+			"break"
+		);
+
+		for (const lineFingeringOptionsBlock of lineFingeringOptionsBlocks) {
+			print(lineFingeringOptionsBlock);
+			print("--");
+		}
+		// print(lineFingeringOptions);
+
+		return lineFingeringOptions;
+	}
 
 	/**
 	 * Combinate product of N number of lists
