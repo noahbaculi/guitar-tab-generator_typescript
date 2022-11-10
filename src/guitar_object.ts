@@ -888,8 +888,11 @@ exports.Guitar = class Guitar {
 	/**
 	 * Combinate product of N number of lists
 	 */
-	cartesian = (listOfListsToCombinate: any[][]) =>
-		listOfListsToCombinate.reduce((a, b) =>
-			a.flatMap((d) => b.map((e) => [d, e].flat()))
-		);
+	cartesian = (arr: any[][]) => {
+		// Return list of each element if only one list is received
+		if (arr.length === 1) {
+			return arr.flat().map((a) => [a]);
+		}
+		return arr.reduce((a, b) => a.flatMap((d) => b.map((e) => [d, e].flat())));
+	};
 };
