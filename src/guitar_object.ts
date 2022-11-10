@@ -715,12 +715,18 @@ exports.Guitar = class Guitar {
 			if (excludeZero === true) {
 				items = items.filter((x) => x !== 0);
 			}
+			if (items.length === 0) {
+				return 0;
+			}
 			return Math.max(...items) - Math.min(...items);
 		};
 
 		const calc_average = (items: number[], excludeZero = false): number => {
 			if (excludeZero === true) {
 				items = items.filter((x) => x !== 0);
+			}
+			if (items.length === 0) {
+				return 0;
 			}
 			return items.reduce((a: number, b: number) => a + b) / items.length;
 		};
