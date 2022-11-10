@@ -500,36 +500,42 @@ exports.Guitar = class Guitar {
 			GM7CHORD: "-13030",
 		};
 
+		/**
+		 * Calculate the pitches for a list of tab fingerings
+		 */
+		const calcChordPitches = (
+			tabFingeringList: string[],
+			chordTabStringNums: string[]
+		) => {
+			const zip = (a: string[], b: string[]): [string, string][] =>
+				Array.from(Array(Math.max(b.length, a.length)), (_, i) => [a[i], b[i]]);
+
+			const zippedFingering = zip(chordTabStringNums, tabFingeringList);
+			const fingering = Object.fromEntries(zippedFingering);
+			let pitches = [];
+			for (const [stringNum, fretVal] of Object.entries(fingering)) {
+				const fretNum = parseInt(fretVal);
+				if (isNaN(fretNum)) {
+					continue;
+				}
+
+				const pitch = this.strings[stringNum].at(fretNum);
+				pitches.push(pitch);
+			}
+			return pitches;
+		};
+
 		let chordPitchesMap = {};
 		for (const [chordName, chordTab] of Object.entries(
 			chordStandardTuningTabMap
 		)) {
-			chordPitchesMap[chordName] = this.calcChordPitches(
+			chordPitchesMap[chordName] = calcChordPitches(
 				[...chordTab],
 				chordTabStringNums
 			);
 		}
 
 		return chordPitchesMap;
-	}
-
-	calcChordPitches(tabFingeringList: string[], chordTabStringNums: string[]) {
-		const zip = (a: string[], b: string[]): [string, string][] =>
-			Array.from(Array(Math.max(b.length, a.length)), (_, i) => [a[i], b[i]]);
-
-		const zippedFingering = zip(chordTabStringNums, tabFingeringList);
-		const fingering = Object.fromEntries(zippedFingering);
-		let pitches = [];
-		for (const [stringNum, fretVal] of Object.entries(fingering)) {
-			const fretNum = parseInt(fretVal);
-			if (isNaN(fretNum)) {
-				continue;
-			}
-
-			const pitch = this.strings[stringNum].at(fretNum);
-			pitches.push(pitch);
-		}
-		return pitches;
 	}
 
 	/**
@@ -549,7 +555,6 @@ exports.Guitar = class Guitar {
 		return [];
 	}
 
-	// TODO consolidate single-use functions
 	validateInput(inputPitchString: string): ValidatedLinePitchInput[] {
 		let pitchLines: ValidatedLinePitchInput[] = [];
 
@@ -583,7 +588,20 @@ exports.Guitar = class Guitar {
 
 			let linePitches: PitchName[] = [];
 			while (inputPitchLine !== "") {
-				const pitchCombos = this.getStringCombinations(inputPitchLine);
+				/**
+				 * Function to get combinations of substrings from string
+				 */
+				const getStringCombinations = (inputString: string): string[] => {
+					let list_of_substrings: string[] = [];
+					for (let i = 0; i < inputString.length; i++) {
+						for (let j = i + 1; j < inputString.length + 1; j++) {
+							list_of_substrings.push(inputString.slice(i, j));
+						}
+					}
+					return list_of_substrings;
+				};
+
+				const pitchCombos = getStringCombinations(inputPitchLine);
 
 				const matchingChords = Object.keys(this.chordPitchesMap).filter(
 					(value) => pitchCombos.includes(value)
@@ -623,43 +641,11 @@ exports.Guitar = class Guitar {
 		return pitchLines;
 	}
 
-	/**
-	 * Function to get combinations of substrings from string
-	 */
-	getStringCombinations(inputString: string): string[] {
-		let list_of_substrings: string[] = [];
-		for (let i = 0; i < inputString.length; i++) {
-			for (let j = i + 1; j < inputString.length + 1; j++) {
-				list_of_substrings.push(inputString.slice(i, j));
-			}
-		}
-		return list_of_substrings;
-	}
-
-	/**
-	 * Generate the fingerings for the pitches on the same line/beat
-	 */
-	genPitchFingering(
-		linePitches: ValidatedLinePitchInput
-	): PitchFingerings[] | "break" {
-		if (linePitches === "") {
-			return "break";
-		}
-
-		let linePitchIndivFingerings: PitchFingerings[] = [];
-		for (const pitchName of linePitches) {
-			const pitchFingerings = this.calcPitchFingerings(pitchName);
-			linePitchIndivFingerings.push(pitchFingerings);
-		}
-
-		return linePitchIndivFingerings;
-	}
-
 	// TODO cache values with memoization for efficiency improvements
 	/**
 	 * Create fingerings for a given pitch
 	 */
-	calcPitchFingerings(pitch: PitchName): PitchFingerings {
+	calcPitchFingerings = (pitch: PitchName): PitchFingerings => {
 		let fingerings = [];
 		for (const [stringNumKey, stringVals] of Object.entries(this.strings)) {
 			const pitchFret = stringVals.indexOf(pitch);
@@ -680,6 +666,25 @@ exports.Guitar = class Guitar {
 			pitch: pitch,
 			fingeringOptions: fingerings,
 		};
+	};
+
+	/**
+	 * Generate the fingerings for the pitches on the same line/beat
+	 */
+	genPitchFingering(
+		linePitches: ValidatedLinePitchInput
+	): PitchFingerings[] | "break" {
+		if (linePitches === "") {
+			return "break";
+		}
+
+		let linePitchIndivFingerings: PitchFingerings[] = [];
+		for (const pitchName of linePitches) {
+			const pitchFingerings = this.calcPitchFingerings(pitchName);
+			linePitchIndivFingerings.push(pitchFingerings);
+		}
+
+		return linePitchIndivFingerings;
 	}
 
 	/**
