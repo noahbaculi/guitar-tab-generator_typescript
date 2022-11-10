@@ -760,7 +760,7 @@ exports.Guitar = class Guitar {
 			[]
 		);
 
-		// Remove fingering options with the highest fret spans over the max if
+		// Remove fingering options with the highest fret spans over the max while
 		// fingering options with low fret spans exist
 		let fretSpans = lineFingeringOptions.map((a) => a.fret_span);
 		let maxFretSpan = Math.max(...fretSpans);
@@ -784,10 +784,16 @@ exports.Guitar = class Guitar {
 				}
 				count++;
 				const breakIndex = arr.indexOf(delimiter);
-				sublists.push(arr.slice(0, breakIndex));
+				const sublist = arr.slice(0, breakIndex);
+				if (sublist.length !== 0) {
+					sublists.push(sublist);
+				}
 				arr.splice(0, breakIndex + 1);
 			}
-			sublists.push(arr);
+
+			if (arr.length !== 0) {
+				sublists.push(arr);
+			}
 			return sublists;
 		};
 
@@ -811,53 +817,7 @@ exports.Guitar = class Guitar {
 
 				// Calculate block combo selection criteria and score
 				const blockFingeringOptionsList = blockFingeringCombosList.map(
-					(combo) => {
-						const avgFrets = combo.map((x) => x.avg_fret);
-
-						/**
-						 * Calculate the standard deviation of an array
-						 */
-						const calcStdDev = (arr: number[]) => {
-							const len = arr.length;
-							const mean = arr.reduce((a, b) => a + b) / len;
-							const variance =
-								arr.map((x) => Math.pow(x - mean, 2)).reduce((a, b) => a + b) /
-								len;
-							return Math.sqrt(variance);
-						};
-						const avgFretStdDev = calcStdDev(avgFrets);
-
-						// Calculate a score that includes smoothness to account
-						//  for the ordering of the average frets for each beat
-						//  Ex: average frets of [7, 7, 8] is preferred over [7, 8, 7]
-
-						// Calculate smoothness from the StdDev of the
-						// differences
-
-						/**
-						 * Calculate the differences between between pairs of consecutive elements
-						 */
-						const calcDiffs = (arr: number[]) => {
-							return arr.slice(1).map((val, index) => val - arr[index]);
-						};
-						const avgFretDiffs = calcDiffs(avgFrets);
-						const avgFretSmoothness = calcStdDev(avgFretDiffs);
-
-						// Percentage weightings are arbitrary. Main contributor is
-						// still the dispersion of the average frets (StdDec). The
-						// extra smoothness component is mostly meant to distinguish
-						// fingering options with the same average fret dispersions.
-						const score = 0.9 * avgFretStdDev + 0.1 * avgFretSmoothness;
-
-						return {
-							avg_frets: avgFrets,
-							avg_fret_stddev: avgFretStdDev,
-							avg_fret_steps: avgFretDiffs,
-							avg_fret_steps_stddev_smoothness: avgFretSmoothness,
-							combo_score: score,
-							combo: combo,
-						};
-					}
+					this.calcFingeringOptionCriteria
 				);
 
 				// Find option with the lowest score. Could combine with the
@@ -884,6 +844,57 @@ exports.Guitar = class Guitar {
 		);
 		return bestFingerings;
 	}
+
+	/**
+	 * Calculate the selection criteria and score for a fingering option combination
+	 */
+	calcFingeringOptionCriteria = (combo: FingeringOption[]) => {
+		const avgFrets = combo.map((x) => x.avg_fret).filter((a) => a !== 0);
+
+		/**
+		 * Calculate the standard deviation of an array
+		 */
+		const calcStdDev = (arr: number[]) => {
+			const len = arr.length;
+			const mean = arr.reduce((a, b) => a + b) / len;
+			const variance =
+				arr.map((x) => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / len;
+			return Math.sqrt(variance);
+		};
+		const avgFretStdDev = calcStdDev(avgFrets);
+
+		// Calculate a score that includes smoothness to account
+		//  for the ordering of the average frets for each beat
+		//  Ex: average frets of [7, 7, 8] is preferred over [7, 8, 7]
+
+		// Calculate smoothness from the StdDev of the
+		// differences
+
+		/**
+		 * Calculate the differences between between pairs of consecutive elements
+		 */
+		const calcDiffs = (arr: number[]) => {
+			return arr.slice(1).map((val, index) => val - arr[index]);
+		};
+
+		const avgFretDiffs = calcDiffs(avgFrets);
+		const avgFretSmoothness = calcStdDev(avgFretDiffs);
+
+		// Percentage weightings are arbitrary. Main contributor is
+		// still the dispersion of the average frets (StdDec). The
+		// extra smoothness component is mostly meant to distinguish
+		// fingering options with the same average fret dispersions.
+		const score = 0.9 * avgFretStdDev + 0.1 * avgFretSmoothness;
+
+		return {
+			avg_frets: avgFrets,
+			avg_fret_stddev: avgFretStdDev,
+			avg_fret_steps: avgFretDiffs,
+			avg_fret_steps_stddev_smoothness: avgFretSmoothness,
+			combo_score: score,
+			combo: combo,
+		};
+	};
 
 	/**
 	 * Combinate product of N number of lists
