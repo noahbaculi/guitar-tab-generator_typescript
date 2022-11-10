@@ -273,10 +273,8 @@ exports.Guitar = (_a = class Guitar {
             this.maxFretSpan = 4;
             /**
              * Combinate product of N number of lists
-             * @param listOfListsToCombinate
-             * @returns
              */
-            this.cartesian = (...listOfListsToCombinate) => listOfListsToCombinate.reduce((a, b) => a.flatMap((d) => b.map((e) => [d, e].flat())));
+            this.cartesian = (listOfListsToCombinate) => listOfListsToCombinate.reduce((a, b) => a.flatMap((d) => b.map((e) => [d, e].flat())));
             this.chordPitchesMap = __classPrivateFieldGet(this, _Guitar_instances, "m", _Guitar_generateChordPitches).call(this);
             /**
              * Tunings reference with tuning adjustments from Standard
@@ -354,12 +352,10 @@ exports.Guitar = (_a = class Guitar {
          */
         generateTab(inputPitchString) {
             const pitchLines = this.validateInput(inputPitchString);
-            const linePitchFingerings = pitchLines.map(this.genLineFingering, this);
+            const linePitchFingerings = pitchLines.map(this.genPitchFingering, this);
             const lineFingeringOptions = linePitchFingerings.map(this.genLineFingeringOptions, this);
             print(lineFingeringOptions);
-            // print(fingeringLineOptions);
             // TODO implement fingering optimizer
-            // this.createMultiBeatFingerings(fingeringOptions);
             return [];
         }
         validateInput(inputPitchString) {
@@ -435,7 +431,7 @@ exports.Guitar = (_a = class Guitar {
          * Generate the fingerings for the pitches on the same line/beat
          * @param linePitches
          */
-        genLineFingering(linePitches) {
+        genPitchFingering(linePitches) {
             if (linePitches === "") {
                 return "break";
             }
@@ -474,7 +470,6 @@ exports.Guitar = (_a = class Guitar {
         }
         /**
          * Generate fingering options from each line fingerings
-         * @param fingeringLine
          */
         genLineFingeringOptions(fingeringLine) {
             if (fingeringLine === "break") {
@@ -483,7 +478,7 @@ exports.Guitar = (_a = class Guitar {
             const linePitches = fingeringLine.map((a) => a.pitch);
             const linePitchFingeringOptions = fingeringLine.map((a) => a.fingeringOptions);
             // Calculate list of combinations
-            let lineFingeringCombosList = this.cartesian(...linePitchFingeringOptions);
+            let lineFingeringCombosList = this.cartesian(linePitchFingeringOptions);
             // Only one combination so wrap in enclosing array for processing
             if (!Array.isArray(lineFingeringCombosList.at(0))) {
                 lineFingeringCombosList = lineFingeringCombosList.map((a) => [a]);

@@ -572,16 +572,13 @@ exports.Guitar = class Guitar {
 	 */
 	generateTab(inputPitchString: string): [] {
 		const pitchLines = this.validateInput(inputPitchString);
-		const linePitchFingerings = pitchLines.map(this.genLineFingering, this);
+		const linePitchFingerings = pitchLines.map(this.genPitchFingering, this);
 		const lineFingeringOptions = linePitchFingerings.map(
 			this.genLineFingeringOptions,
 			this
 		);
-		print(lineFingeringOptions);
-		// print(fingeringLineOptions);
+		// print(lineFingeringOptions);
 		// TODO implement fingering optimizer
-		// this.createMultiBeatFingerings(fingeringOptions);
-
 		return [];
 	}
 
@@ -676,7 +673,7 @@ exports.Guitar = class Guitar {
 	 * Generate the fingerings for the pitches on the same line/beat
 	 * @param linePitches
 	 */
-	genLineFingering(linePitches: ValidatedPitchInput): LineFingering {
+	genPitchFingering(linePitches: ValidatedPitchInput): LineFingering {
 		if (linePitches === "") {
 			return "break";
 		}
@@ -720,7 +717,6 @@ exports.Guitar = class Guitar {
 
 	/**
 	 * Generate fingering options from each line fingerings
-	 * @param fingeringLine
 	 */
 	genLineFingeringOptions(
 		fingeringLine: LineFingering
@@ -734,7 +730,7 @@ exports.Guitar = class Guitar {
 		);
 
 		// Calculate list of combinations
-		let lineFingeringCombosList = this.cartesian(...linePitchFingeringOptions);
+		let lineFingeringCombosList = this.cartesian(linePitchFingeringOptions);
 
 		// Only one combination so wrap in enclosing array for processing
 		if (!Array.isArray(lineFingeringCombosList.at(0))) {
@@ -807,10 +803,8 @@ exports.Guitar = class Guitar {
 
 	/**
 	 * Combinate product of N number of lists
-	 * @param listOfListsToCombinate
-	 * @returns
 	 */
-	cartesian = (...listOfListsToCombinate: any[][]) =>
+	cartesian = (listOfListsToCombinate: any[][]) =>
 		listOfListsToCombinate.reduce((a, b) =>
 			a.flatMap((d) => b.map((e) => [d, e].flat()))
 		);

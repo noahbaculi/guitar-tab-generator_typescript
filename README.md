@@ -24,7 +24,7 @@ String of pitches and chords for where the pitches or chord for each beat is sep
 ```typescript
 Eb4
 B4
-E2B4
+F2B4
 A2A3
 
 Em chord
@@ -49,7 +49,7 @@ Perform the following standardizations to the input string:
 [
   [ 'D#4' ],
   [ 'B4' ],
-  [ 'E2', 'B4' ],
+  [ 'F2', 'B4' ],
   [ 'A2', 'A3' ],
   '',
   [ 'E4', 'B3', 'G3', 'E3', 'B2', 'E2' ]
@@ -58,7 +58,7 @@ Perform the following standardizations to the input string:
 
 </details>
 
-### `linePitchFingerings <- genLineFingering()`
+### `linePitchFingerings <- genPitchFingering()`
 
 Generate the fingerings for the individual pitches for each line/beat.
 
@@ -88,9 +88,9 @@ Generate the fingerings for the individual pitches for each line/beat.
     }
   ],
   [
-    { pitch: 'E2',
+    { pitch: 'F2',
       fingeringOptions: [
-        { stringNum: 6, fret: 0 }
+        { stringNum: 6, fret: 1 }
       ]
     },
     {
@@ -185,37 +185,82 @@ Generate compatible fingering combinations for each set of pitches for later com
 ```typescript
 [
   [
-    [
-      { stringNum: 2, fret: 4 },
-      { stringNum: 3, fret: 8 },
-      { stringNum: 4, fret: 13 }
-    ]
+    {
+      avg_fret: 4,
+      fret_span: 0,
+      fingering: [ { stringNum: 2, fret: 4 } ]
+    },
+    {
+      avg_fret: 8,
+      fret_span: 0,
+      fingering: [ { stringNum: 3, fret: 8 } ]
+    },
+    {
+      avg_fret: 13,
+      fret_span: 0,
+      fingering: [ { stringNum: 4, fret: 13 } ]
+    }
   ],
   [
-    [
-      { stringNum: 1, fret: 7 },
-      { stringNum: 2, fret: 12 },
-      { stringNum: 3, fret: 16 }
-    ]
+    {
+      avg_fret: 7,
+      fret_span: 0,
+      fingering: [ { stringNum: 1, fret: 7 } ]
+    },
+    {
+      avg_fret: 12,
+      fret_span: 0,
+      fingering: [ { stringNum: 2, fret: 12 } ]
+    },
+    {
+      avg_fret: 16,
+      fret_span: 0,
+      fingering: [ { stringNum: 3, fret: 16 } ]
+    }
   ],
   [
-    [ { stringNum: 5, fret: 0 }, { stringNum: 3, fret: 2 } ],    
-    [ { stringNum: 5, fret: 0 }, { stringNum: 4, fret: 7 } ],    
-    [ { stringNum: 5, fret: 0 }, { stringNum: 6, fret: 17 } ],   
-    [ { stringNum: 6, fret: 5 }, { stringNum: 3, fret: 2 } ],    
-    [ { stringNum: 6, fret: 5 }, { stringNum: 4, fret: 7 } ],    
-    [ { stringNum: 6, fret: 5 }, { stringNum: 5, fret: 12 } ]    
+    {
+      avg_fret: 4,
+      fret_span: 6,
+      fingering: [ { stringNum: 6, fret: 1 }, { stringNum: 1, fret: 7 } ]
+    }
+  ],
+  [
+    {
+      avg_fret: 2,
+      fret_span: 0,
+      fingering: [ { stringNum: 5, fret: 0 }, { stringNum: 3, fret: 2 } ]
+    },
+    {
+      avg_fret: 7,
+      fret_span: 0,
+      fingering: [ { stringNum: 5, fret: 0 }, { stringNum: 4, fret: 7 } ]
+    },
+    {
+      avg_fret: 17,
+      fret_span: 0,
+      fingering: [ { stringNum: 5, fret: 0 }, { stringNum: 6, fret: 17 } ]
+    },
+    {
+      avg_fret: 6,
+      fret_span: 2,
+      fingering: [ { stringNum: 6, fret: 5 }, { stringNum: 4, fret: 7 } ]
+    }
   ],
   'break',
   [
-    [
-      { stringNum: 1, fret: 0 },
-      { stringNum: 2, fret: 0 },
-      { stringNum: 3, fret: 0 },
-      { stringNum: 4, fret: 2 },
-      { stringNum: 5, fret: 2 },
-      { stringNum: 6, fret: 0 }
-    ]
+    {
+      avg_fret: 2,
+      fret_span: 0,
+      fingering: [
+        { stringNum: 1, fret: 0 },
+        { stringNum: 2, fret: 0 },
+        { stringNum: 3, fret: 0 },
+        { stringNum: 4, fret: 2 },
+        { stringNum: 5, fret: 2 },
+        { stringNum: 6, fret: 0 }
+      ]
+    }
   ]
 ]
 ```

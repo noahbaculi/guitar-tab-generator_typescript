@@ -9,7 +9,7 @@ const guitar = new GuitarModule2.Guitar("");
 
 const testNotesString = `Eb4
 B4
-E2B4
+F2B4
 A2A3
 
 Em chord`;
