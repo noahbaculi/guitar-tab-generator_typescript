@@ -270,6 +270,7 @@ exports.Guitar = (_a = class Guitar {
             this.tuningName = "standard";
             this.capo = 0;
             this.numFrets = 18;
+            this.maxFretSpan = 4;
             /**
              * Combinate product of N number of lists
              * @param listOfListsToCombinate
@@ -350,13 +351,12 @@ exports.Guitar = (_a = class Guitar {
         /**
          * Function to generate a set of TAB fingerings for a guitar object
          * @param inputPitchString
-         * @returns Empty List
          */
         generateTab(inputPitchString) {
             const pitchLines = this.validateInput(inputPitchString);
-            const fingeringLines = pitchLines.map(this.generateLineFingering, this);
-            const fingeringLineOptions = fingeringLines.map(this.generateLineFingeringOptions, this);
-            print(fingeringLines);
+            const linePitchFingerings = pitchLines.map(this.genLineFingering, this);
+            const lineFingeringOptions = linePitchFingerings.map(this.genLineFingeringOptions, this);
+            print(lineFingeringOptions);
             // print(fingeringLineOptions);
             // TODO implement fingering optimizer
             // this.createMultiBeatFingerings(fingeringOptions);
@@ -421,7 +421,6 @@ exports.Guitar = (_a = class Guitar {
         /**
          * Function to get combinations of substring from string
          * @param inputString
-         * @returns Empty List
          */
         getStringCombinations(inputString) {
             let list_of_strings = [];
@@ -435,9 +434,8 @@ exports.Guitar = (_a = class Guitar {
         /**
          * Generate the fingerings for the pitches on the same line/beat
          * @param linePitches
-         * @returns
          */
-        generateLineFingering(linePitches) {
+        genLineFingering(linePitches) {
             if (linePitches === "") {
                 return "break";
             }
@@ -452,7 +450,6 @@ exports.Guitar = (_a = class Guitar {
         /**
          * Create fingerings for a given pitch
          * @param pitch Validated pitch name
-         * @returns
          */
         calcPitchFingerings(pitch) {
             let fingerings = [];
@@ -472,37 +469,64 @@ exports.Guitar = (_a = class Guitar {
             }
             return {
                 pitch: pitch,
-                fingerings: fingerings,
+                fingeringOptions: fingerings,
             };
         }
-        // TODO convert to mapped function to apply to the fingeringLines array
-        // directly
         /**
          * Generate fingering options from each line fingerings
          * @param fingeringLine
          */
-        generateLineFingeringOptions(fingeringLine) {
+        genLineFingeringOptions(fingeringLine) {
             if (fingeringLine === "break") {
                 return "break";
             }
             const linePitches = fingeringLine.map((a) => a.pitch);
-            const linePitchFingerings = fingeringLine.map((a) => a.fingerings);
+            const linePitchFingeringOptions = fingeringLine.map((a) => a.fingeringOptions);
             // Calculate list of combinations
-            let lineFingeringCombosList = this.cartesian(...linePitchFingerings);
+            let lineFingeringCombosList = this.cartesian(...linePitchFingeringOptions);
             // Only one combination so wrap in enclosing array for processing
             if (!Array.isArray(lineFingeringCombosList.at(0))) {
-                lineFingeringCombosList = [lineFingeringCombosList];
+                lineFingeringCombosList = lineFingeringCombosList.map((a) => [a]);
             }
             const lineFingeringCombos = (new Set(lineFingeringCombosList));
-            // Check for fingering combos with overlapping strings numbers
-            for (const lineFingeringCombo of lineFingeringCombos) {
+            const calc_range = (items, excludeZero = false) => {
+                if (excludeZero === true) {
+                    items = items.filter((x) => x !== 0);
+                }
+                return Math.max(...items) - Math.min(...items);
+            };
+            const calc_average = (items, excludeZero = false) => {
+                if (excludeZero === true) {
+                    items = items.filter((x) => x !== 0);
+                }
+                return items.reduce((a, b) => a + b) / items.length;
+            };
+            let lineFingeringOptions = [...lineFingeringCombos].reduce(function (result, lineFingeringCombo) {
+                // Do not include fingering combos with overlapping strings numbers
                 const numPitches = lineFingeringCombo.length;
                 const uniqueStringNums = new Set(lineFingeringCombo.map((a) => a.stringNum));
                 if (uniqueStringNums.size !== numPitches) {
-                    lineFingeringCombos.delete(lineFingeringCombo);
+                    return result;
                 }
+                const output = {
+                    avg_fret: calc_average(lineFingeringCombo.map((a) => a.fret), true),
+                    fret_span: calc_range(lineFingeringCombo.map((a) => a.fret), true),
+                    fingering: lineFingeringCombo,
+                };
+                result.push(output);
+                return result;
+            }, []);
+            // Remove fingering options with the highest fret spans over the max if
+            // fingering options with low fret spans exist
+            let fretSpans = lineFingeringOptions.map((a) => a.fret_span);
+            let maxFretSpan = Math.max(...fretSpans);
+            while (lineFingeringOptions.length > 1 && maxFretSpan > this.maxFretSpan) {
+                fretSpans = lineFingeringOptions.map((a) => a.fret_span);
+                maxFretSpan = Math.max(...fretSpans);
+                const maxFretSpanFingeringIndex = fretSpans.indexOf(maxFretSpan);
+                lineFingeringOptions.splice(maxFretSpanFingeringIndex, 1);
             }
-            return Array.from(lineFingeringCombos);
+            return lineFingeringOptions;
         }
         createMultiBeatFingerings() { }
     },

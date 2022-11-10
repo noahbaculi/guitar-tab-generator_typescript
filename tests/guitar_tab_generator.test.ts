@@ -597,18 +597,18 @@ describe("Guitar Fingering Lines Calculations", () => {
 
 		const input = [["E2"], ["A2", "A3"], "", ["E4", "C#4", "G3", "E3", "A2"]];
 		const output = [
-			[{ pitch: "E2", fingerings: [{ stringNum: 6, fret: 0 }] }],
+			[{ pitch: "E2", fingeringOptions: [{ stringNum: 6, fret: 0 }] }],
 			[
 				{
 					pitch: "A2",
-					fingerings: [
+					fingeringOptions: [
 						{ stringNum: 5, fret: 0 },
 						{ stringNum: 6, fret: 5 },
 					],
 				},
 				{
 					pitch: "A3",
-					fingerings: [
+					fingeringOptions: [
 						{ stringNum: 3, fret: 2 },
 						{ stringNum: 4, fret: 7 },
 						{ stringNum: 5, fret: 12 },
@@ -620,7 +620,7 @@ describe("Guitar Fingering Lines Calculations", () => {
 			[
 				{
 					pitch: "E4",
-					fingerings: [
+					fingeringOptions: [
 						{ stringNum: 1, fret: 0 },
 						{ stringNum: 2, fret: 5 },
 						{ stringNum: 3, fret: 9 },
@@ -629,7 +629,7 @@ describe("Guitar Fingering Lines Calculations", () => {
 				},
 				{
 					pitch: "C#4",
-					fingerings: [
+					fingeringOptions: [
 						{ stringNum: 2, fret: 2 },
 						{ stringNum: 3, fret: 6 },
 						{ stringNum: 4, fret: 11 },
@@ -638,7 +638,7 @@ describe("Guitar Fingering Lines Calculations", () => {
 				},
 				{
 					pitch: "G3",
-					fingerings: [
+					fingeringOptions: [
 						{ stringNum: 3, fret: 0 },
 						{ stringNum: 4, fret: 5 },
 						{ stringNum: 5, fret: 10 },
@@ -647,7 +647,7 @@ describe("Guitar Fingering Lines Calculations", () => {
 				},
 				{
 					pitch: "E3",
-					fingerings: [
+					fingeringOptions: [
 						{ stringNum: 4, fret: 2 },
 						{ stringNum: 5, fret: 7 },
 						{ stringNum: 6, fret: 12 },
@@ -655,7 +655,7 @@ describe("Guitar Fingering Lines Calculations", () => {
 				},
 				{
 					pitch: "A2",
-					fingerings: [
+					fingeringOptions: [
 						{ stringNum: 5, fret: 0 },
 						{ stringNum: 6, fret: 5 },
 					],
@@ -663,7 +663,7 @@ describe("Guitar Fingering Lines Calculations", () => {
 			],
 		];
 
-		expect(input.map(guitar.generateLineFingering, guitar)).toEqual(output);
+		expect(input.map(guitar.genLineFingering, guitar)).toEqual(output);
 	});
 });
 
@@ -811,8 +811,6 @@ describe("Guitar Fingering Line Options Calculations", () => {
 			],
 		];
 
-		expect(input.map(guitar.generateLineFingeringOptions, guitar)).toEqual(
-			output
-		);
+		expect(input.map(guitar.genLineFingeringOptions, guitar)).toEqual(output);
 	});
 });

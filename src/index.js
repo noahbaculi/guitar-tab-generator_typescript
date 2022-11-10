@@ -6,12 +6,8 @@ const guitar = new GuitarModule2.Guitar("");
 // }
 const testNotesString = `Eb4
 B4
+E2B4
 A2A3
 
 Em chord`;
-// guitar.generateLineFingerings([
-// 	["E2"],
-// 	["A2", "A3"],
-// 	["E4", "C#4", "G3", "E3", "A2"],
-// ]);
 guitar.generateTab(testNotesString);
