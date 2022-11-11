@@ -875,6 +875,20 @@ describe("Guitar Line Fingering Options Calculation", () => {
 			linePitchFingerings.map(guitar.genLineFingeringOptions, guitar)
 		).toEqual(lineFingeringOptions);
 	});
+
+	it("handles improper input", function () {
+		const guitar = new GuitarModule.Guitar();
+		const linePitchFingerings = [
+			[
+				{ pitch: "E2", fingeringOptions: [{ stringNum: 6, fret: 0 }] },
+				{ pitch: "F2", fingeringOptions: [{ stringNum: 6, fret: 1 }] },
+				{ pitch: "F#2", fingeringOptions: [{ stringNum: 6, fret: 2 }] },
+			],
+		];
+		expect(() => {
+			linePitchFingerings.map(guitar.genLineFingeringOptions, guitar);
+		}).toThrow("an impossible combination");
+	});
 });
 
 describe("Guitar Fingering Option Criteria Calculation", () => {
