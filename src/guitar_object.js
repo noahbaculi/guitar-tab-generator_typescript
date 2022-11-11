@@ -523,10 +523,6 @@ exports.Guitar = (_a = class Guitar {
             const linePitchFingeringOptions = fingeringLine.map((a) => a.fingeringOptions);
             // Calculate list of combinations
             let lineFingeringCombosList = this.cartesian(linePitchFingeringOptions);
-            // Only one combination so wrap in enclosing array for processing
-            if (!Array.isArray(lineFingeringCombosList.at(0))) {
-                lineFingeringCombosList = lineFingeringCombosList.map((a) => [a]);
-            }
             const lineFingeringCombos = (new Set(lineFingeringCombosList));
             const calc_range = (items, excludeZero = false) => {
                 if (excludeZero === true) {
@@ -542,7 +538,14 @@ exports.Guitar = (_a = class Guitar {
                 const numPitches = lineFingeringCombo.length;
                 const uniqueStringNums = new Set(lineFingeringCombo.map((a) => a.stringNum));
                 if (uniqueStringNums.size !== numPitches) {
-                    return result;
+                    if (lineFingeringCombos.size === 1) {
+                        const errOutputCombo = JSON.stringify(lineFingeringCombo);
+                        const errOutput = `Fingerings for the pitches ${linePitches} is an impossible combination of ${errOutputCombo}.'`;
+                        throw new Error(errOutput);
+                    }
+                    else {
+                        return result;
+                    }
                 }
                 const output = {
                     avg_fret: this.calc_average(lineFingeringCombo.map((a) => a.fret), true),

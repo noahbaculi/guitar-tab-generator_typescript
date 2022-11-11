@@ -702,11 +702,6 @@ exports.Guitar = class Guitar {
 		// Calculate list of combinations
 		let lineFingeringCombosList = this.cartesian(linePitchFingeringOptions);
 
-		// Only one combination so wrap in enclosing array for processing
-		if (!Array.isArray(lineFingeringCombosList.at(0))) {
-			lineFingeringCombosList = lineFingeringCombosList.map((a) => [a]);
-		}
-
 		const lineFingeringCombos = <Set<Fingering[]>>(
 			new Set(lineFingeringCombosList)
 		);
@@ -729,7 +724,13 @@ exports.Guitar = class Guitar {
 					lineFingeringCombo.map((a) => a.stringNum)
 				);
 				if (uniqueStringNums.size !== numPitches) {
-					return result;
+					if (lineFingeringCombos.size === 1) {
+						const errOutputCombo = JSON.stringify(lineFingeringCombo);
+						const errOutput = `Fingerings for the pitches ${linePitches} is an impossible combination of ${errOutputCombo}.'`;
+						throw new Error(errOutput);
+					} else {
+						return result;
+					}
 				}
 
 				const output = {
