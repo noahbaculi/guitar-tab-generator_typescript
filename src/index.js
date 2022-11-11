@@ -5,20 +5,9 @@ const guitar = new GuitarModule2.Guitar("");
 // 	console.log(`${string} | ${guitar.strings[string][0]}`);
 // }
 const testNotesString = `
-G3
-A3
-Bb3
-F4
-F4C4Bb3
-CChord
-CChord
-CChord
+E2
 
-D4
-
-C4
-Bb3
-A3
+Bb3F4E4C4D4C4Bb3
 `;
 const output = guitar.generateTab(testNotesString);
 console.log(output);

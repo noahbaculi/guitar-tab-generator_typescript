@@ -587,26 +587,39 @@ exports.Guitar = (_a = class Guitar {
             };
             // Split list of options into sublists separated by measure breaks
             const lineFingeringOptionsBlocks = (splitArrayOn(lineFingeringOptions, "break"));
+            // TODO Investigate progressive calculation technique where a block
+            // TODO would move for each beat consideration to include previously chosen
+            // TODO fingerings but also future fingering options
             // Calculate the most optimal fingering option for each block
             const bestFingeringOptionBlocks = lineFingeringOptionsBlocks.map((lineFingeringOptionsBlock) => {
-                // Calculate list of combinations
+                // Check for excessive block size to avoid exponential memory
+                // usage from cartesian()
+                let lineFingeringOptionsSubBlocks = [lineFingeringOptionsBlock];
                 if (lineFingeringOptionsBlock.length > 8) {
-                    //
-                    print(lineFingeringOptionsBlock);
-                    throw new Error();
+                    /**
+                     * Split array into array of arrays of a specified chunk size
+                     */
+                    const chunkArray = (array, chunkSize) => {
+                        const numberOfChunks = Math.ceil(array.length / chunkSize);
+                        return [...Array(numberOfChunks)].map((_, index) => {
+                            return array.slice(index * chunkSize, (index + 1) * chunkSize);
+                        });
+                    };
+                    lineFingeringOptionsSubBlocks = chunkArray(lineFingeringOptionsBlock, 8);
                 }
-                const blockFingeringCombosList = (this.cartesian(lineFingeringOptionsBlock));
-                // Handle case where there is only one option
-                if (blockFingeringCombosList.length === 1) {
-                    return blockFingeringCombosList;
-                }
-                // Calculate block combo selection criteria and score
-                const blockFingeringOptionsList = blockFingeringCombosList.map(this.calcFingeringOptionCriteria);
-                // Find option with the lowest score. Could combine with the
-                // calculation step to lower memory footprint but combining would
-                // impede debuggability
-                const bestBlockOption = blockFingeringOptionsList.reduce((lowest, current) => lowest.combo_score < current.combo_score ? lowest : current);
-                return bestBlockOption.combo;
+                const bestSubBlockOptionFingerings = lineFingeringOptionsSubBlocks.map((lineFingeringOptionsSubBlock) => {
+                    // Calculate list of combinations
+                    const blockFingeringCombosList = (this.cartesian(lineFingeringOptionsSubBlock));
+                    // Calculate block combo selection criteria and score
+                    const blockFingeringOptionsList = blockFingeringCombosList.map(this.calcFingeringOptionCriteria);
+                    // Find option with the lowest score. Could combine with the
+                    // calculation step to lower memory footprint but combining would
+                    // impede debuggability
+                    const bestBlockOption = blockFingeringOptionsList.reduce((lowest, current) => lowest.combo_score < current.combo_score ? lowest : current);
+                    return bestBlockOption.combo;
+                });
+                const bestSubBlockOptionFingering = [].concat(...bestSubBlockOptionFingerings.flat());
+                return bestSubBlockOptionFingering;
             });
             const bestFingeringsNoBreaks = bestFingeringOptionBlocks.map((fingeringOptions) => fingeringOptions.map((fingeringOption) => fingeringOption.fingering));
             // Add back measure breaks and flatten
