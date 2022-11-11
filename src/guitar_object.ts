@@ -780,10 +780,10 @@ exports.Guitar = class Guitar {
 			let sublists = [];
 			let count = 0;
 			while (arr.includes(delimiter)) {
+				count++;
 				if (count > limit) {
 					throw new Error(`Array split delimiter limit reached.`);
 				}
-				count++;
 				const breakIndex = arr.indexOf(delimiter);
 				const sublist = arr.slice(0, breakIndex);
 				if (sublist.length !== 0) {

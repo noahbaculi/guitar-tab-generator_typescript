@@ -3463,3 +3463,402 @@ describe("Guitar Fingering Option Criteria Calculation", () => {
 		).toEqual(blockFingeringOptionsList);
 	});
 });
+
+describe("Guitar Fingering Optimization", () => {
+	let normalGuitar;
+	beforeEach(() => {
+		normalGuitar = new GuitarModule.Guitar();
+	});
+
+	it("calculates fingering option criteria for 1 beat", function () {
+		const lineFingeringOptions = [
+			[
+				{
+					avg_fret: 0,
+					fret_span: 0,
+					fingering: [{ stringNum: 6, fret: 0 }],
+				},
+			],
+		];
+		const bestFingerings = [[{ stringNum: 6, fret: 0 }]];
+
+		expect(normalGuitar.optimizeFingerings(lineFingeringOptions)).toEqual(
+			bestFingerings
+		);
+	});
+
+	it("calculates fingering option criteria for 1 beat with extra breaks", function () {
+		const lineFingeringOptions = [
+			"break",
+			"break",
+			"break",
+			[
+				{
+					avg_fret: 0,
+					fret_span: 0,
+					fingering: [{ stringNum: 6, fret: 0 }],
+				},
+			],
+			"break",
+			"break",
+		];
+		const bestFingerings = [[{ stringNum: 6, fret: 0 }]];
+
+		expect(normalGuitar.optimizeFingerings(lineFingeringOptions)).toEqual(
+			bestFingerings
+		);
+	});
+
+	it("calculates fingering option criteria for 4 beats with extra breaks", function () {
+		const lineFingeringOptions = [
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+			],
+			[
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+			],
+			[
+				{
+					avg_fret: 2,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 3, fret: 2 },
+					],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+				{
+					avg_fret: 17,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 6, fret: 17 },
+					],
+				},
+				{
+					avg_fret: 6,
+					fret_span: 2,
+					fingering: [
+						{ stringNum: 6, fret: 5 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			"break",
+			"break",
+			"break",
+			[
+				{
+					avg_fret: 4,
+					fret_span: 6,
+					fingering: [
+						{ stringNum: 6, fret: 1 },
+						{ stringNum: 1, fret: 7 },
+					],
+				},
+			],
+		];
+		const bestFingerings = [
+			[{ stringNum: 3, fret: 8 }],
+			[{ stringNum: 1, fret: 7 }],
+			[
+				{ stringNum: 5, fret: 0 },
+				{ stringNum: 4, fret: 7 },
+			],
+			"break",
+			[
+				{ stringNum: 6, fret: 1 },
+				{ stringNum: 1, fret: 7 },
+			],
+		];
+
+		expect(normalGuitar.optimizeFingerings(lineFingeringOptions)).toEqual(
+			bestFingerings
+		);
+	});
+
+	it("calculates fingering option criteria for 14 beats with no breaks to test sub-blocks", function () {
+		const lineFingeringOptions = [
+			[
+				{
+					avg_fret: 0,
+					fret_span: 0,
+					fingering: [{ stringNum: 6, fret: 0 }],
+				},
+			],
+			[
+				{
+					avg_fret: 1,
+					fret_span: 0,
+					fingering: [{ stringNum: 6, fret: 1 }],
+				},
+			],
+			[
+				{
+					avg_fret: 2,
+					fret_span: 0,
+					fingering: [{ stringNum: 6, fret: 2 }],
+				},
+			],
+			[
+				{
+					avg_fret: 3,
+					fret_span: 0,
+					fingering: [{ stringNum: 6, fret: 3 }],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 6, fret: 4 }],
+				},
+			],
+			[
+				{
+					avg_fret: 0,
+					fret_span: 0,
+					fingering: [{ stringNum: 5, fret: 0 }],
+				},
+				{
+					avg_fret: 5,
+					fret_span: 0,
+					fingering: [{ stringNum: 6, fret: 5 }],
+				},
+			],
+			[
+				{
+					avg_fret: 1,
+					fret_span: 0,
+					fingering: [{ stringNum: 5, fret: 1 }],
+				},
+				{
+					avg_fret: 6,
+					fret_span: 0,
+					fingering: [{ stringNum: 6, fret: 6 }],
+				},
+			],
+			[
+				{
+					avg_fret: 2,
+					fret_span: 0,
+					fingering: [{ stringNum: 5, fret: 2 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 6, fret: 7 }],
+				},
+			],
+			[
+				{
+					avg_fret: 3,
+					fret_span: 0,
+					fingering: [{ stringNum: 5, fret: 3 }],
+				},
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 6, fret: 8 }],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 5, fret: 4 }],
+				},
+				{
+					avg_fret: 9,
+					fret_span: 0,
+					fingering: [{ stringNum: 6, fret: 9 }],
+				},
+			],
+			[
+				{
+					avg_fret: 0,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 0 }],
+				},
+				{
+					avg_fret: 5,
+					fret_span: 0,
+					fingering: [{ stringNum: 5, fret: 5 }],
+				},
+				{
+					avg_fret: 10,
+					fret_span: 0,
+					fingering: [{ stringNum: 6, fret: 10 }],
+				},
+			],
+			[
+				{
+					avg_fret: 1,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 1 }],
+				},
+				{
+					avg_fret: 6,
+					fret_span: 0,
+					fingering: [{ stringNum: 5, fret: 6 }],
+				},
+				{
+					avg_fret: 11,
+					fret_span: 0,
+					fingering: [{ stringNum: 6, fret: 11 }],
+				},
+			],
+			[
+				{
+					avg_fret: 2,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 2 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 5, fret: 7 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 6, fret: 12 }],
+				},
+			],
+			[
+				{
+					avg_fret: 3,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 3 }],
+				},
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 5, fret: 8 }],
+				},
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 6, fret: 13 }],
+				},
+			],
+		];
+		const bestFingerings = [
+			[{ stringNum: 6, fret: 0 }],
+			[{ stringNum: 6, fret: 1 }],
+			[{ stringNum: 6, fret: 2 }],
+			[{ stringNum: 6, fret: 3 }],
+			[{ stringNum: 6, fret: 4 }],
+			[{ stringNum: 5, fret: 0 }],
+			[{ stringNum: 5, fret: 1 }],
+			[{ stringNum: 5, fret: 2 }],
+			[{ stringNum: 5, fret: 3 }],
+			[{ stringNum: 5, fret: 4 }],
+			[{ stringNum: 4, fret: 0 }],
+			[{ stringNum: 4, fret: 1 }],
+			[{ stringNum: 4, fret: 2 }],
+			[{ stringNum: 4, fret: 3 }],
+		];
+
+		expect(normalGuitar.optimizeFingerings(lineFingeringOptions)).toEqual(
+			bestFingerings
+		);
+	});
+
+	it("does not calculate fingering option criteria for more than 100 beats", function () {
+		const baseArr = [
+			[
+				{
+					avg_fret: 0,
+					fret_span: 0,
+					fingering: [{ stringNum: 6, fret: 0 }],
+				},
+			],
+			"break",
+		];
+		const lineFingeringOptions = Array(101).fill(baseArr).flat();
+
+		expect(() => {
+			normalGuitar.optimizeFingerings(lineFingeringOptions);
+		}).toThrow("Array split delimiter limit reached");
+	});
+});
+
+describe("Guitar Tab Generation", () => {
+	it("generates tab for Fur Elise intro with standard tuning", function () {
+		const guitar = new GuitarModule.Guitar();
+
+		const inputPitchString = `E4
+		Eb4
+		E4
+		Eb4
+		E4
+		B3
+		D4
+		C4
+
+		A2A3
+		E3
+		A3
+		C3
+		E3
+		A3`;
+
+		const output = [
+			[{ stringNum: 1, fret: 0 }],
+			[{ stringNum: 2, fret: 4 }],
+			[{ stringNum: 1, fret: 0 }],
+			[{ stringNum: 2, fret: 4 }],
+			[{ stringNum: 1, fret: 0 }],
+			[{ stringNum: 3, fret: 4 }],
+			[{ stringNum: 2, fret: 3 }],
+			[{ stringNum: 3, fret: 5 }],
+			"break",
+			[
+				{ stringNum: 5, fret: 0 },
+				{ stringNum: 3, fret: 2 },
+			],
+			[{ stringNum: 4, fret: 2 }],
+			[{ stringNum: 3, fret: 2 }],
+			[{ stringNum: 5, fret: 3 }],
+			[{ stringNum: 4, fret: 2 }],
+			[{ stringNum: 3, fret: 2 }],
+		];
+		expect(guitar.generateTab(inputPitchString)).toEqual(output);
+	});
+});
