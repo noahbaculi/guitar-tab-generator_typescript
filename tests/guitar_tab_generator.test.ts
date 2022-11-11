@@ -876,3 +876,3424 @@ describe("Guitar Line Fingering Options Calculation", () => {
 		).toEqual(lineFingeringOptions);
 	});
 });
+
+describe("Guitar Fingering Option Criteria Calculation", () => {
+	let normalGuitar;
+	beforeEach(() => {
+		normalGuitar = new GuitarModule.Guitar();
+	});
+
+	it("calculates fingering option criteria for 3 beats", function () {
+		const blockFingeringCombosList = [
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 2,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 3, fret: 2 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 17,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 6, fret: 17 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 6,
+					fret_span: 2,
+					fingering: [
+						{ stringNum: 6, fret: 5 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 2,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 3, fret: 2 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 17,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 6, fret: 17 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 6,
+					fret_span: 2,
+					fingering: [
+						{ stringNum: 6, fret: 5 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 2,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 3, fret: 2 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 17,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 6, fret: 17 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 6,
+					fret_span: 2,
+					fingering: [
+						{ stringNum: 6, fret: 5 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 2,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 3, fret: 2 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 17,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 6, fret: 17 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 6,
+					fret_span: 2,
+					fingering: [
+						{ stringNum: 6, fret: 5 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 2,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 3, fret: 2 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 17,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 6, fret: 17 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 6,
+					fret_span: 2,
+					fingering: [
+						{ stringNum: 6, fret: 5 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 2,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 3, fret: 2 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 17,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 6, fret: 17 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 6,
+					fret_span: 2,
+					fingering: [
+						{ stringNum: 6, fret: 5 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 2,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 3, fret: 2 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 17,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 6, fret: 17 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 6,
+					fret_span: 2,
+					fingering: [
+						{ stringNum: 6, fret: 5 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 2,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 3, fret: 2 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 17,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 6, fret: 17 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 6,
+					fret_span: 2,
+					fingering: [
+						{ stringNum: 6, fret: 5 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 2,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 3, fret: 2 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 17,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 6, fret: 17 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 6,
+					fret_span: 2,
+					fingering: [
+						{ stringNum: 6, fret: 5 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+		];
+
+		const blockFingeringOptionsList = [
+			{
+				avg_frets: [4, 7, 2],
+				avg_fret_stddev: 2.0548046676563256,
+				avg_fret_steps: [3, -5],
+				avg_fret_steps_stddev_smoothness: 4,
+				combo_score: 2.249324200890693,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 2,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 3, fret: 2 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [4, 7, 7],
+				avg_fret_stddev: 1.4142135623730951,
+				avg_fret_steps: [3, 0],
+				avg_fret_steps_stddev_smoothness: 1.5,
+				combo_score: 1.4227922061357856,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [4, 7, 17],
+				avg_fret_stddev: 5.557777333511022,
+				avg_fret_steps: [3, 10],
+				avg_fret_steps_stddev_smoothness: 3.5,
+				combo_score: 5.351999600159919,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 17,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 6, fret: 17 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [4, 7, 6],
+				avg_fret_stddev: 1.247219128924647,
+				avg_fret_steps: [3, -1],
+				avg_fret_steps_stddev_smoothness: 2,
+				combo_score: 1.3224972160321824,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 6,
+						fret_span: 2,
+						fingering: [
+							{ stringNum: 6, fret: 5 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [4, 12, 2],
+				avg_fret_stddev: 4.320493798938574,
+				avg_fret_steps: [8, -10],
+				avg_fret_steps_stddev_smoothness: 9,
+				combo_score: 4.788444419044716,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 2,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 3, fret: 2 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [4, 12, 7],
+				avg_fret_stddev: 3.2998316455372216,
+				avg_fret_steps: [8, -5],
+				avg_fret_steps_stddev_smoothness: 6.5,
+				combo_score: 3.6198484809834994,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [4, 12, 17],
+				avg_fret_stddev: 5.354126134736337,
+				avg_fret_steps: [8, 5],
+				avg_fret_steps_stddev_smoothness: 1.5,
+				combo_score: 4.968713521262703,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 17,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 6, fret: 17 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [4, 12, 6],
+				avg_fret_stddev: 3.39934634239519,
+				avg_fret_steps: [8, -6],
+				avg_fret_steps_stddev_smoothness: 7,
+				combo_score: 3.759411708155671,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 6,
+						fret_span: 2,
+						fingering: [
+							{ stringNum: 6, fret: 5 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [4, 16, 2],
+				avg_fret_stddev: 6.18241233033047,
+				avg_fret_steps: [12, -14],
+				avg_fret_steps_stddev_smoothness: 13,
+				combo_score: 6.864171097297423,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 2,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 3, fret: 2 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [4, 16, 7],
+				avg_fret_stddev: 5.0990195135927845,
+				avg_fret_steps: [12, -9],
+				avg_fret_steps_stddev_smoothness: 10.5,
+				combo_score: 5.639117562233506,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [4, 16, 17],
+				avg_fret_stddev: 5.90668171555645,
+				avg_fret_steps: [12, 1],
+				avg_fret_steps_stddev_smoothness: 5.5,
+				combo_score: 5.866013544000805,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 17,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 6, fret: 17 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [4, 16, 6],
+				avg_fret_stddev: 5.2493385826745405,
+				avg_fret_steps: [12, -10],
+				avg_fret_steps_stddev_smoothness: 11,
+				combo_score: 5.824404724407087,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 6,
+						fret_span: 2,
+						fingering: [
+							{ stringNum: 6, fret: 5 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 7, 2],
+				avg_fret_stddev: 2.6246692913372702,
+				avg_fret_steps: [-1, -5],
+				avg_fret_steps_stddev_smoothness: 2,
+				combo_score: 2.5622023622035432,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 2,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 3, fret: 2 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 7, 7],
+				avg_fret_stddev: 0.4714045207910317,
+				avg_fret_steps: [-1, 0],
+				avg_fret_steps_stddev_smoothness: 0.5,
+				combo_score: 0.4742640687119285,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 7, 17],
+				avg_fret_stddev: 4.4969125210773475,
+				avg_fret_steps: [-1, 10],
+				avg_fret_steps_stddev_smoothness: 5.5,
+				combo_score: 4.597221268969613,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 17,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 6, fret: 17 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 7, 6],
+				avg_fret_stddev: 0.816496580927726,
+				avg_fret_steps: [-1, -1],
+				avg_fret_steps_stddev_smoothness: 0,
+				combo_score: 0.7348469228349535,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 6,
+						fret_span: 2,
+						fingering: [
+							{ stringNum: 6, fret: 5 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 12, 2],
+				avg_fret_stddev: 4.109609335312651,
+				avg_fret_steps: [4, -10],
+				avg_fret_steps_stddev_smoothness: 7,
+				combo_score: 4.3986484017813865,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 2,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 3, fret: 2 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 12, 7],
+				avg_fret_stddev: 2.160246899469287,
+				avg_fret_steps: [4, -5],
+				avg_fret_steps_stddev_smoothness: 4.5,
+				combo_score: 2.394222209522358,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 12, 17],
+				avg_fret_stddev: 3.681787005729087,
+				avg_fret_steps: [4, 5],
+				avg_fret_steps_stddev_smoothness: 0.5,
+				combo_score: 3.3636083051561783,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 17,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 6, fret: 17 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 12, 6],
+				avg_fret_stddev: 2.494438257849294,
+				avg_fret_steps: [4, -6],
+				avg_fret_steps_stddev_smoothness: 5,
+				combo_score: 2.744994432064365,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 6,
+						fret_span: 2,
+						fingering: [
+							{ stringNum: 6, fret: 5 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 16, 2],
+				avg_fret_stddev: 5.734883511361751,
+				avg_fret_steps: [8, -14],
+				avg_fret_steps_stddev_smoothness: 11,
+				combo_score: 6.261395160225577,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 2,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 3, fret: 2 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 16, 7],
+				avg_fret_stddev: 4.027681991198191,
+				avg_fret_steps: [8, -9],
+				avg_fret_steps_stddev_smoothness: 8.5,
+				combo_score: 4.474913792078373,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 16, 17],
+				avg_fret_stddev: 4.027681991198191,
+				avg_fret_steps: [8, 1],
+				avg_fret_steps_stddev_smoothness: 3.5,
+				combo_score: 3.9749137920783726,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 17,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 6, fret: 17 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 16, 6],
+				avg_fret_stddev: 4.320493798938574,
+				avg_fret_steps: [8, -10],
+				avg_fret_steps_stddev_smoothness: 9,
+				combo_score: 4.788444419044716,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 6,
+						fret_span: 2,
+						fingering: [
+							{ stringNum: 6, fret: 5 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 7, 2],
+				avg_fret_stddev: 4.4969125210773475,
+				avg_fret_steps: [-6, -5],
+				avg_fret_steps_stddev_smoothness: 0.5,
+				combo_score: 4.097221268969613,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 2,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 3, fret: 2 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 7, 7],
+				avg_fret_stddev: 2.8284271247461903,
+				avg_fret_steps: [-6, 0],
+				avg_fret_steps_stddev_smoothness: 3,
+				combo_score: 2.845584412271571,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 7, 17],
+				avg_fret_stddev: 4.109609335312651,
+				avg_fret_steps: [-6, 10],
+				avg_fret_steps_stddev_smoothness: 8,
+				combo_score: 4.498648401781386,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 17,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 6, fret: 17 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 7, 6],
+				avg_fret_stddev: 3.0912061651652345,
+				avg_fret_steps: [-6, -1],
+				avg_fret_steps_stddev_smoothness: 2.5,
+				combo_score: 3.0320855486487113,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 6,
+						fret_span: 2,
+						fingering: [
+							{ stringNum: 6, fret: 5 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 12, 2],
+				avg_fret_stddev: 4.96655480858378,
+				avg_fret_steps: [-1, -10],
+				avg_fret_steps_stddev_smoothness: 4.5,
+				combo_score: 4.919899327725402,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 2,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 3, fret: 2 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 12, 7],
+				avg_fret_stddev: 2.6246692913372702,
+				avg_fret_steps: [-1, -5],
+				avg_fret_steps_stddev_smoothness: 2,
+				combo_score: 2.5622023622035432,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 12, 17],
+				avg_fret_stddev: 2.160246899469287,
+				avg_fret_steps: [-1, 5],
+				avg_fret_steps_stddev_smoothness: 3,
+				combo_score: 2.2442222095223583,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 17,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 6, fret: 17 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 12, 6],
+				avg_fret_stddev: 3.0912061651652345,
+				avg_fret_steps: [-1, -6],
+				avg_fret_steps_stddev_smoothness: 2.5,
+				combo_score: 3.0320855486487113,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 6,
+						fret_span: 2,
+						fingering: [
+							{ stringNum: 6, fret: 5 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 16, 2],
+				avg_fret_stddev: 6.018490028422596,
+				avg_fret_steps: [3, -14],
+				avg_fret_steps_stddev_smoothness: 8.5,
+				combo_score: 6.266641025580336,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 2,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 3, fret: 2 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 16, 7],
+				avg_fret_stddev: 3.7416573867739413,
+				avg_fret_steps: [3, -9],
+				avg_fret_steps_stddev_smoothness: 6,
+				combo_score: 3.9674916480965474,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 16, 17],
+				avg_fret_stddev: 1.699673171197595,
+				avg_fret_steps: [3, 1],
+				avg_fret_steps_stddev_smoothness: 1,
+				combo_score: 1.6297058540778355,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 17,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 6, fret: 17 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 16, 6],
+				avg_fret_stddev: 4.189935029992179,
+				avg_fret_steps: [3, -10],
+				avg_fret_steps_stddev_smoothness: 6.5,
+				combo_score: 4.420941526992961,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 6,
+						fret_span: 2,
+						fingering: [
+							{ stringNum: 6, fret: 5 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+		];
+
+		expect(
+			blockFingeringCombosList.map(
+				normalGuitar.calcFingeringOptionCriteria,
+				normalGuitar
+			)
+		).toEqual(blockFingeringOptionsList);
+	});
+
+	it("calculates fingering option criteria for 3 beats", function () {
+		const blockFingeringCombosList = [
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 2,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 3, fret: 2 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 17,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 6, fret: 17 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 6,
+					fret_span: 2,
+					fingering: [
+						{ stringNum: 6, fret: 5 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 2,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 3, fret: 2 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 17,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 6, fret: 17 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 6,
+					fret_span: 2,
+					fingering: [
+						{ stringNum: 6, fret: 5 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 2,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 3, fret: 2 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 17,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 6, fret: 17 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 4,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 4 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 6,
+					fret_span: 2,
+					fingering: [
+						{ stringNum: 6, fret: 5 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 2,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 3, fret: 2 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 17,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 6, fret: 17 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 6,
+					fret_span: 2,
+					fingering: [
+						{ stringNum: 6, fret: 5 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 2,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 3, fret: 2 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 17,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 6, fret: 17 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 6,
+					fret_span: 2,
+					fingering: [
+						{ stringNum: 6, fret: 5 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 2,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 3, fret: 2 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 17,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 6, fret: 17 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 8,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 8 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 6,
+					fret_span: 2,
+					fingering: [
+						{ stringNum: 6, fret: 5 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 2,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 3, fret: 2 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 17,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 6, fret: 17 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [{ stringNum: 1, fret: 7 }],
+				},
+				{
+					avg_fret: 6,
+					fret_span: 2,
+					fingering: [
+						{ stringNum: 6, fret: 5 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 2,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 3, fret: 2 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 17,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 6, fret: 17 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 12,
+					fret_span: 0,
+					fingering: [{ stringNum: 2, fret: 12 }],
+				},
+				{
+					avg_fret: 6,
+					fret_span: 2,
+					fingering: [
+						{ stringNum: 6, fret: 5 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 2,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 3, fret: 2 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 7,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 17,
+					fret_span: 0,
+					fingering: [
+						{ stringNum: 5, fret: 0 },
+						{ stringNum: 6, fret: 17 },
+					],
+				},
+			],
+			[
+				{
+					avg_fret: 13,
+					fret_span: 0,
+					fingering: [{ stringNum: 4, fret: 13 }],
+				},
+				{
+					avg_fret: 16,
+					fret_span: 0,
+					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+				{
+					avg_fret: 6,
+					fret_span: 2,
+					fingering: [
+						{ stringNum: 6, fret: 5 },
+						{ stringNum: 4, fret: 7 },
+					],
+				},
+			],
+		];
+
+		const blockFingeringOptionsList = [
+			{
+				avg_frets: [4, 7, 2],
+				avg_fret_stddev: 2.0548046676563256,
+				avg_fret_steps: [3, -5],
+				avg_fret_steps_stddev_smoothness: 4,
+				combo_score: 2.249324200890693,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 2,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 3, fret: 2 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [4, 7, 7],
+				avg_fret_stddev: 1.4142135623730951,
+				avg_fret_steps: [3, 0],
+				avg_fret_steps_stddev_smoothness: 1.5,
+				combo_score: 1.4227922061357856,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [4, 7, 17],
+				avg_fret_stddev: 5.557777333511022,
+				avg_fret_steps: [3, 10],
+				avg_fret_steps_stddev_smoothness: 3.5,
+				combo_score: 5.351999600159919,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 17,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 6, fret: 17 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [4, 7, 6],
+				avg_fret_stddev: 1.247219128924647,
+				avg_fret_steps: [3, -1],
+				avg_fret_steps_stddev_smoothness: 2,
+				combo_score: 1.3224972160321824,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 6,
+						fret_span: 2,
+						fingering: [
+							{ stringNum: 6, fret: 5 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [4, 12, 2],
+				avg_fret_stddev: 4.320493798938574,
+				avg_fret_steps: [8, -10],
+				avg_fret_steps_stddev_smoothness: 9,
+				combo_score: 4.788444419044716,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 2,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 3, fret: 2 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [4, 12, 7],
+				avg_fret_stddev: 3.2998316455372216,
+				avg_fret_steps: [8, -5],
+				avg_fret_steps_stddev_smoothness: 6.5,
+				combo_score: 3.6198484809834994,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [4, 12, 17],
+				avg_fret_stddev: 5.354126134736337,
+				avg_fret_steps: [8, 5],
+				avg_fret_steps_stddev_smoothness: 1.5,
+				combo_score: 4.968713521262703,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 17,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 6, fret: 17 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [4, 12, 6],
+				avg_fret_stddev: 3.39934634239519,
+				avg_fret_steps: [8, -6],
+				avg_fret_steps_stddev_smoothness: 7,
+				combo_score: 3.759411708155671,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 6,
+						fret_span: 2,
+						fingering: [
+							{ stringNum: 6, fret: 5 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [4, 16, 2],
+				avg_fret_stddev: 6.18241233033047,
+				avg_fret_steps: [12, -14],
+				avg_fret_steps_stddev_smoothness: 13,
+				combo_score: 6.864171097297423,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 2,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 3, fret: 2 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [4, 16, 7],
+				avg_fret_stddev: 5.0990195135927845,
+				avg_fret_steps: [12, -9],
+				avg_fret_steps_stddev_smoothness: 10.5,
+				combo_score: 5.639117562233506,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [4, 16, 17],
+				avg_fret_stddev: 5.90668171555645,
+				avg_fret_steps: [12, 1],
+				avg_fret_steps_stddev_smoothness: 5.5,
+				combo_score: 5.866013544000805,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 17,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 6, fret: 17 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [4, 16, 6],
+				avg_fret_stddev: 5.2493385826745405,
+				avg_fret_steps: [12, -10],
+				avg_fret_steps_stddev_smoothness: 11,
+				combo_score: 5.824404724407087,
+				combo: [
+					{
+						avg_fret: 4,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 4 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 6,
+						fret_span: 2,
+						fingering: [
+							{ stringNum: 6, fret: 5 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 7, 2],
+				avg_fret_stddev: 2.6246692913372702,
+				avg_fret_steps: [-1, -5],
+				avg_fret_steps_stddev_smoothness: 2,
+				combo_score: 2.5622023622035432,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 2,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 3, fret: 2 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 7, 7],
+				avg_fret_stddev: 0.4714045207910317,
+				avg_fret_steps: [-1, 0],
+				avg_fret_steps_stddev_smoothness: 0.5,
+				combo_score: 0.4742640687119285,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 7, 17],
+				avg_fret_stddev: 4.4969125210773475,
+				avg_fret_steps: [-1, 10],
+				avg_fret_steps_stddev_smoothness: 5.5,
+				combo_score: 4.597221268969613,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 17,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 6, fret: 17 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 7, 6],
+				avg_fret_stddev: 0.816496580927726,
+				avg_fret_steps: [-1, -1],
+				avg_fret_steps_stddev_smoothness: 0,
+				combo_score: 0.7348469228349535,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 6,
+						fret_span: 2,
+						fingering: [
+							{ stringNum: 6, fret: 5 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 12, 2],
+				avg_fret_stddev: 4.109609335312651,
+				avg_fret_steps: [4, -10],
+				avg_fret_steps_stddev_smoothness: 7,
+				combo_score: 4.3986484017813865,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 2,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 3, fret: 2 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 12, 7],
+				avg_fret_stddev: 2.160246899469287,
+				avg_fret_steps: [4, -5],
+				avg_fret_steps_stddev_smoothness: 4.5,
+				combo_score: 2.394222209522358,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 12, 17],
+				avg_fret_stddev: 3.681787005729087,
+				avg_fret_steps: [4, 5],
+				avg_fret_steps_stddev_smoothness: 0.5,
+				combo_score: 3.3636083051561783,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 17,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 6, fret: 17 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 12, 6],
+				avg_fret_stddev: 2.494438257849294,
+				avg_fret_steps: [4, -6],
+				avg_fret_steps_stddev_smoothness: 5,
+				combo_score: 2.744994432064365,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 6,
+						fret_span: 2,
+						fingering: [
+							{ stringNum: 6, fret: 5 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 16, 2],
+				avg_fret_stddev: 5.734883511361751,
+				avg_fret_steps: [8, -14],
+				avg_fret_steps_stddev_smoothness: 11,
+				combo_score: 6.261395160225577,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 2,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 3, fret: 2 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 16, 7],
+				avg_fret_stddev: 4.027681991198191,
+				avg_fret_steps: [8, -9],
+				avg_fret_steps_stddev_smoothness: 8.5,
+				combo_score: 4.474913792078373,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 16, 17],
+				avg_fret_stddev: 4.027681991198191,
+				avg_fret_steps: [8, 1],
+				avg_fret_steps_stddev_smoothness: 3.5,
+				combo_score: 3.9749137920783726,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 17,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 6, fret: 17 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [8, 16, 6],
+				avg_fret_stddev: 4.320493798938574,
+				avg_fret_steps: [8, -10],
+				avg_fret_steps_stddev_smoothness: 9,
+				combo_score: 4.788444419044716,
+				combo: [
+					{
+						avg_fret: 8,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 8 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 6,
+						fret_span: 2,
+						fingering: [
+							{ stringNum: 6, fret: 5 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 7, 2],
+				avg_fret_stddev: 4.4969125210773475,
+				avg_fret_steps: [-6, -5],
+				avg_fret_steps_stddev_smoothness: 0.5,
+				combo_score: 4.097221268969613,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 2,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 3, fret: 2 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 7, 7],
+				avg_fret_stddev: 2.8284271247461903,
+				avg_fret_steps: [-6, 0],
+				avg_fret_steps_stddev_smoothness: 3,
+				combo_score: 2.845584412271571,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 7, 17],
+				avg_fret_stddev: 4.109609335312651,
+				avg_fret_steps: [-6, 10],
+				avg_fret_steps_stddev_smoothness: 8,
+				combo_score: 4.498648401781386,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 17,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 6, fret: 17 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 7, 6],
+				avg_fret_stddev: 3.0912061651652345,
+				avg_fret_steps: [-6, -1],
+				avg_fret_steps_stddev_smoothness: 2.5,
+				combo_score: 3.0320855486487113,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [{ stringNum: 1, fret: 7 }],
+					},
+					{
+						avg_fret: 6,
+						fret_span: 2,
+						fingering: [
+							{ stringNum: 6, fret: 5 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 12, 2],
+				avg_fret_stddev: 4.96655480858378,
+				avg_fret_steps: [-1, -10],
+				avg_fret_steps_stddev_smoothness: 4.5,
+				combo_score: 4.919899327725402,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 2,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 3, fret: 2 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 12, 7],
+				avg_fret_stddev: 2.6246692913372702,
+				avg_fret_steps: [-1, -5],
+				avg_fret_steps_stddev_smoothness: 2,
+				combo_score: 2.5622023622035432,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 12, 17],
+				avg_fret_stddev: 2.160246899469287,
+				avg_fret_steps: [-1, 5],
+				avg_fret_steps_stddev_smoothness: 3,
+				combo_score: 2.2442222095223583,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 17,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 6, fret: 17 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 12, 6],
+				avg_fret_stddev: 3.0912061651652345,
+				avg_fret_steps: [-1, -6],
+				avg_fret_steps_stddev_smoothness: 2.5,
+				combo_score: 3.0320855486487113,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 12,
+						fret_span: 0,
+						fingering: [{ stringNum: 2, fret: 12 }],
+					},
+					{
+						avg_fret: 6,
+						fret_span: 2,
+						fingering: [
+							{ stringNum: 6, fret: 5 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 16, 2],
+				avg_fret_stddev: 6.018490028422596,
+				avg_fret_steps: [3, -14],
+				avg_fret_steps_stddev_smoothness: 8.5,
+				combo_score: 6.266641025580336,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 2,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 3, fret: 2 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 16, 7],
+				avg_fret_stddev: 3.7416573867739413,
+				avg_fret_steps: [3, -9],
+				avg_fret_steps_stddev_smoothness: 6,
+				combo_score: 3.9674916480965474,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 7,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 16, 17],
+				avg_fret_stddev: 1.699673171197595,
+				avg_fret_steps: [3, 1],
+				avg_fret_steps_stddev_smoothness: 1,
+				combo_score: 1.6297058540778355,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 17,
+						fret_span: 0,
+						fingering: [
+							{ stringNum: 5, fret: 0 },
+							{ stringNum: 6, fret: 17 },
+						],
+					},
+				],
+			},
+			{
+				avg_frets: [13, 16, 6],
+				avg_fret_stddev: 4.189935029992179,
+				avg_fret_steps: [3, -10],
+				avg_fret_steps_stddev_smoothness: 6.5,
+				combo_score: 4.420941526992961,
+				combo: [
+					{
+						avg_fret: 13,
+						fret_span: 0,
+						fingering: [{ stringNum: 4, fret: 13 }],
+					},
+					{
+						avg_fret: 16,
+						fret_span: 0,
+						fingering: [{ stringNum: 3, fret: 16 }],
+					},
+					{
+						avg_fret: 6,
+						fret_span: 2,
+						fingering: [
+							{ stringNum: 6, fret: 5 },
+							{ stringNum: 4, fret: 7 },
+						],
+					},
+				],
+			},
+		];
+
+		expect(
+			blockFingeringCombosList.map(
+				normalGuitar.calcFingeringOptionCriteria,
+				normalGuitar
+			)
+		).toEqual(blockFingeringOptionsList);
+	});
+});

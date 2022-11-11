@@ -721,16 +721,6 @@ exports.Guitar = class Guitar {
 			return Math.max(...items) - Math.min(...items);
 		};
 
-		const calc_average = (items: number[], excludeZero = false): number => {
-			if (excludeZero === true) {
-				items = items.filter((x) => x !== 0);
-			}
-			if (items.length === 0) {
-				return 0;
-			}
-			return items.reduce((a: number, b: number) => a + b) / items.length;
-		};
-
 		let lineFingeringOptions = [...lineFingeringCombos].reduce(
 			(result: FingeringOption[], lineFingeringCombo) => {
 				// Do not include fingering combos with overlapping strings numbers
@@ -743,7 +733,7 @@ exports.Guitar = class Guitar {
 				}
 
 				const output = {
-					avg_fret: calc_average(
+					avg_fret: this.calc_average(
 						lineFingeringCombo.map((a) => a.fret),
 						true
 					),
@@ -773,6 +763,16 @@ exports.Guitar = class Guitar {
 
 		return lineFingeringOptions;
 	}
+
+	calc_average = (items: number[], excludeZero = false): number => {
+		if (excludeZero === true) {
+			items = items.filter((x) => x !== 0);
+		}
+		if (items.length === 0) {
+			return 0;
+		}
+		return items.reduce((a: number, b: number) => a + b) / items.length;
+	};
 
 	optimizeFingerings(lineFingeringOptions: (FingeringOption[] | "break")[]) {
 		const splitArrayOn = (arr: any[], delimiter: any, limit = 100) => {
@@ -855,11 +855,15 @@ exports.Guitar = class Guitar {
 	 */
 	calcFingeringOptionCriteria = (combo: FingeringOption[]) => {
 		const avgFrets = combo.map((x) => x.avg_fret).filter((a) => a !== 0);
+		const avgFretsVal = this.calc_average(avgFrets);
 
 		/**
 		 * Calculate the standard deviation of an array
 		 */
 		const calcStdDev = (arr: number[]) => {
+			if (arr.length === 0) {
+				return 0;
+			}
 			const len = arr.length;
 			const mean = arr.reduce((a, b) => a + b) / len;
 			const variance =
@@ -883,16 +887,18 @@ exports.Guitar = class Guitar {
 		};
 
 		const avgFretDiffs = calcDiffs(avgFrets);
-		const avgFretSmoothness = calcStdDev(avgFretDiffs);
+		const avgFretSmoothness = calcStdDev(avgFretDiffs); // lower is smoother
 
 		// Percentage weightings are arbitrary. Main contributor is
-		// still the dispersion of the average frets (StdDec). The
-		// extra smoothness component is mostly meant to distinguish
+		// still the dispersion of the average frets (StdDec).
+		// The smoothness component is mostly meant to distinguish
 		// fingering options with the same average fret dispersions.
-		const score = 0.9 * avgFretStdDev + 0.1 * avgFretSmoothness;
+		// The average fret value is included to preference lower fret values.
+		const score = avgFretStdDev + 0.1 * avgFretSmoothness + 0.001 * avgFretsVal;
 
 		return {
 			avg_frets: avgFrets,
+			avg_fret_val: avgFretsVal,
 			avg_fret_stddev: avgFretStdDev,
 			avg_fret_steps: avgFretDiffs,
 			avg_fret_steps_stddev_smoothness: avgFretSmoothness,
