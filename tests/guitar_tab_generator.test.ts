@@ -700,6 +700,12 @@ describe("Guitar Line Fingering Options Calculation", () => {
 				},
 			],
 			[
+				{
+					pitch: "E2",
+					fingeringOptions: [{ stringNum: 6, fret: 0 }],
+				},
+			],
+			[
 				{ pitch: "F2", fingeringOptions: [{ stringNum: 6, fret: 1 }] },
 				{
 					pitch: "B4",
@@ -808,6 +814,13 @@ describe("Guitar Line Fingering Options Calculation", () => {
 					avg_fret: 16,
 					fret_span: 0,
 					fingering: [{ stringNum: 3, fret: 16 }],
+				},
+			],
+			[
+				{
+					avg_fret: 0,
+					fret_span: 0,
+					fingering: [{ stringNum: 6, fret: 0 }],
 				},
 			],
 			[

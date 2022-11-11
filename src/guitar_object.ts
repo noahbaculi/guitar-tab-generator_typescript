@@ -706,7 +706,7 @@ exports.Guitar = class Guitar {
 			new Set(lineFingeringCombosList)
 		);
 
-		const calc_range = (items: number[], excludeZero = false): number => {
+		const calcRange = (items: number[], excludeZero = false): number => {
 			if (excludeZero === true) {
 				items = items.filter((x) => x !== 0);
 			}
@@ -734,11 +734,11 @@ exports.Guitar = class Guitar {
 				}
 
 				const output = {
-					avg_fret: this.calc_average(
+					avg_fret: this.calcAverage(
 						lineFingeringCombo.map((a) => a.fret),
 						true
 					),
-					fret_span: calc_range(
+					fret_span: calcRange(
 						lineFingeringCombo.map((a) => a.fret),
 						true
 					),
@@ -765,7 +765,7 @@ exports.Guitar = class Guitar {
 		return lineFingeringOptions;
 	}
 
-	calc_average = (items: number[], excludeZero = false): number => {
+	calcAverage = (items: number[], excludeZero = false): number => {
 		if (excludeZero === true) {
 			items = items.filter((x) => x !== 0);
 		}
@@ -881,7 +881,7 @@ exports.Guitar = class Guitar {
 	 */
 	calcFingeringOptionCriteria = (combo: FingeringOption[]) => {
 		const avgFrets = combo.map((x) => x.avg_fret).filter((a) => a !== 0);
-		const avgFretsVal = this.calc_average(avgFrets);
+		const avgFretsVal = this.calcAverage(avgFrets);
 
 		/**
 		 * Calculate the standard deviation of an array
