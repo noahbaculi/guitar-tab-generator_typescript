@@ -806,6 +806,11 @@ exports.Guitar = class Guitar {
 		const bestFingeringOptionBlocks = lineFingeringOptionsBlocks.map(
 			(lineFingeringOptionsBlock) => {
 				// Calculate list of combinations
+				if (lineFingeringOptionsBlock.length > 8) {
+					//
+					print(lineFingeringOptionsBlock);
+					throw new Error();
+				}
 				const blockFingeringCombosList = <FingeringOption[][]>(
 					this.cartesian(lineFingeringOptionsBlock)
 				);
