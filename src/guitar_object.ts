@@ -1,13 +1,10 @@
-const util = require("util");
 /**
  * Console Log objects to full depth
  * @param objs Objects to print
  */
-function print(...objs: any[]): void {
+function print(...objs) {
 	for (const obj of objs) {
-		console.log(
-			util.inspect(obj, { showHidden: false, depth: null, colors: true })
-		);
+		console.dir(obj, { depth: null });
 	}
 }
 

@@ -1,5 +1,5 @@
-const GuitarModule2 = require("../src/guitar_object.js");
-const guitar = new GuitarModule2.Guitar("");
+const GuitarModule = require("../src/guitar_object");
+const guitar = new GuitarModule.Guitar("");
 // console.log(guitar.strings);
 // for (const string in guitar.strings) {
 // 	console.log(`${string} | ${guitar.strings[string][0]}`);

@@ -4,14 +4,13 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
 var _Guitar_instances, _Guitar_generateChordPitches, _a;
-const util = require("util");
 /**
  * Console Log objects to full depth
  * @param objs Objects to print
  */
 function print(...objs) {
     for (const obj of objs) {
-        console.log(util.inspect(obj, { showHidden: false, depth: null, colors: true }));
+        console.dir(obj, { depth: null });
     }
 }
 /**
