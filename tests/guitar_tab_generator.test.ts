@@ -477,8 +477,9 @@ describe("Guitar Pitch Input Validation", () => {
 	});
 
 	it("validates normal input", function () {
-		const inputString = "A2A3E4\nA7 chord\nA2\nA3\nE4\n\nA2A3";
-		expect(normalGuitar.validateInput(inputString)).toEqual([
+		const inputPitchString = "A2A3E4\nA7 chord\nA2\nA3\nE4\n\nA2A3";
+		const arrangement = new GuitarModule.Arrangement(normalGuitar, inputPitchString);
+		expect(arrangement.pitchLines).toEqual([
 			["A2", "A3", "E4"],
 			["E4", "C#4", "G3", "E3", "A2"],
 			["A2"],
@@ -490,23 +491,21 @@ describe("Guitar Pitch Input Validation", () => {
 	});
 
 	it("handles repeated pitch input", function () {
-		expect(normalGuitar.validateInput("A2A3A2E4E4")).toEqual([
-			["A2", "A3", "E4"],
-		]);
+		const arrangement = new GuitarModule.Arrangement(normalGuitar, "A2A3A2E4E4");
+		expect(arrangement.pitchLines).toEqual([["A2", "A3", "E4"]]);
 	});
 
 	it("handles flat pitches input", function () {
-		expect(normalGuitar.validateInput("C4Ab2F3")).toEqual([
-			["C4", "G#2", "F3"],
-		]);
+		const arrangement = new GuitarModule.Arrangement(normalGuitar, "C4Ab2F3");
+		expect(arrangement.pitchLines).toEqual([["C4", "G#2", "F3"]]);
 	});
 
 	it("handles improper input", function () {
 		expect(() => {
-			normalGuitar.validateInput("A2Q");
+			new GuitarModule.Arrangement(normalGuitar, "A2Q");
 		}).toThrow("Out of range or invalid pitch");
 		expect(() => {
-			normalGuitar.validateInput("Z87Chord");
+			new GuitarModule.Arrangement(normalGuitar, "Z87Chord");
 		}).toThrow("Out of range or invalid pitch");
 	});
 });
@@ -515,15 +514,15 @@ describe("Guitar Pitch Fingering Calculations", () => {
 	it("calculates pitch fingerings correctly with standard tuning, no capo", function () {
 		const guitar = new GuitarModule.Guitar();
 
-		expect(guitar.calcPitchFingerings("E2")).toEqual({
+		expect(new GuitarModule.Arrangement(guitar, "").calcPitchFingerings("E2")).toEqual({
 			pitch: "E2",
 			fingeringOptions: [{ stringNum: 6, fret: 0 }],
 		});
-		expect(guitar.calcPitchFingerings("G5")).toEqual({
+		expect(new GuitarModule.Arrangement(guitar, "").calcPitchFingerings("G5")).toEqual({
 			pitch: "G5",
 			fingeringOptions: [{ stringNum: 1, fret: 15 }],
 		});
-		expect(guitar.calcPitchFingerings("A3")).toEqual({
+		expect(new GuitarModule.Arrangement(guitar, "").calcPitchFingerings("A3")).toEqual({
 			pitch: "A3",
 			fingeringOptions: [
 				{ stringNum: 3, fret: 2 },
@@ -532,7 +531,7 @@ describe("Guitar Pitch Fingering Calculations", () => {
 				{ stringNum: 6, fret: 17 },
 			],
 		});
-		expect(guitar.calcPitchFingerings("A#4")).toEqual({
+		expect(new GuitarModule.Arrangement(guitar, "").calcPitchFingerings("A#4")).toEqual({
 			pitch: "A#4",
 			fingeringOptions: [
 				{ stringNum: 1, fret: 6 },
@@ -546,11 +545,11 @@ describe("Guitar Pitch Fingering Calculations", () => {
 		const guitar = new GuitarModule.Guitar("Drop B");
 
 		expect(guitar.tuningName).toEqual("dropb");
-		expect(guitar.calcPitchFingerings("E2")).toEqual({
+		expect(new GuitarModule.Arrangement(guitar, "").calcPitchFingerings("E2")).toEqual({
 			pitch: "E2",
 			fingeringOptions: [{ stringNum: 6, fret: 5 }],
 		});
-		expect(guitar.calcPitchFingerings("A3")).toEqual({
+		expect(new GuitarModule.Arrangement(guitar, "").calcPitchFingerings("A3")).toEqual({
 			pitch: "A3",
 			fingeringOptions: [
 				{ stringNum: 2, fret: 1 },
@@ -559,7 +558,7 @@ describe("Guitar Pitch Fingering Calculations", () => {
 				{ stringNum: 5, fret: 15 },
 			],
 		});
-		expect(guitar.calcPitchFingerings("A#4")).toEqual({
+		expect(new GuitarModule.Arrangement(guitar, "").calcPitchFingerings("A#4")).toEqual({
 			pitch: "A#4",
 			fingeringOptions: [
 				{ stringNum: 1, fret: 9 },
@@ -567,14 +566,14 @@ describe("Guitar Pitch Fingering Calculations", () => {
 			],
 		});
 		expect(() => {
-			guitar.calcPitchFingerings("G5");
+			new GuitarModule.Arrangement(guitar, "").calcPitchFingerings("G5");
 		}).toThrow("Out of range or invalid pitch");
 	});
 
 	it("calculates pitch fingerings correctly with standard tuning, with capo", function () {
 		const guitar = new GuitarModule.Guitar("Standard", 4);
 
-		expect(guitar.calcPitchFingerings("A3")).toEqual({
+		expect(new GuitarModule.Arrangement(guitar, "").calcPitchFingerings("A3")).toEqual({
 			pitch: "A3",
 			fingeringOptions: [
 				{ stringNum: 4, fret: 3 },
@@ -583,10 +582,10 @@ describe("Guitar Pitch Fingering Calculations", () => {
 			],
 		});
 		expect(() => {
-			guitar.calcPitchFingerings("E2");
+			new GuitarModule.Arrangement(guitar, "").calcPitchFingerings("E2");
 		}).toThrow("Out of range or invalid pitch");
 		expect(() => {
-			guitar.calcPitchFingerings("G2");
+			new GuitarModule.Arrangement(guitar, "").calcPitchFingerings("G2");
 		}).toThrow("Out of range or invalid pitch");
 	});
 });
@@ -594,13 +593,9 @@ describe("Guitar Pitch Fingering Calculations", () => {
 describe("Guitar Line Fingerings Calculation", () => {
 	it("calculates lines fingerings in correct format", function () {
 		const guitar = new GuitarModule.Guitar();
+		const arrangement = new GuitarModule.Arrangement(guitar, "");
 
-		const pitchLines = [
-			["E2"],
-			["A2", "A3"],
-			"",
-			["E4", "C#4", "G3", "E3", "A2"],
-		];
+		const pitchLines = [["E2"], ["A2", "A3"], "", ["E4", "C#4", "G3", "E3", "A2"]];
 		const linePitchFingerings = [
 			[{ pitch: "E2", fingeringOptions: [{ stringNum: 6, fret: 0 }] }],
 			[
@@ -668,15 +663,14 @@ describe("Guitar Line Fingerings Calculation", () => {
 			],
 		];
 
-		expect(pitchLines.map(guitar.genPitchFingering, guitar)).toEqual(
-			linePitchFingerings
-		);
+		expect(pitchLines.map(arrangement.genPitchFingering, arrangement)).toEqual(linePitchFingerings);
 	});
 });
 
 describe("Guitar Line Fingering Options Calculation", () => {
 	it("calculates line fingerings options in correct format", function () {
 		const guitar = new GuitarModule.Guitar();
+		const arrangement = new GuitarModule.Arrangement(guitar, "");
 
 		const linePitchFingerings = [
 			[
@@ -884,13 +878,12 @@ describe("Guitar Line Fingering Options Calculation", () => {
 			],
 		];
 
-		expect(
-			linePitchFingerings.map(guitar.genLineFingeringOptions, guitar)
-		).toEqual(lineFingeringOptions);
+		expect(linePitchFingerings.map(arrangement.genLineFingeringOptions, arrangement)).toEqual(lineFingeringOptions);
 	});
 
 	it("handles improper input", function () {
 		const guitar = new GuitarModule.Guitar();
+		const arrangement = new GuitarModule.Arrangement(guitar, "");
 		const linePitchFingerings = [
 			[
 				{ pitch: "E2", fingeringOptions: [{ stringNum: 6, fret: 0 }] },
@@ -899,15 +892,16 @@ describe("Guitar Line Fingering Options Calculation", () => {
 			],
 		];
 		expect(() => {
-			linePitchFingerings.map(guitar.genLineFingeringOptions, guitar);
+			linePitchFingerings.map(arrangement.genLineFingeringOptions, arrangement);
 		}).toThrow("an impossible combination");
 	});
 });
 
 describe("Guitar Fingering Option Criteria Calculation", () => {
-	let normalGuitar;
+	let normalArrangement;
 	beforeEach(() => {
-		normalGuitar = new GuitarModule.Guitar();
+		const normalGuitar = new GuitarModule.Guitar();
+		normalArrangement = new GuitarModule.Arrangement(normalGuitar, "");
 	});
 
 	it("calculates fingering option criteria for 1 beat", function () {
@@ -961,12 +955,9 @@ describe("Guitar Fingering Option Criteria Calculation", () => {
 			},
 		];
 
-		expect(
-			blockFingeringCombosList.map(
-				normalGuitar.calcFingeringOptionCriteria,
-				normalGuitar
-			)
-		).toEqual(blockFingeringOptionsList);
+		expect(blockFingeringCombosList.map(normalArrangement.calcFingeringOptionCriteria, normalArrangement)).toEqual(
+			blockFingeringOptionsList
+		);
 	});
 
 	it("calculates fingering option criteria for 3 beats", function () {
@@ -2704,12 +2695,9 @@ describe("Guitar Fingering Option Criteria Calculation", () => {
 			},
 		];
 
-		expect(
-			blockFingeringCombosList.map(
-				normalGuitar.calcFingeringOptionCriteria,
-				normalGuitar
-			)
-		).toEqual(blockFingeringOptionsList);
+		expect(blockFingeringCombosList.map(normalArrangement.calcFingeringOptionCriteria, normalArrangement)).toEqual(
+			blockFingeringOptionsList
+		);
 	});
 
 	it("calculates fingering option criteria for 8 beats", function () {
@@ -3455,19 +3443,17 @@ describe("Guitar Fingering Option Criteria Calculation", () => {
 			},
 		];
 
-		expect(
-			blockFingeringCombosList.map(
-				normalGuitar.calcFingeringOptionCriteria,
-				normalGuitar
-			)
-		).toEqual(blockFingeringOptionsList);
+		expect(blockFingeringCombosList.map(normalArrangement.calcFingeringOptionCriteria, normalArrangement)).toEqual(
+			blockFingeringOptionsList
+		);
 	});
 });
 
 describe("Guitar Fingering Optimization", () => {
-	let normalGuitar;
+	let normalArrangement;
 	beforeEach(() => {
-		normalGuitar = new GuitarModule.Guitar();
+		const normalGuitar = new GuitarModule.Guitar();
+		normalArrangement = new GuitarModule.Arrangement(normalGuitar, "");
 	});
 
 	it("calculates fingering option criteria for 1 beat", function () {
@@ -3482,9 +3468,7 @@ describe("Guitar Fingering Optimization", () => {
 		];
 		const bestFingerings = [[{ stringNum: 6, fret: 0 }]];
 
-		expect(normalGuitar.optimizeFingerings(lineFingeringOptions)).toEqual(
-			bestFingerings
-		);
+		expect(normalArrangement.optimizeFingerings(lineFingeringOptions)).toEqual(bestFingerings);
 	});
 
 	it("calculates fingering option criteria for 1 beat with extra breaks", function () {
@@ -3504,9 +3488,7 @@ describe("Guitar Fingering Optimization", () => {
 		];
 		const bestFingerings = [[{ stringNum: 6, fret: 0 }]];
 
-		expect(normalGuitar.optimizeFingerings(lineFingeringOptions)).toEqual(
-			bestFingerings
-		);
+		expect(normalArrangement.optimizeFingerings(lineFingeringOptions)).toEqual(bestFingerings);
 	});
 
 	it("calculates fingering option criteria for 4 beats with extra breaks", function () {
@@ -3607,9 +3589,7 @@ describe("Guitar Fingering Optimization", () => {
 			],
 		];
 
-		expect(normalGuitar.optimizeFingerings(lineFingeringOptions)).toEqual(
-			bestFingerings
-		);
+		expect(normalArrangement.optimizeFingerings(lineFingeringOptions)).toEqual(bestFingerings);
 	});
 
 	it("calculates fingering option criteria for 14 beats with no breaks to test sub-blocks", function () {
@@ -3795,9 +3775,7 @@ describe("Guitar Fingering Optimization", () => {
 			[{ stringNum: 4, fret: 3 }],
 		];
 
-		expect(normalGuitar.optimizeFingerings(lineFingeringOptions)).toEqual(
-			bestFingerings
-		);
+		expect(normalArrangement.optimizeFingerings(lineFingeringOptions)).toEqual(bestFingerings);
 	});
 
 	it("does not calculate fingering option criteria for more than 100 beats", function () {
@@ -3814,7 +3792,7 @@ describe("Guitar Fingering Optimization", () => {
 		const lineFingeringOptions = Array(101).fill(baseArr).flat();
 
 		expect(() => {
-			normalGuitar.optimizeFingerings(lineFingeringOptions);
+			normalArrangement.optimizeFingerings(lineFingeringOptions);
 		}).toThrow("Array split delimiter limit reached");
 	});
 });
@@ -3859,6 +3837,8 @@ describe("Guitar Tab Generation", () => {
 			[{ stringNum: 4, fret: 2 }],
 			[{ stringNum: 3, fret: 2 }],
 		];
-		expect(guitar.generateTab(inputPitchString)).toEqual(output);
+
+		const arrangement = new GuitarModule.Arrangement(guitar, inputPitchString);
+		expect(arrangement.bestFingerings).toEqual(output);
 	});
 });

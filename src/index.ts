@@ -1,6 +1,6 @@
-const GuitarModule = require("../src/guitar_object");
+const GuitarModule2 = require("../src/guitar_object");
 
-const guitar = new GuitarModule.Guitar("", 2);
+const guitar = new GuitarModule2.Guitar("", 2);
 // console.log(guitar.strings);
 
 // for (const string in guitar.strings) {
@@ -33,8 +33,8 @@ A3`.repeat(5);
 // console.log(arrangement.bestFingerings);
 // console.log("-----------------------------");
 
-const arrangement = new GuitarModule.Arrangement(guitar, testNotesString);
+const arrangement = new GuitarModule2.Arrangement(guitar, "");
 console.time("doSomething");
 const test2 = arrangement.getStringToFretFingerings(arrangement.bestFingerings);
-// console.log(test2);
+console.log(test2);
 console.timeEnd("doSomething");
