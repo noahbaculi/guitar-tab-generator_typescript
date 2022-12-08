@@ -265,103 +265,9 @@ exports.Guitar = (_a = class Guitar {
                     "E4",
                 ],
             };
-            // chords
             this.tuningName = "standard";
             this.capo = 0;
             this.numFrets = 18;
-            this.maxFretSpan = 4;
-            // TODO cache values with memoization for efficiency improvements
-            /**
-             * Create fingerings for a given pitch
-             */
-            this.calcPitchFingerings = (pitch) => {
-                let fingerings = [];
-                for (const [stringNumKey, stringVals] of Object.entries(this.strings)) {
-                    const pitchFret = stringVals.indexOf(pitch);
-                    if (pitchFret === -1) {
-                        continue;
-                    }
-                    const stringNum = parseInt(stringNumKey);
-                    if (isNaN(stringNum)) {
-                        throw new Error(`String number key is not a number '${stringNumKey}'`);
-                    }
-                    fingerings.push({ stringNum: stringNum, fret: pitchFret });
-                }
-                if (fingerings.length == 0) {
-                    throw new Error(`Out of range or invalid pitch '${pitch}'`);
-                }
-                return {
-                    pitch: pitch,
-                    fingeringOptions: fingerings,
-                };
-            };
-            this.calcAverage = (items, excludeZero = false) => {
-                if (excludeZero === true) {
-                    items = items.filter((x) => x !== 0);
-                }
-                if (items.length === 0) {
-                    return 0;
-                }
-                return items.reduce((a, b) => a + b) / items.length;
-            };
-            /**
-             * Calculate the selection criteria and score for a fingering option combination
-             */
-            this.calcFingeringOptionCriteria = (combo) => {
-                const avgFrets = combo.map((x) => x.avg_fret).filter((a) => a !== 0);
-                const avgFretsVal = this.calcAverage(avgFrets);
-                /**
-                 * Calculate the standard deviation of an array
-                 */
-                const calcStdDev = (arr) => {
-                    if (arr.length === 0) {
-                        return 0;
-                    }
-                    const len = arr.length;
-                    const mean = arr.reduce((a, b) => a + b) / len;
-                    const variance = arr.map((x) => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / len;
-                    return Math.sqrt(variance);
-                };
-                const avgFretStdDev = calcStdDev(avgFrets);
-                // Calculate a score that includes smoothness to account
-                //  for the ordering of the average frets for each beat
-                //  Ex: average frets of [7, 7, 8] is preferred over [7, 8, 7]
-                // Calculate smoothness from the StdDev of the
-                // differences
-                /**
-                 * Calculate the differences between between pairs of consecutive elements
-                 */
-                const calcDiffs = (arr) => {
-                    return arr.slice(1).map((val, index) => val - arr[index]);
-                };
-                const avgFretDiffs = calcDiffs(avgFrets);
-                const avgFretSmoothness = calcStdDev(avgFretDiffs); // lower is smoother
-                // Percentage weightings are arbitrary. Main contributor is
-                // still the dispersion of the average frets (StdDec).
-                // The smoothness component is mostly meant to distinguish
-                // fingering options with the same average fret dispersions.
-                // The average fret value is included to preference lower fret values.
-                const score = avgFretStdDev + 0.1 * avgFretSmoothness + 0.001 * avgFretsVal;
-                return {
-                    avg_frets: avgFrets,
-                    avg_fret_val: avgFretsVal,
-                    avg_fret_stddev: avgFretStdDev,
-                    avg_fret_steps: avgFretDiffs,
-                    avg_fret_steps_stddev_smoothness: avgFretSmoothness,
-                    combo_score: score,
-                    combo: combo,
-                };
-            };
-            /**
-             * Combinate product of N number of lists
-             */
-            this.cartesian = (arr) => {
-                // Return list of each element if only one list is received
-                if (arr.length === 1) {
-                    return arr.flat().map((a) => [a]);
-                }
-                return arr.reduce((a, b) => a.flatMap((d) => b.map((e) => [d, e].flat())));
-            };
             this.chordPitchesMap = __classPrivateFieldGet(this, _Guitar_instances, "m", _Guitar_generateChordPitches).call(this);
             /**
              * Tunings reference with tuning adjustments from Standard
@@ -417,217 +323,6 @@ exports.Guitar = (_a = class Guitar {
                 this.strings[stringNum] = this.strings[stringNum].slice(this.capo);
             }
             this.pitchRange = new Set(Object.values(this.strings).flat());
-        }
-        /**
-         * Function to generate a set of TAB fingerings for a guitar object
-         * @param inputPitchString
-         */
-        generateTab(inputPitchString) {
-            const pitchLines = this.validateInput(inputPitchString);
-            const linePitchFingerings = pitchLines.map(this.genPitchFingering, this);
-            const lineFingeringOptions = linePitchFingerings.map(this.genLineFingeringOptions, this);
-            const bestFingerings = this.optimizeFingerings(lineFingeringOptions);
-            return bestFingerings;
-        }
-        validateInput(inputPitchString) {
-            let pitchLines = [];
-            // Format and convert input to sharps
-            inputPitchString = inputPitchString.toUpperCase();
-            const flatsToSharps = {
-                DB: "C#",
-                EB: "D#",
-                GB: "F#",
-                AB: "G#",
-                BB: "A#",
-            };
-            for (const flatString in flatsToSharps) {
-                const replace = new RegExp(`${flatString}`, "g");
-                inputPitchString = inputPitchString.replace(replace, flatsToSharps[flatString]);
-            }
-            // Validate lines of pitches against of Guitar's pitchRange
-            let errorStrings = [];
-            const inputPitchLines = inputPitchString.split("\n");
-            for (const [lineNum, inputPitchLineOrig] of inputPitchLines.entries()) {
-                let inputPitchLine = inputPitchLineOrig;
-                inputPitchLine = inputPitchLine.replace(/\s/g, "");
-                if (inputPitchLine === "") {
-                    pitchLines.push("");
-                    continue;
-                }
-                let linePitches = [];
-                while (inputPitchLine !== "") {
-                    /**
-                     * Function to get combinations of substrings from string
-                     */
-                    const getStringCombinations = (inputString) => {
-                        let list_of_substrings = [];
-                        for (let i = 0; i < inputString.length; i++) {
-                            for (let j = i + 1; j < inputString.length + 1; j++) {
-                                list_of_substrings.push(inputString.slice(i, j));
-                            }
-                        }
-                        return list_of_substrings;
-                    };
-                    const pitchCombos = getStringCombinations(inputPitchLine);
-                    const matchingChords = Object.keys(this.chordPitchesMap).filter((value) => pitchCombos.includes(value));
-                    if (matchingChords && matchingChords.length) {
-                        linePitches = this.chordPitchesMap[matchingChords.at(0)];
-                        break;
-                    }
-                    for (const [i, linePitchCombo] of pitchCombos.entries()) {
-                        if (this.pitchRange.has(linePitchCombo)) {
-                            inputPitchLine = inputPitchLine.replace(linePitchCombo, "");
-                            // Add to the pitches in the line if not already present
-                            if (!linePitches.includes(linePitchCombo)) {
-                                linePitches.push(linePitchCombo);
-                            }
-                            break;
-                        }
-                        if (i === pitchCombos.length - 1) {
-                            errorStrings.push(`Line ${lineNum} - '${inputPitchLine}' in '${inputPitchLineOrig}'`);
-                            inputPitchLine = "";
-                        }
-                    }
-                }
-                pitchLines.push(linePitches);
-            }
-            // Throw aggregated invalid pitch error
-            if (errorStrings.length > 0) {
-                throw new Error(`Out of range or invalid pitches:\n${errorStrings.join("\n")}`);
-            }
-            return pitchLines;
-        }
-        /**
-         * Generate the fingerings for the pitches on the same line/beat
-         */
-        genPitchFingering(linePitches) {
-            if (linePitches === "") {
-                return "break";
-            }
-            let linePitchIndivFingerings = [];
-            for (const pitchName of linePitches) {
-                const pitchFingerings = this.calcPitchFingerings(pitchName);
-                linePitchIndivFingerings.push(pitchFingerings);
-            }
-            return linePitchIndivFingerings;
-        }
-        /**
-         * Generate fingering options from each line fingerings
-         */
-        genLineFingeringOptions(fingeringLine) {
-            if (fingeringLine === "break") {
-                return "break";
-            }
-            const linePitches = fingeringLine.map((a) => a.pitch);
-            const linePitchFingeringOptions = fingeringLine.map((a) => a.fingeringOptions);
-            // Calculate list of combinations
-            let lineFingeringCombosList = this.cartesian(linePitchFingeringOptions);
-            const lineFingeringCombos = (new Set(lineFingeringCombosList));
-            const calcRange = (items, excludeZero = false) => {
-                if (excludeZero === true) {
-                    items = items.filter((x) => x !== 0);
-                }
-                if (items.length === 0) {
-                    return 0;
-                }
-                return Math.max(...items) - Math.min(...items);
-            };
-            let lineFingeringOptions = [...lineFingeringCombos].reduce((result, lineFingeringCombo) => {
-                // Do not include fingering combos with overlapping strings numbers
-                const numPitches = lineFingeringCombo.length;
-                const uniqueStringNums = new Set(lineFingeringCombo.map((a) => a.stringNum));
-                if (uniqueStringNums.size !== numPitches) {
-                    if (lineFingeringCombos.size === 1) {
-                        const errOutputCombo = JSON.stringify(lineFingeringCombo);
-                        const errOutput = `Fingerings for the pitches ${linePitches} is an impossible combination of ${errOutputCombo}.'`;
-                        throw new Error(errOutput);
-                    }
-                    else {
-                        return result;
-                    }
-                }
-                const output = {
-                    avg_fret: this.calcAverage(lineFingeringCombo.map((a) => a.fret), true),
-                    fret_span: calcRange(lineFingeringCombo.map((a) => a.fret), true),
-                    fingering: lineFingeringCombo,
-                };
-                result.push(output);
-                return result;
-            }, []);
-            // Remove fingering options with the highest fret spans over the max while
-            // fingering options with low fret spans exist
-            let fretSpans = lineFingeringOptions.map((a) => a.fret_span);
-            let maxFretSpan = Math.max(...fretSpans);
-            while (lineFingeringOptions.length > 1 && maxFretSpan > this.maxFretSpan) {
-                fretSpans = lineFingeringOptions.map((a) => a.fret_span);
-                maxFretSpan = Math.max(...fretSpans);
-                const maxFretSpanFingeringIndex = fretSpans.indexOf(maxFretSpan);
-                lineFingeringOptions.splice(maxFretSpanFingeringIndex, 1);
-            }
-            return lineFingeringOptions;
-        }
-        optimizeFingerings(lineFingeringOptions) {
-            const splitArrayOn = (arr, delimiter, limit = 100) => {
-                let sublists = [];
-                let count = 0;
-                while (arr.includes(delimiter)) {
-                    count++;
-                    if (count > limit) {
-                        throw new Error(`Array split delimiter limit reached.`);
-                    }
-                    const breakIndex = arr.indexOf(delimiter);
-                    const sublist = arr.slice(0, breakIndex);
-                    if (sublist.length !== 0) {
-                        sublists.push(sublist);
-                    }
-                    arr.splice(0, breakIndex + 1);
-                }
-                if (arr.length !== 0) {
-                    sublists.push(arr);
-                }
-                return sublists;
-            };
-            // Split list of options into sublists separated by measure breaks
-            const lineFingeringOptionsBlocks = (splitArrayOn(lineFingeringOptions, "break"));
-            // TODO Investigate progressive calculation technique where a block
-            // TODO would move for each beat consideration to include previously chosen
-            // TODO fingerings but also future fingering options
-            // Calculate the most optimal fingering option for each block
-            const bestFingeringOptionBlocks = lineFingeringOptionsBlocks.map((lineFingeringOptionsBlock) => {
-                // Check for excessive block size to avoid exponential memory
-                // usage from cartesian()
-                let lineFingeringOptionsSubBlocks = [lineFingeringOptionsBlock];
-                if (lineFingeringOptionsBlock.length > 8) {
-                    /**
-                     * Split array into array of arrays of a specified chunk size
-                     */
-                    const chunkArray = (array, chunkSize) => {
-                        const numberOfChunks = Math.ceil(array.length / chunkSize);
-                        return [...Array(numberOfChunks)].map((_, index) => {
-                            return array.slice(index * chunkSize, (index + 1) * chunkSize);
-                        });
-                    };
-                    lineFingeringOptionsSubBlocks = chunkArray(lineFingeringOptionsBlock, 8);
-                }
-                const bestSubBlockOptionFingerings = lineFingeringOptionsSubBlocks.map((lineFingeringOptionsSubBlock) => {
-                    // Calculate list of combinations
-                    const blockFingeringCombosList = (this.cartesian(lineFingeringOptionsSubBlock));
-                    // Calculate block combo selection criteria and score
-                    const blockFingeringOptionsList = blockFingeringCombosList.map(this.calcFingeringOptionCriteria);
-                    // Find option with the lowest score. Could combine with the
-                    // calculation step to lower memory footprint but combining would
-                    // impede debuggability
-                    const bestBlockOption = blockFingeringOptionsList.reduce((lowest, current) => lowest.combo_score < current.combo_score ? lowest : current);
-                    return bestBlockOption.combo;
-                });
-                const bestSubBlockOptionFingering = [].concat(...bestSubBlockOptionFingerings.flat());
-                return bestSubBlockOptionFingering;
-            });
-            const bestFingeringsNoBreaks = bestFingeringOptionBlocks.map((fingeringOptions) => fingeringOptions.map((fingeringOption) => fingeringOption.fingering));
-            // Add back measure breaks and flatten
-            const interleave = (arr, delimiter) => [].concat(...arr.map((n) => [n, delimiter])).slice(0, -1);
-            const bestFingerings = (interleave(bestFingeringsNoBreaks, "break").flat());
-            return bestFingerings;
         }
     },
     _Guitar_instances = new WeakSet(),
@@ -697,3 +392,329 @@ exports.Guitar = (_a = class Guitar {
         return chordPitchesMap;
     },
     _a);
+exports.Arrangement = class Arrangement {
+    /**
+     * Class to generate a set of TAB fingerings for a guitar object
+     * @param inputPitchString
+     */
+    constructor(guitar, inputPitchString) {
+        // TODO cache values with memoization for efficiency improvements
+        /**
+         * Create fingerings for a given pitch
+         */
+        this.calcPitchFingerings = (pitch) => {
+            let fingerings = [];
+            for (const [stringNumKey, stringVals] of Object.entries(this.guitarStrings)) {
+                const pitchFret = stringVals.indexOf(pitch);
+                if (pitchFret === -1) {
+                    continue;
+                }
+                const stringNum = parseInt(stringNumKey);
+                if (isNaN(stringNum)) {
+                    throw new Error(`String number key is not a number '${stringNumKey}'`);
+                }
+                fingerings.push({ stringNum: stringNum, fret: pitchFret });
+            }
+            if (fingerings.length == 0) {
+                throw new Error(`Out of range or invalid pitch '${pitch}'`);
+            }
+            return {
+                pitch: pitch,
+                fingeringOptions: fingerings,
+            };
+        };
+        this.calcAverage = (items, excludeZero = false) => {
+            if (excludeZero === true) {
+                items = items.filter((x) => x !== 0);
+            }
+            if (items.length === 0) {
+                return 0;
+            }
+            return items.reduce((a, b) => a + b) / items.length;
+        };
+        /**
+         * Calculate the selection criteria and score for a fingering option combination
+         */
+        this.calcFingeringOptionCriteria = (combo) => {
+            const avgFrets = combo.map((x) => x.avg_fret).filter((a) => a !== 0);
+            const avgFretsVal = this.calcAverage(avgFrets);
+            /**
+             * Calculate the standard deviation of an array
+             */
+            const calcStdDev = (arr) => {
+                if (arr.length === 0) {
+                    return 0;
+                }
+                const len = arr.length;
+                const mean = arr.reduce((a, b) => a + b) / len;
+                const variance = arr.map((x) => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / len;
+                return Math.sqrt(variance);
+            };
+            const avgFretStdDev = calcStdDev(avgFrets);
+            // Calculate a score that includes smoothness to account
+            //  for the ordering of the average frets for each beat
+            //  Ex: average frets of [7, 7, 8] is preferred over [7, 8, 7]
+            // Calculate smoothness from the StdDev of the
+            // differences
+            /**
+             * Calculate the differences between between pairs of consecutive elements
+             */
+            const calcDiffs = (arr) => {
+                return arr.slice(1).map((val, index) => val - arr[index]);
+            };
+            const avgFretDiffs = calcDiffs(avgFrets);
+            const avgFretSmoothness = calcStdDev(avgFretDiffs); // lower is smoother
+            // Percentage weightings are arbitrary. Main contributor is
+            // still the dispersion of the average frets (StdDec).
+            // The smoothness component is mostly meant to distinguish
+            // fingering options with the same average fret dispersions.
+            // The average fret value is included to preference lower fret values.
+            const score = avgFretStdDev + 0.1 * avgFretSmoothness + 0.001 * avgFretsVal;
+            return {
+                avg_frets: avgFrets,
+                avg_fret_val: avgFretsVal,
+                avg_fret_stddev: avgFretStdDev,
+                avg_fret_steps: avgFretDiffs,
+                avg_fret_steps_stddev_smoothness: avgFretSmoothness,
+                combo_score: score,
+                combo: combo,
+            };
+        };
+        /**
+         * Combinate product of N number of lists
+         */
+        this.cartesian = (arr) => {
+            // Return list of each element if only one list is received
+            if (arr.length === 1) {
+                return arr.flat().map((a) => [a]);
+            }
+            return arr.reduce((a, b) => a.flatMap((d) => b.map((e) => [d, e].flat())));
+        };
+        this.getStringToFretFingerings = (bestFingerings) => {
+            const bestStringToFretFingerings = bestFingerings.map((beatData) => {
+                if (beatData === "break") {
+                    return "break";
+                }
+                const defaultBeatFingering = new Map([
+                    [1, null],
+                    [2, null],
+                    [3, null],
+                    [4, null],
+                    [5, null],
+                    [6, null],
+                ]);
+                return beatData.reduce((map, stringDatum) => map.set(stringDatum["stringNum"], stringDatum["fret"]), defaultBeatFingering);
+            });
+            return bestStringToFretFingerings;
+        };
+        this.guitarStrings = guitar.strings;
+        const guitarChordPitchesMap = guitar.chordPitchesMap;
+        const guitarPitchRange = guitar.pitchRange;
+        this.pitchLines = this.validateInput(inputPitchString, guitarChordPitchesMap, guitarPitchRange);
+        this.linePitchFingerings = this.pitchLines.map(this.genPitchFingering, this);
+        // print(this.linePitchFingerings);
+        const maxFretSpan = 4;
+        this.lineFingeringOptions = this.linePitchFingerings.map((x) => this.genLineFingeringOptions(x, maxFretSpan), this);
+        this.bestFingerings = this.optimizeFingerings(this.lineFingeringOptions);
+    }
+    validateInput(inputPitchString, chordPitchesMap, pitchRange) {
+        let pitchLines = [];
+        // Format and convert input to sharps
+        inputPitchString = inputPitchString.toUpperCase();
+        const flatsToSharps = {
+            DB: "C#",
+            EB: "D#",
+            GB: "F#",
+            AB: "G#",
+            BB: "A#",
+        };
+        for (const flatString in flatsToSharps) {
+            const replace = new RegExp(`${flatString}`, "g");
+            inputPitchString = inputPitchString.replace(replace, flatsToSharps[flatString]);
+        }
+        // Validate lines of pitches against of Guitar's pitchRange
+        let errorStrings = [];
+        const inputPitchLines = inputPitchString.split("\n");
+        for (const [lineNum, inputPitchLineOrig] of inputPitchLines.entries()) {
+            let inputPitchLine = inputPitchLineOrig;
+            inputPitchLine = inputPitchLine.replace(/\s/g, "");
+            if (inputPitchLine === "") {
+                pitchLines.push("");
+                continue;
+            }
+            let linePitches = [];
+            while (inputPitchLine !== "") {
+                /**
+                 * Function to get combinations of substrings from string
+                 */
+                const getStringCombinations = (inputString) => {
+                    let list_of_substrings = [];
+                    for (let i = 0; i < inputString.length; i++) {
+                        for (let j = i + 1; j < inputString.length + 1; j++) {
+                            list_of_substrings.push(inputString.slice(i, j));
+                        }
+                    }
+                    return list_of_substrings;
+                };
+                const pitchCombos = getStringCombinations(inputPitchLine);
+                const matchingChords = Object.keys(chordPitchesMap).filter((value) => pitchCombos.includes(value));
+                if (matchingChords && matchingChords.length) {
+                    linePitches = chordPitchesMap[matchingChords.at(0)];
+                    break;
+                }
+                for (const [i, linePitchCombo] of pitchCombos.entries()) {
+                    if (pitchRange.has(linePitchCombo)) {
+                        inputPitchLine = inputPitchLine.replace(linePitchCombo, "");
+                        // Add to the pitches in the line if not already present
+                        if (!linePitches.includes(linePitchCombo)) {
+                            linePitches.push(linePitchCombo);
+                        }
+                        break;
+                    }
+                    if (i === pitchCombos.length - 1) {
+                        errorStrings.push(`Line ${lineNum} - '${inputPitchLine}' in '${inputPitchLineOrig}'`);
+                        inputPitchLine = "";
+                    }
+                }
+            }
+            pitchLines.push(linePitches);
+        }
+        // Throw aggregated invalid pitch error
+        if (errorStrings.length > 0) {
+            throw new Error(`Out of range or invalid pitches:\n${errorStrings.join("\n")}`);
+        }
+        return pitchLines;
+    }
+    /**
+     * Generate the fingerings for the pitches on the same line/beat
+     */
+    genPitchFingering(linePitches) {
+        if (linePitches === "") {
+            return "break";
+        }
+        let linePitchIndivFingerings = [];
+        for (const pitchName of linePitches) {
+            const pitchFingerings = this.calcPitchFingerings(pitchName);
+            linePitchIndivFingerings.push(pitchFingerings);
+        }
+        return linePitchIndivFingerings;
+    }
+    /**
+     * Generate fingering options from each line fingerings
+     */
+    genLineFingeringOptions(fingeringLine, maxFretSpan) {
+        if (fingeringLine === "break") {
+            return "break";
+        }
+        const linePitches = fingeringLine.map((a) => a.pitch);
+        const linePitchFingeringOptions = fingeringLine.map((a) => a.fingeringOptions);
+        // Calculate list of combinations
+        let lineFingeringCombosList = this.cartesian(linePitchFingeringOptions);
+        const lineFingeringCombos = new Set(lineFingeringCombosList);
+        const calcRange = (items, excludeZero = false) => {
+            if (excludeZero === true) {
+                items = items.filter((x) => x !== 0);
+            }
+            if (items.length === 0) {
+                return 0;
+            }
+            return Math.max(...items) - Math.min(...items);
+        };
+        let lineFingeringOptions = [...lineFingeringCombos].reduce((result, lineFingeringCombo) => {
+            // Do not include fingering combos with overlapping strings numbers
+            const numPitches = lineFingeringCombo.length;
+            const uniqueStringNums = new Set(lineFingeringCombo.map((a) => a.stringNum));
+            if (uniqueStringNums.size !== numPitches) {
+                if (lineFingeringCombos.size === 1) {
+                    const errOutputCombo = JSON.stringify(lineFingeringCombo);
+                    const errOutput = `Fingerings for the pitches ${linePitches} is an impossible combination of ${errOutputCombo}.'`;
+                    throw new Error(errOutput);
+                }
+                else {
+                    return result;
+                }
+            }
+            const output = {
+                avg_fret: this.calcAverage(lineFingeringCombo.map((a) => a.fret), true),
+                fret_span: calcRange(lineFingeringCombo.map((a) => a.fret), true),
+                fingering: lineFingeringCombo,
+            };
+            result.push(output);
+            return result;
+        }, []);
+        // Remove fingering options with the highest fret spans over the max while
+        // fingering options with low fret spans exist
+        let fretSpans = lineFingeringOptions.map((a) => a.fret_span);
+        let biggestFretSpan = Math.max(...fretSpans);
+        while (lineFingeringOptions.length > 1 && biggestFretSpan > maxFretSpan) {
+            fretSpans = lineFingeringOptions.map((a) => a.fret_span);
+            biggestFretSpan = Math.max(...fretSpans);
+            const maxFretSpanFingeringIndex = fretSpans.indexOf(biggestFretSpan);
+            lineFingeringOptions.splice(maxFretSpanFingeringIndex, 1);
+        }
+        return lineFingeringOptions;
+    }
+    optimizeFingerings(lineFingeringOptions) {
+        const splitArrayOn = (arr, delimiter, limit = 100) => {
+            let sublists = [];
+            let count = 0;
+            while (arr.includes(delimiter)) {
+                count++;
+                if (count > limit) {
+                    throw new Error(`Array split delimiter limit reached.`);
+                }
+                const breakIndex = arr.indexOf(delimiter);
+                const sublist = arr.slice(0, breakIndex);
+                if (sublist.length !== 0) {
+                    sublists.push(sublist);
+                }
+                arr.splice(0, breakIndex + 1);
+            }
+            if (arr.length !== 0) {
+                sublists.push(arr);
+            }
+            return sublists;
+        };
+        // Split list of options into sublists separated by measure breaks
+        const lineFingeringOptionsBlocks = splitArrayOn(lineFingeringOptions, "break");
+        // TODO Investigate progressive calculation technique where a block
+        // TODO would move for each beat consideration to include previously chosen
+        // TODO fingerings but also future fingering options
+        // Calculate the most optimal fingering option for each block
+        const bestFingeringOptionBlocks = lineFingeringOptionsBlocks.map((lineFingeringOptionsBlock) => {
+            // Check for excessive block size to avoid exponential memory
+            // usage from cartesian()
+            let lineFingeringOptionsSubBlocks = [lineFingeringOptionsBlock];
+            if (lineFingeringOptionsBlock.length > 8) {
+                /**
+                 * Split array into array of arrays of a specified chunk size
+                 */
+                const chunkArray = (array, chunkSize) => {
+                    const numberOfChunks = Math.ceil(array.length / chunkSize);
+                    return [...Array(numberOfChunks)].map((_, index) => {
+                        return array.slice(index * chunkSize, (index + 1) * chunkSize);
+                    });
+                };
+                lineFingeringOptionsSubBlocks = chunkArray(lineFingeringOptionsBlock, 8);
+            }
+            const bestSubBlockOptionFingerings = lineFingeringOptionsSubBlocks.map((lineFingeringOptionsSubBlock) => {
+                // Calculate list of combinations
+                const blockFingeringCombosList = this.cartesian(lineFingeringOptionsSubBlock);
+                // Calculate block combo selection criteria and score
+                const blockFingeringOptionsList = blockFingeringCombosList.map(this.calcFingeringOptionCriteria);
+                // Find option with the lowest score. Could combine with the
+                // calculation step to lower memory footprint but combining would
+                // impede debuggability
+                const bestBlockOption = blockFingeringOptionsList.reduce((lowest, current) => lowest.combo_score < current.combo_score ? lowest : current);
+                return bestBlockOption.combo;
+            });
+            const bestSubBlockOptionFingering = [].concat(...bestSubBlockOptionFingerings.flat());
+            return bestSubBlockOptionFingering;
+        });
+        const bestFingeringsNoBreaks = bestFingeringOptionBlocks.map((fingeringOptions) => fingeringOptions.map((fingeringOption) => fingeringOption.fingering));
+        // Add back measure breaks and flatten
+        const interleave = (arr, delimiter) => [].concat(...arr.map((n) => [n, delimiter])).slice(0, -1);
+        const bestFingerings = interleave(bestFingeringsNoBreaks, "break").flat();
+        return bestFingerings;
+    }
+};
