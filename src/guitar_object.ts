@@ -129,6 +129,8 @@ type FingeringOption = {
 	fingering: Fingering[];
 };
 
+type OutputFingering = Map<"pitches" | "stringToFretFingering", PitchName[] | Map<StringNumber, null | number>>;
+
 /**
  * Guitar object
  */
@@ -510,7 +512,7 @@ exports.Arrangement = class Arrangement {
 	readonly pitchLines: ValidatedLinePitchInput[];
 	readonly linePitchFingerings: (PitchFingerings[] | "break")[];
 	readonly lineFingeringOptions: ("break" | FingeringOption[])[];
-	readonly bestFingerings: ("break" | Fingering[])[];
+	readonly bestFingerings: OutputFingering[];
 
 	/**
 	 * Class to generate a set of TAB fingerings for a guitar object
@@ -524,7 +526,6 @@ exports.Arrangement = class Arrangement {
 		this.pitchLines = this.validateInput(inputPitchString, guitarChordPitchesMap, guitarPitchRange);
 
 		this.linePitchFingerings = this.pitchLines.map(this.genPitchFingering, this);
-		// print(this.linePitchFingerings);
 
 		const maxFretSpan = 4;
 		this.lineFingeringOptions = this.linePitchFingerings.map((x) => this.genLineFingeringOptions(x, maxFretSpan), this);
@@ -532,6 +533,7 @@ exports.Arrangement = class Arrangement {
 		this.bestFingerings = this.optimizeFingerings(this.lineFingeringOptions);
 	}
 
+	// TODO add comment support for input strings
 	validateInput(inputPitchString: string, chordPitchesMap, pitchRange: Set<string>): ValidatedLinePitchInput[] {
 		let pitchLines: ValidatedLinePitchInput[] = [];
 
@@ -693,6 +695,7 @@ exports.Arrangement = class Arrangement {
 			}
 
 			const output = {
+				pitches: linePitches,
 				avg_fret: this.calcAverage(
 					lineFingeringCombo.map((a) => a.fret),
 					true
@@ -718,7 +721,6 @@ exports.Arrangement = class Arrangement {
 			const maxFretSpanFingeringIndex = fretSpans.indexOf(biggestFretSpan);
 			lineFingeringOptions.splice(maxFretSpanFingeringIndex, 1);
 		}
-
 		return lineFingeringOptions;
 	}
 
@@ -803,13 +805,34 @@ exports.Arrangement = class Arrangement {
 			return bestSubBlockOptionFingering;
 		});
 
-		const bestFingeringsNoBreaks = bestFingeringOptionBlocks.map((fingeringOptions) =>
-			fingeringOptions.map((fingeringOption) => fingeringOption.fingering)
+		const convertFingeringObjectToMap = (lineFingerings: Fingering[]) => {
+			const defaultLineFingering = new Map([
+				[1, null],
+				[2, null],
+				[3, null],
+				[4, null],
+				[5, null],
+				[6, null],
+			]);
+
+			return lineFingerings.reduce(
+				(map: Map<number, number | null>, stringDatum) => map.set(stringDatum.stringNum, stringDatum.fret),
+				defaultLineFingering
+			);
+		};
+
+		const bestFingeringBlocks = bestFingeringOptionBlocks.map((fingeringOptions) =>
+			fingeringOptions.map((fingeringOption) => {
+				return new Map([
+					["pitches", fingeringOption.pitches],
+					["stringToFretFingering", convertFingeringObjectToMap(fingeringOption.fingering)],
+				]);
+			})
 		);
 
 		// Add back measure breaks and flatten
 		const interleave = (arr: any[], delimiter: any) => [].concat(...arr.map((n) => [n, delimiter])).slice(0, -1);
-		const bestFingerings = <(Fingering[] | "break")[]>interleave(bestFingeringsNoBreaks, "break").flat();
+		const bestFingerings = <OutputFingering[]>interleave(bestFingeringBlocks, "break").flat();
 		return bestFingerings;
 	}
 
@@ -878,28 +901,5 @@ exports.Arrangement = class Arrangement {
 			return arr.flat().map((a) => [a]);
 		}
 		return arr.reduce((a, b) => a.flatMap((d) => b.map((e) => [d, e].flat())));
-	};
-
-	getStringToFretFingerings = (bestFingerings: ("break" | Fingering[])[]): ("break" | Map<number, number | null>)[] => {
-		const bestStringToFretFingerings = bestFingerings.map((beatData) => {
-			if (beatData === "break") {
-				return "break";
-			}
-
-			const defaultBeatFingering = new Map([
-				[1, null],
-				[2, null],
-				[3, null],
-				[4, null],
-				[5, null],
-				[6, null],
-			]);
-
-			return beatData.reduce(
-				(map: Map<number, number | null>, stringDatum) => map.set(stringDatum["stringNum"], stringDatum["fret"]),
-				defaultBeatFingering
-			);
-		});
-		return bestStringToFretFingerings;
 	};
 };

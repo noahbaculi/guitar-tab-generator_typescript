@@ -778,16 +778,19 @@ describe("Guitar Line Fingering Options Calculation", () => {
 		const lineFingeringOptions = [
 			[
 				{
+					pitches: ["D#4"],
 					avg_fret: 4,
 					fret_span: 0,
 					fingering: [{ stringNum: 2, fret: 4 }],
 				},
 				{
+					pitches: ["D#4"],
 					avg_fret: 8,
 					fret_span: 0,
 					fingering: [{ stringNum: 3, fret: 8 }],
 				},
 				{
+					pitches: ["D#4"],
 					avg_fret: 13,
 					fret_span: 0,
 					fingering: [{ stringNum: 4, fret: 13 }],
@@ -795,16 +798,19 @@ describe("Guitar Line Fingering Options Calculation", () => {
 			],
 			[
 				{
+					pitches: ["B4"],
 					avg_fret: 7,
 					fret_span: 0,
 					fingering: [{ stringNum: 1, fret: 7 }],
 				},
 				{
+					pitches: ["B4"],
 					avg_fret: 12,
 					fret_span: 0,
 					fingering: [{ stringNum: 2, fret: 12 }],
 				},
 				{
+					pitches: ["B4"],
 					avg_fret: 16,
 					fret_span: 0,
 					fingering: [{ stringNum: 3, fret: 16 }],
@@ -812,6 +818,7 @@ describe("Guitar Line Fingering Options Calculation", () => {
 			],
 			[
 				{
+					pitches: ["E2"],
 					avg_fret: 0,
 					fret_span: 0,
 					fingering: [{ stringNum: 6, fret: 0 }],
@@ -819,6 +826,7 @@ describe("Guitar Line Fingering Options Calculation", () => {
 			],
 			[
 				{
+					pitches: ["F2", "B4"],
 					avg_fret: 4,
 					fret_span: 6,
 					fingering: [
@@ -829,6 +837,7 @@ describe("Guitar Line Fingering Options Calculation", () => {
 			],
 			[
 				{
+					pitches: ["A2", "A3"],
 					avg_fret: 2,
 					fret_span: 0,
 					fingering: [
@@ -837,6 +846,7 @@ describe("Guitar Line Fingering Options Calculation", () => {
 					],
 				},
 				{
+					pitches: ["A2", "A3"],
 					avg_fret: 7,
 					fret_span: 0,
 					fingering: [
@@ -845,6 +855,7 @@ describe("Guitar Line Fingering Options Calculation", () => {
 					],
 				},
 				{
+					pitches: ["A2", "A3"],
 					avg_fret: 17,
 					fret_span: 0,
 					fingering: [
@@ -853,6 +864,7 @@ describe("Guitar Line Fingering Options Calculation", () => {
 					],
 				},
 				{
+					pitches: ["A2", "A3"],
 					avg_fret: 6,
 					fret_span: 2,
 					fingering: [
@@ -864,6 +876,7 @@ describe("Guitar Line Fingering Options Calculation", () => {
 			"break",
 			[
 				{
+					pitches: ["E4", "B3", "G3", "E3", "B2", "E2"],
 					avg_fret: 2,
 					fret_span: 0,
 					fingering: [
@@ -3460,13 +3473,30 @@ describe("Guitar Fingering Optimization", () => {
 		const lineFingeringOptions = [
 			[
 				{
+					pitches: ["E2"],
 					avg_fret: 0,
 					fret_span: 0,
 					fingering: [{ stringNum: 6, fret: 0 }],
 				},
 			],
 		];
-		const bestFingerings = [[{ stringNum: 6, fret: 0 }]];
+		const bestFingerings = [
+			// @ts-ignore
+			new Map([
+				["pitches", ["E2"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, null],
+						[4, null],
+						[5, null],
+						[6, 0],
+					]),
+				],
+			]),
+		];
 
 		expect(normalArrangement.optimizeFingerings(lineFingeringOptions)).toEqual(bestFingerings);
 	});
@@ -3478,6 +3508,7 @@ describe("Guitar Fingering Optimization", () => {
 			"break",
 			[
 				{
+					pitches: ["E2"],
 					avg_fret: 0,
 					fret_span: 0,
 					fingering: [{ stringNum: 6, fret: 0 }],
@@ -3486,7 +3517,23 @@ describe("Guitar Fingering Optimization", () => {
 			"break",
 			"break",
 		];
-		const bestFingerings = [[{ stringNum: 6, fret: 0 }]];
+		const bestFingerings = [
+			// @ts-ignore
+			new Map([
+				["pitches", ["E2"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, null],
+						[4, null],
+						[5, null],
+						[6, 0],
+					]),
+				],
+			]),
+		];
 
 		expect(normalArrangement.optimizeFingerings(lineFingeringOptions)).toEqual(bestFingerings);
 	});
@@ -3495,16 +3542,19 @@ describe("Guitar Fingering Optimization", () => {
 		const lineFingeringOptions = [
 			[
 				{
+					pitches: ["D#4"],
 					avg_fret: 4,
 					fret_span: 0,
 					fingering: [{ stringNum: 2, fret: 4 }],
 				},
 				{
+					pitches: ["D#4"],
 					avg_fret: 8,
 					fret_span: 0,
 					fingering: [{ stringNum: 3, fret: 8 }],
 				},
 				{
+					pitches: ["D#4"],
 					avg_fret: 13,
 					fret_span: 0,
 					fingering: [{ stringNum: 4, fret: 13 }],
@@ -3512,16 +3562,19 @@ describe("Guitar Fingering Optimization", () => {
 			],
 			[
 				{
+					pitches: ["B4"],
 					avg_fret: 7,
 					fret_span: 0,
 					fingering: [{ stringNum: 1, fret: 7 }],
 				},
 				{
+					pitches: ["B4"],
 					avg_fret: 12,
 					fret_span: 0,
 					fingering: [{ stringNum: 2, fret: 12 }],
 				},
 				{
+					pitches: ["B4"],
 					avg_fret: 16,
 					fret_span: 0,
 					fingering: [{ stringNum: 3, fret: 16 }],
@@ -3529,6 +3582,7 @@ describe("Guitar Fingering Optimization", () => {
 			],
 			[
 				{
+					pitches: ["A2", "A3"],
 					avg_fret: 2,
 					fret_span: 0,
 					fingering: [
@@ -3537,6 +3591,7 @@ describe("Guitar Fingering Optimization", () => {
 					],
 				},
 				{
+					pitches: ["A2", "A3"],
 					avg_fret: 7,
 					fret_span: 0,
 					fingering: [
@@ -3545,6 +3600,7 @@ describe("Guitar Fingering Optimization", () => {
 					],
 				},
 				{
+					pitches: ["A2", "A3"],
 					avg_fret: 17,
 					fret_span: 0,
 					fingering: [
@@ -3553,6 +3609,7 @@ describe("Guitar Fingering Optimization", () => {
 					],
 				},
 				{
+					pitches: ["A2", "A3"],
 					avg_fret: 6,
 					fret_span: 2,
 					fingering: [
@@ -3566,6 +3623,7 @@ describe("Guitar Fingering Optimization", () => {
 			"break",
 			[
 				{
+					pitches: ["F2", "B4"],
 					avg_fret: 4,
 					fret_span: 6,
 					fingering: [
@@ -3576,17 +3634,67 @@ describe("Guitar Fingering Optimization", () => {
 			],
 		];
 		const bestFingerings = [
-			[{ stringNum: 3, fret: 8 }],
-			[{ stringNum: 1, fret: 7 }],
-			[
-				{ stringNum: 5, fret: 0 },
-				{ stringNum: 4, fret: 7 },
-			],
+			// @ts-ignore
+			new Map([
+				["pitches", ["D#4"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, 8],
+						[4, null],
+						[5, null],
+						[6, null],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["B4"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, 7],
+						[2, null],
+						[3, null],
+						[4, null],
+						[5, null],
+						[6, null],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["A2", "A3"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, null],
+						[4, 7],
+						[5, 0],
+						[6, null],
+					]),
+				],
+			]),
 			"break",
-			[
-				{ stringNum: 6, fret: 1 },
-				{ stringNum: 1, fret: 7 },
-			],
+			// @ts-ignore
+			new Map([
+				["pitches", ["F2", "B4"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, 7],
+						[2, null],
+						[3, null],
+						[4, null],
+						[5, null],
+						[6, 1],
+					]),
+				],
+			]),
 		];
 
 		expect(normalArrangement.optimizeFingerings(lineFingeringOptions)).toEqual(bestFingerings);
@@ -3596,6 +3704,7 @@ describe("Guitar Fingering Optimization", () => {
 		const lineFingeringOptions = [
 			[
 				{
+					pitches: ["E2"],
 					avg_fret: 0,
 					fret_span: 0,
 					fingering: [{ stringNum: 6, fret: 0 }],
@@ -3603,6 +3712,7 @@ describe("Guitar Fingering Optimization", () => {
 			],
 			[
 				{
+					pitches: ["F2"],
 					avg_fret: 1,
 					fret_span: 0,
 					fingering: [{ stringNum: 6, fret: 1 }],
@@ -3610,6 +3720,7 @@ describe("Guitar Fingering Optimization", () => {
 			],
 			[
 				{
+					pitches: ["F#2"],
 					avg_fret: 2,
 					fret_span: 0,
 					fingering: [{ stringNum: 6, fret: 2 }],
@@ -3617,6 +3728,7 @@ describe("Guitar Fingering Optimization", () => {
 			],
 			[
 				{
+					pitches: ["G2"],
 					avg_fret: 3,
 					fret_span: 0,
 					fingering: [{ stringNum: 6, fret: 3 }],
@@ -3624,6 +3736,7 @@ describe("Guitar Fingering Optimization", () => {
 			],
 			[
 				{
+					pitches: ["G#2"],
 					avg_fret: 4,
 					fret_span: 0,
 					fingering: [{ stringNum: 6, fret: 4 }],
@@ -3631,11 +3744,13 @@ describe("Guitar Fingering Optimization", () => {
 			],
 			[
 				{
+					pitches: ["A2"],
 					avg_fret: 0,
 					fret_span: 0,
 					fingering: [{ stringNum: 5, fret: 0 }],
 				},
 				{
+					pitches: ["A2"],
 					avg_fret: 5,
 					fret_span: 0,
 					fingering: [{ stringNum: 6, fret: 5 }],
@@ -3643,11 +3758,13 @@ describe("Guitar Fingering Optimization", () => {
 			],
 			[
 				{
+					pitches: ["A#2"],
 					avg_fret: 1,
 					fret_span: 0,
 					fingering: [{ stringNum: 5, fret: 1 }],
 				},
 				{
+					pitches: ["A#2"],
 					avg_fret: 6,
 					fret_span: 0,
 					fingering: [{ stringNum: 6, fret: 6 }],
@@ -3655,11 +3772,13 @@ describe("Guitar Fingering Optimization", () => {
 			],
 			[
 				{
+					pitches: ["B2"],
 					avg_fret: 2,
 					fret_span: 0,
 					fingering: [{ stringNum: 5, fret: 2 }],
 				},
 				{
+					pitches: ["B2"],
 					avg_fret: 7,
 					fret_span: 0,
 					fingering: [{ stringNum: 6, fret: 7 }],
@@ -3667,11 +3786,13 @@ describe("Guitar Fingering Optimization", () => {
 			],
 			[
 				{
+					pitches: ["C3"],
 					avg_fret: 3,
 					fret_span: 0,
 					fingering: [{ stringNum: 5, fret: 3 }],
 				},
 				{
+					pitches: ["C3"],
 					avg_fret: 8,
 					fret_span: 0,
 					fingering: [{ stringNum: 6, fret: 8 }],
@@ -3679,11 +3800,13 @@ describe("Guitar Fingering Optimization", () => {
 			],
 			[
 				{
+					pitches: ["C#3"],
 					avg_fret: 4,
 					fret_span: 0,
 					fingering: [{ stringNum: 5, fret: 4 }],
 				},
 				{
+					pitches: ["C#3"],
 					avg_fret: 9,
 					fret_span: 0,
 					fingering: [{ stringNum: 6, fret: 9 }],
@@ -3691,16 +3814,19 @@ describe("Guitar Fingering Optimization", () => {
 			],
 			[
 				{
+					pitches: ["D3"],
 					avg_fret: 0,
 					fret_span: 0,
 					fingering: [{ stringNum: 4, fret: 0 }],
 				},
 				{
+					pitches: ["D3"],
 					avg_fret: 5,
 					fret_span: 0,
 					fingering: [{ stringNum: 5, fret: 5 }],
 				},
 				{
+					pitches: ["D3"],
 					avg_fret: 10,
 					fret_span: 0,
 					fingering: [{ stringNum: 6, fret: 10 }],
@@ -3708,16 +3834,19 @@ describe("Guitar Fingering Optimization", () => {
 			],
 			[
 				{
+					pitches: ["D#3"],
 					avg_fret: 1,
 					fret_span: 0,
 					fingering: [{ stringNum: 4, fret: 1 }],
 				},
 				{
+					pitches: ["D#3"],
 					avg_fret: 6,
 					fret_span: 0,
 					fingering: [{ stringNum: 5, fret: 6 }],
 				},
 				{
+					pitches: ["D#3"],
 					avg_fret: 11,
 					fret_span: 0,
 					fingering: [{ stringNum: 6, fret: 11 }],
@@ -3725,16 +3854,19 @@ describe("Guitar Fingering Optimization", () => {
 			],
 			[
 				{
+					pitches: ["E3"],
 					avg_fret: 2,
 					fret_span: 0,
 					fingering: [{ stringNum: 4, fret: 2 }],
 				},
 				{
+					pitches: ["E3"],
 					avg_fret: 7,
 					fret_span: 0,
 					fingering: [{ stringNum: 5, fret: 7 }],
 				},
 				{
+					pitches: ["E3"],
 					avg_fret: 12,
 					fret_span: 0,
 					fingering: [{ stringNum: 6, fret: 12 }],
@@ -3742,23 +3874,26 @@ describe("Guitar Fingering Optimization", () => {
 			],
 			[
 				{
+					pitches: ["F3"],
 					avg_fret: 3,
 					fret_span: 0,
 					fingering: [{ stringNum: 4, fret: 3 }],
 				},
 				{
+					pitches: ["F3"],
 					avg_fret: 8,
 					fret_span: 0,
 					fingering: [{ stringNum: 5, fret: 8 }],
 				},
 				{
+					pitches: ["F3"],
 					avg_fret: 13,
 					fret_span: 0,
 					fingering: [{ stringNum: 6, fret: 13 }],
 				},
 			],
 		];
-		const bestFingerings = [
+		const bestFingeringsLegacy = [
 			[{ stringNum: 6, fret: 0 }],
 			[{ stringNum: 6, fret: 1 }],
 			[{ stringNum: 6, fret: 2 }],
@@ -3774,11 +3909,224 @@ describe("Guitar Fingering Optimization", () => {
 			[{ stringNum: 4, fret: 2 }],
 			[{ stringNum: 4, fret: 3 }],
 		];
+		const bestFingerings = [
+			// @ts-ignore
+			new Map([
+				["pitches", ["E2"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, null],
+						[4, null],
+						[5, null],
+						[6, 0],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["F2"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, null],
+						[4, null],
+						[5, null],
+						[6, 1],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["F#2"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, null],
+						[4, null],
+						[5, null],
+						[6, 2],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["G2"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, null],
+						[4, null],
+						[5, null],
+						[6, 3],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["G#2"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, null],
+						[4, null],
+						[5, null],
+						[6, 4],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["A2"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, null],
+						[4, null],
+						[5, 0],
+						[6, null],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["A#2"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, null],
+						[4, null],
+						[5, 1],
+						[6, null],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["B2"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, null],
+						[4, null],
+						[5, 2],
+						[6, null],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["C3"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, null],
+						[4, null],
+						[5, 3],
+						[6, null],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["C#3"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, null],
+						[4, null],
+						[5, 4],
+						[6, null],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["D3"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, null],
+						[4, 0],
+						[5, null],
+						[6, null],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["D#3"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, null],
+						[4, 1],
+						[5, null],
+						[6, null],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["E3"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, null],
+						[4, 2],
+						[5, null],
+						[6, null],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["F3"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, null],
+						[4, 3],
+						[5, null],
+						[6, null],
+					]),
+				],
+			]),
+		];
 
 		expect(normalArrangement.optimizeFingerings(lineFingeringOptions)).toEqual(bestFingerings);
 	});
 
-	it("does not calculate fingering option criteria for more than 100 beats", function () {
+	// TODO test with 801 beats in a single measure
+	it("does not calculate fingering option criteria for more than 100 blocks", function () {
 		const baseArr = [
 			[
 				{
@@ -3818,24 +4166,217 @@ describe("Guitar Tab Generation", () => {
 		A3`;
 
 		const output = [
-			[{ stringNum: 1, fret: 0 }],
-			[{ stringNum: 2, fret: 4 }],
-			[{ stringNum: 1, fret: 0 }],
-			[{ stringNum: 2, fret: 4 }],
-			[{ stringNum: 1, fret: 0 }],
-			[{ stringNum: 3, fret: 4 }],
-			[{ stringNum: 2, fret: 3 }],
-			[{ stringNum: 3, fret: 5 }],
+			// @ts-ignore
+			new Map([
+				["pitches", ["E4"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, 0],
+						[2, null],
+						[3, null],
+						[4, null],
+						[5, null],
+						[6, null],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["D#4"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, 4],
+						[3, null],
+						[4, null],
+						[5, null],
+						[6, null],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["E4"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, 0],
+						[2, null],
+						[3, null],
+						[4, null],
+						[5, null],
+						[6, null],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["D#4"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, 4],
+						[3, null],
+						[4, null],
+						[5, null],
+						[6, null],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["E4"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, 0],
+						[2, null],
+						[3, null],
+						[4, null],
+						[5, null],
+						[6, null],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["B3"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, 4],
+						[4, null],
+						[5, null],
+						[6, null],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["D4"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, 3],
+						[3, null],
+						[4, null],
+						[5, null],
+						[6, null],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["C4"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, 5],
+						[4, null],
+						[5, null],
+						[6, null],
+					]),
+				],
+			]),
 			"break",
-			[
-				{ stringNum: 5, fret: 0 },
-				{ stringNum: 3, fret: 2 },
-			],
-			[{ stringNum: 4, fret: 2 }],
-			[{ stringNum: 3, fret: 2 }],
-			[{ stringNum: 5, fret: 3 }],
-			[{ stringNum: 4, fret: 2 }],
-			[{ stringNum: 3, fret: 2 }],
+			// @ts-ignore
+			new Map([
+				["pitches", ["A2", "A3"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, 2],
+						[4, null],
+						[5, 0],
+						[6, null],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["E3"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, null],
+						[4, 2],
+						[5, null],
+						[6, null],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["A3"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, 2],
+						[4, null],
+						[5, null],
+						[6, null],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["C3"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, null],
+						[4, null],
+						[5, 3],
+						[6, null],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["E3"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, null],
+						[4, 2],
+						[5, null],
+						[6, null],
+					]),
+				],
+			]),
+			// @ts-ignore
+			new Map([
+				["pitches", ["A3"]],
+				[
+					"stringToFretFingering",
+					new Map([
+						[1, null],
+						[2, null],
+						[3, 2],
+						[4, null],
+						[5, null],
+						[6, null],
+					]),
+				],
+			]),
 		];
 
 		const arrangement = new GuitarModule.Arrangement(guitar, inputPitchString);

@@ -490,33 +490,16 @@ exports.Arrangement = class Arrangement {
             }
             return arr.reduce((a, b) => a.flatMap((d) => b.map((e) => [d, e].flat())));
         };
-        this.getStringToFretFingerings = (bestFingerings) => {
-            const bestStringToFretFingerings = bestFingerings.map((beatData) => {
-                if (beatData === "break") {
-                    return "break";
-                }
-                const defaultBeatFingering = new Map([
-                    [1, null],
-                    [2, null],
-                    [3, null],
-                    [4, null],
-                    [5, null],
-                    [6, null],
-                ]);
-                return beatData.reduce((map, stringDatum) => map.set(stringDatum["stringNum"], stringDatum["fret"]), defaultBeatFingering);
-            });
-            return bestStringToFretFingerings;
-        };
         this.guitarStrings = guitar.strings;
         const guitarChordPitchesMap = guitar.chordPitchesMap;
         const guitarPitchRange = guitar.pitchRange;
         this.pitchLines = this.validateInput(inputPitchString, guitarChordPitchesMap, guitarPitchRange);
         this.linePitchFingerings = this.pitchLines.map(this.genPitchFingering, this);
-        // print(this.linePitchFingerings);
         const maxFretSpan = 4;
         this.lineFingeringOptions = this.linePitchFingerings.map((x) => this.genLineFingeringOptions(x, maxFretSpan), this);
         this.bestFingerings = this.optimizeFingerings(this.lineFingeringOptions);
     }
+    // TODO add comment support for input strings
     validateInput(inputPitchString, chordPitchesMap, pitchRange) {
         let pitchLines = [];
         // Format and convert input to sharps
@@ -635,6 +618,7 @@ exports.Arrangement = class Arrangement {
                 }
             }
             const output = {
+                pitches: linePitches,
                 avg_fret: this.calcAverage(lineFingeringCombo.map((a) => a.fret), true),
                 fret_span: calcRange(lineFingeringCombo.map((a) => a.fret), true),
                 fingering: lineFingeringCombo,
@@ -711,10 +695,26 @@ exports.Arrangement = class Arrangement {
             const bestSubBlockOptionFingering = [].concat(...bestSubBlockOptionFingerings.flat());
             return bestSubBlockOptionFingering;
         });
-        const bestFingeringsNoBreaks = bestFingeringOptionBlocks.map((fingeringOptions) => fingeringOptions.map((fingeringOption) => fingeringOption.fingering));
+        const convertFingeringObjectToMap = (lineFingerings) => {
+            const defaultLineFingering = new Map([
+                [1, null],
+                [2, null],
+                [3, null],
+                [4, null],
+                [5, null],
+                [6, null],
+            ]);
+            return lineFingerings.reduce((map, stringDatum) => map.set(stringDatum.stringNum, stringDatum.fret), defaultLineFingering);
+        };
+        const bestFingeringBlocks = bestFingeringOptionBlocks.map((fingeringOptions) => fingeringOptions.map((fingeringOption) => {
+            return new Map([
+                ["pitches", fingeringOption.pitches],
+                ["stringToFretFingering", convertFingeringObjectToMap(fingeringOption.fingering)],
+            ]);
+        }));
         // Add back measure breaks and flatten
         const interleave = (arr, delimiter) => [].concat(...arr.map((n) => [n, delimiter])).slice(0, -1);
-        const bestFingerings = interleave(bestFingeringsNoBreaks, "break").flat();
+        const bestFingerings = interleave(bestFingeringBlocks, "break").flat();
         return bestFingerings;
     }
 };
