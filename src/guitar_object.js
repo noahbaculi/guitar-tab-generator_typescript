@@ -499,7 +499,6 @@ exports.Arrangement = class Arrangement {
         this.lineFingeringOptions = this.linePitchFingerings.map((x) => this.genLineFingeringOptions(x, maxFretSpan), this);
         this.bestFingerings = this.optimizeFingerings(this.lineFingeringOptions);
     }
-    // TODO add comment support for input strings
     validateInput(inputPitchString, chordPitchesMap, pitchRange) {
         let pitchLines = [];
         // Format and convert input to sharps
@@ -521,6 +520,10 @@ exports.Arrangement = class Arrangement {
         for (const [lineNum, inputPitchLineOrig] of inputPitchLines.entries()) {
             let inputPitchLine = inputPitchLineOrig;
             inputPitchLine = inputPitchLine.replace(/\s/g, "");
+            // Skip lines that are commented out
+            if (inputPitchLine[0] == `#` || inputPitchLine.slice(0, 2) == `//`) {
+                continue;
+            }
             if (inputPitchLine === "") {
                 pitchLines.push("");
                 continue;

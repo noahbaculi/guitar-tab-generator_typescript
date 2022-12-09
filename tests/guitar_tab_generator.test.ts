@@ -490,6 +490,34 @@ describe("Guitar Pitch Input Validation", () => {
 		]);
 	});
 
+	it("validates input with commented lines", function () {
+		const inputPitchString = `A2A3E4
+		A7 chord
+		A2
+		A3
+		E2
+		F2
+		# This is a comment
+		// This is also a comment
+		F#2
+		E4
+		
+		A2A3`;
+		const arrangement = new GuitarModule.Arrangement(normalGuitar, inputPitchString);
+		expect(arrangement.pitchLines).toEqual([
+			["A2", "A3", "E4"],
+			["E4", "C#4", "G3", "E3", "A2"],
+			["A2"],
+			["A3"],
+			["E2"],
+			["F2"],
+			["F#2"],
+			["E4"],
+			"",
+			["A2", "A3"],
+		]);
+	});
+
 	it("handles repeated pitch input", function () {
 		const arrangement = new GuitarModule.Arrangement(normalGuitar, "A2A3A2E4E4");
 		expect(arrangement.pitchLines).toEqual([["A2", "A3", "E4"]]);
@@ -3892,22 +3920,6 @@ describe("Guitar Fingering Optimization", () => {
 					fingering: [{ stringNum: 6, fret: 13 }],
 				},
 			],
-		];
-		const bestFingeringsLegacy = [
-			[{ stringNum: 6, fret: 0 }],
-			[{ stringNum: 6, fret: 1 }],
-			[{ stringNum: 6, fret: 2 }],
-			[{ stringNum: 6, fret: 3 }],
-			[{ stringNum: 6, fret: 4 }],
-			[{ stringNum: 5, fret: 0 }],
-			[{ stringNum: 5, fret: 1 }],
-			[{ stringNum: 5, fret: 2 }],
-			[{ stringNum: 5, fret: 3 }],
-			[{ stringNum: 5, fret: 4 }],
-			[{ stringNum: 4, fret: 0 }],
-			[{ stringNum: 4, fret: 1 }],
-			[{ stringNum: 4, fret: 2 }],
-			[{ stringNum: 4, fret: 3 }],
 		];
 		const bestFingerings = [
 			// @ts-ignore
