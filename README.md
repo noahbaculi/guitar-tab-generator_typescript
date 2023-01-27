@@ -34,7 +34,6 @@ Em chord
 </details>
 
 ### `pitchLines <- validateInput()`
-
 Perform the following standardizations to the input string:
 
 - Replace flat pitches with equivalent sharp pitches.
@@ -189,16 +188,19 @@ Generate compatible fingering combinations for each set of pitches for later com
 [
   [
     {
+      pitches: [ 'D#4' ],
       avg_fret: 4,
       fret_span: 0,
       fingering: [ { stringNum: 2, fret: 4 } ]
     },
     {
+      pitches: [ 'D#4' ],
       avg_fret: 8,
       fret_span: 0,
       fingering: [ { stringNum: 3, fret: 8 } ]
     },
     {
+      pitches: [ 'D#4' ],
       avg_fret: 13,
       fret_span: 0,
       fingering: [ { stringNum: 4, fret: 13 } ]
@@ -206,16 +208,19 @@ Generate compatible fingering combinations for each set of pitches for later com
   ],
   [
     {
+      pitches: [ 'B4' ],
       avg_fret: 7,
       fret_span: 0,
       fingering: [ { stringNum: 1, fret: 7 } ]
     },
     {
+      pitches: [ 'B4' ],
       avg_fret: 12,
       fret_span: 0,
       fingering: [ { stringNum: 2, fret: 12 } ]
     },
     {
+      pitches: [ 'B4' ],
       avg_fret: 16,
       fret_span: 0,
       fingering: [ { stringNum: 3, fret: 16 } ]
@@ -223,37 +228,43 @@ Generate compatible fingering combinations for each set of pitches for later com
   ],
   [
     {
+      pitches: [ 'A2', 'A3' ],
       avg_fret: 2,
       fret_span: 0,
-      fingering: [ { stringNum: 5, fret: 0 }, { stringNum: 3, fret: 2 } ]     
+      fingering: [ { stringNum: 5, fret: 0 }, { stringNum: 3, fret: 2 } ]
     },
     {
+      pitches: [ 'A2', 'A3' ],
       avg_fret: 7,
       fret_span: 0,
-      fingering: [ { stringNum: 5, fret: 0 }, { stringNum: 4, fret: 7 } ]     
+      fingering: [ { stringNum: 5, fret: 0 }, { stringNum: 4, fret: 7 } ]
     },
     {
+      pitches: [ 'A2', 'A3' ],
       avg_fret: 17,
       fret_span: 0,
-      fingering: [ { stringNum: 5, fret: 0 }, { stringNum: 6, fret: 17 } ]    
+      fingering: [ { stringNum: 5, fret: 0 }, { stringNum: 6, fret: 17 } ]
     },
     {
+      pitches: [ 'A2', 'A3' ],
       avg_fret: 6,
       fret_span: 2,
-      fingering: [ { stringNum: 6, fret: 5 }, { stringNum: 4, fret: 7 } ]     
+      fingering: [ { stringNum: 6, fret: 5 }, { stringNum: 4, fret: 7 } ]
     }
   ],
   'break',
   [
     {
+      pitches: [ 'F2', 'B4' ],
       avg_fret: 4,
       fret_span: 6,
-      fingering: [ { stringNum: 6, fret: 1 }, { stringNum: 1, fret: 7 } ]     
+      fingering: [ { stringNum: 6, fret: 1 }, { stringNum: 1, fret: 7 } ]
     }
   ],
   'break',
   [
     {
+      pitches: [ 'E4', 'B3', 'G3', 'E3', 'B2', 'E2' ],
       avg_fret: 2,
       fret_span: 0,
       fingering: [

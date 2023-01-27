@@ -14,21 +14,13 @@ const guitar = new GuitarModule2.Guitar("", 0);
 // 	console.log(`${string} | ${guitar.strings[string][0]}`);
 // }
 const testNotesString = `
-E4
 Eb4
-E4
-Eb4
-E4
-B3
-D4
-C4
-
+B4
 A2A3
-E3
-A3
-C3
-E3
-A3
+
+F2B4
+
+Em chord
 `.repeat(1);
 // const arrangement = new GuitarModule2.Arrangement(guitar, testNotesString);
 // console.log(arrangement.pitchLines);
