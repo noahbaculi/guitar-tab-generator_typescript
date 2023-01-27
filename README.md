@@ -281,3 +281,122 @@ Generate compatible fingering combinations for each set of pitches for later com
 ```
 
 </details>
+
+### `bestFingerings <- optimizeFingerings()`
+
+Calculate the optimal fingering path to minimize finger movement.
+
+```mermaid
+flowchart LR
+classDef fingeringStyle text-align: left
+
+subgraph beat1
+_beat1_D#4_option1("pitches: 'D#4',
+  avg_fret: 4,
+  fret_span: 0,
+    fingering: [ { stringNum: 2, fret: 4 } ]"):::fingeringStyle
+_beat1_D#4_option2("pitches: 'D#4',
+  avg_fret: 8,
+  fret_span: 0,
+  fingering: [ { stringNum: 3, fret: 8 } ]"):::fingeringStyle
+_beat1_D#4_option3("pitches: 'D#4',
+  avg_fret: 13,
+  fret_span: 0,
+  fingering: [ { stringNum: 4, fret: 13 } ]"):::fingeringStyle
+end
+
+  _beat1_D#4_option1 --3--> _beat2_B4_option1
+  _beat1_D#4_option1 --8--> _beat2_B4_option2
+  _beat1_D#4_option1 --12--> _beat2_B4_option3
+
+  _beat1_D#4_option2 --1--> _beat2_B4_option1
+  _beat1_D#4_option2 --4--> _beat2_B4_option2
+  _beat1_D#4_option2 --8--> _beat2_B4_option3
+
+  _beat1_D#4_option3 --6--> _beat2_B4_option1
+  _beat1_D#4_option3 --1--> _beat2_B4_option2
+  _beat1_D#4_option3 --3--> _beat2_B4_option3
+
+subgraph beat2
+_beat2_B4_option1("pitches: 'B4',
+  avg_fret: 7,
+  fret_span: 0,
+  fingering: [ { stringNum: 1, fret: 7 } ]"):::fingeringStyle
+_beat2_B4_option2("pitches: 'B4',
+  avg_fret: 12,
+  fret_span: 0,
+  fingering: [ { stringNum: 2, fret: 12 } ]"):::fingeringStyle
+_beat2_B4_option3("pitches: 'B4',
+  avg_fret: 16,
+  fret_span: 0,
+  fingering: [ { stringNum: 3, fret: 16 } ]"):::fingeringStyle
+end
+
+  _beat2_B4_option1 --5--> _beat3_A2A3_option1
+  _beat2_B4_option1 --0--> _beat3_A2A3_option2
+  _beat2_B4_option1 --10--> _beat3_A2A3_option3
+  _beat2_B4_option1 --1--> _beat3_A2A3_option4
+
+  _beat2_B4_option2 --10--> _beat3_A2A3_option1
+  _beat2_B4_option2 --5--> _beat3_A2A3_option2
+  _beat2_B4_option2 --5--> _beat3_A2A3_option3
+  _beat2_B4_option2 --6--> _beat3_A2A3_option4
+
+  _beat2_B4_option3 --14--> _beat3_A2A3_option1
+  _beat2_B4_option3 --7--> _beat3_A2A3_option2
+  _beat2_B4_option3 --1--> _beat3_A2A3_option3
+  _beat2_B4_option3 --11--> _beat3_A2A3_option4
+
+subgraph beat3
+_beat3_A2A3_option1("pitches: 'A2', 'A3',
+  avg_fret: 2,
+  fret_span: 0,
+  fingering: [ { stringNum: 5, fret: 0 }, { stringNum: 3, fret: 2 } ]"):::fingeringStyle
+_beat3_A2A3_option2("pitches: 'A2', 'A3',
+  avg_fret: 7,
+  fret_span: 0,
+  fingering: [ { stringNum: 5, fret: 0 }, { stringNum: 4, fret: 7 } ]"):::fingeringStyle
+_beat3_A2A3_option3("pitches: 'A2', 'A3',
+  avg_fret: 17,
+  fret_span: 0,
+  fingering: [ { stringNum: 5, fret: 0 }, { stringNum: 6, fret: 17 } ]"):::fingeringStyle
+_beat3_A2A3_option4("pitches: 'A2', 'A3',
+  avg_fret: 6
+  fret_span: 2,
+  fingering: [ { stringNum: 6, fret: 5 }, { stringNum: 4, fret: 7 } ]"):::fingeringStyle
+end
+
+  _beat3_A2A3_option1 --2--> _beat4_F2B4_option1
+  _beat3_A2A3_option2 --3--> _beat4_F2B4_option1
+  _beat3_A2A3_option3 --2--> _beat4_F2B4_option1
+
+subgraph beat4
+_beat4_F2B4_option1("pitches: 'F2', 'B4',
+  avg_fret: 4,
+  fret_span: 6,
+  fingering: [ { stringNum: 6, fret: 1 }, { stringNum: 1, fret: 7 } ]"):::fingeringStyle
+end
+
+  _beat4_F2B4_option1 --2--> _beat5_E4B3G3E3B2E2_option1
+
+subgraph beat5
+_beat5_E4B3G3E3B2E2_option1("pitches: 'E4', 'B3', 'G3', 'E3', 'B2', 'E2',
+  avg_fret: 2,
+  fret_span: 0,
+  fingering: [
+    { stringNum: 1, fret: 0 },
+    { stringNum: 2, fret: 0 },
+    { stringNum: 3, fret: 0 },
+    { stringNum: 4, fret: 2 },
+    { stringNum: 5, fret: 2 },
+    { stringNum: 6, fret: 0 } ]"):::fingeringStyle
+end
+```
+
+<details open style="margin-bottom: 2em;">
+<summary>Example</summary>
+
+```typescript
+```
+
+</details>
