@@ -1,4 +1,14 @@
-# guitar-tab
+# guitar-tab-generator_typescript
+
+October 2022
+
+Guitar tab generator from note names considering difficulty of different finger positions.
+
+Old version:
+- [Java](https://github.com/noahbaculi/guitar-tab-generator_java) (2022)
+
+New version:
+- [Rust](https://github.com/noahbaculi/guitar-tab-generator) (2023 - )
 
 ## Terminal Commands
 ```shell
